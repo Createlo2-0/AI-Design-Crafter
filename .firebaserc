@@ -1,0 +1,11 @@
+{
+  "projects": {
+    "default": "portfolio-pratap"
+  },
+  "targets": {},
+  "etags": {
+    "portfolio-pratap": {
+      "extensionInstances": {}
+    }
+  }
+}
