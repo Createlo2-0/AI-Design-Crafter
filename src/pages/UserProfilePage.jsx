@@ -18,7 +18,7 @@ const UserCircleIcon = () => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-8 h-8"
+    className="w-9 h-9"
   >
     <path
       strokeLinecap="round"
@@ -34,7 +34,7 @@ const ArchiveIcon = () => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-8 h-8"
+    className="w-9 h-9"
   >
     <path
       strokeLinecap="round"
@@ -50,7 +50,7 @@ const SettingsIcon = () => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-8 h-8"
+    className="w-9 h-9"
   >
     <path
       strokeLinecap="round"
@@ -69,11 +69,12 @@ const ProfilePanel = ({
   delay = 0.2,
 }) => {
   const panelVariants = {
-    offscreen: { opacity: 0, y: 30 },
+    offscreen: { opacity: 0, y: 40, scale: 0.98 },
     onscreen: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 80, delay, damping: 15 },
+      scale: 1,
+      transition: { type: "spring", stiffness: 80, delay, damping: 14 },
     },
   };
   const titleColor = colorClass.startsWith("text-")
@@ -85,17 +86,22 @@ const ProfilePanel = ({
   return (
     <motion.div
       variants={panelVariants}
-      className={`w-full max-w-3xl mx-auto bg-gradient-to-br from-cyber-primary/80 to-cyber-bg-darker/70 backdrop-blur-md p-4 sm:p-6 md:p-8 rounded-lg shadow-xl border-t-4 ${borderColorClass} relative overflow-hidden mb-8`}
+      initial="offscreen"
+      whileInView="onscreen"
+      viewport={{ once: true, amount: 0.15 }}
+      className={`w-full max-w-3xl mx-auto bg-gradient-to-br from-cyber-primary/90 to-cyber-bg-darker/80 backdrop-blur-md p-4 sm:p-6 md:p-8 rounded-2xl shadow-2xl border-t-4 ${borderColorClass} relative overflow-hidden mb-10`}
     >
       <div className="relative z-10">
         <div
-          className={`flex items-center gap-3 mb-6 border-b pb-3 border-${colorClass}/30`}
+          className={`flex items-center gap-4 mb-6 border-b pb-3 border-${colorClass}/30`}
         >
-          {React.cloneElement(icon, {
-            className: `mr-1 ${titleColor} flex-shrink-0`,
-          })}
+          <span className="flex items-center h-10">
+            {React.cloneElement(icon, {
+              className: `${titleColor} flex-shrink-0 drop-shadow-neon w-9 h-9`,
+            })}
+          </span>
           <h2
-            className={`text-xl sm:text-2xl md:text-3xl font-cyber ${titleColor} uppercase tracking-wide flex-grow text-left`}
+            className={`text-xl sm:text-2xl md:text-3xl font-cyber mt-3 ${titleColor} uppercase tracking-wide flex-grow text-left leading-tight flex items-center`}
           >
             {title}
           </h2>
@@ -188,20 +194,13 @@ function UserProfilePage() {
       transition: { duration: 0.5, staggerChildren: 0.15 },
     },
   };
-  const panelItemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 100 },
-    },
-  };
   const gridItemVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
+    hidden: { opacity: 0, scale: 0.92, y: 20 },
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { type: "spring", stiffness: 150 },
+      y: 0,
+      transition: { type: "spring", stiffness: 120 },
     },
   };
 
@@ -212,162 +211,163 @@ function UserProfilePage() {
   return (
     <>
       <motion.div
-        className="w-full min-h-screen bg-cyber-bg-darker/80 py-8 px-2 sm:px-4 md:px-8 flex flex-col items-center"
+        className="w-full min-h-screen bg-gradient-to-br from-cyber-bg-darker/90 via-cyber-bg/80 to-cyber-bg/60 py-8 px-2 sm:px-4 md:px-8 flex flex-col items-center"
         initial="hidden"
         animate="visible"
         variants={pageVariants}
       >
         <motion.h1
-          className="text-2xl sm:text-3xl md:text-4xl font-cyber text-neon-green mb-8 md:mb-12 text-center uppercase tracking-wider w-full max-w-3xl"
+          className="text-2xl sm:text-3xl md:text-4xl font-cyber text-neon-green mb-8 md:mb-12 text-center uppercase tracking-wider w-full max-w-3xl drop-shadow-neon"
           variants={{
             hidden: { opacity: 0, y: -20 },
             visible: { opacity: 1, y: 0, transition: { delay: 0.1 } },
           }}
         >
-          User Profile
+          <span className="inline-block animate-fade-in-up">User Profile</span>
         </motion.h1>
 
         {/* --- Agent Info --- */}
-        <motion.div variants={panelItemVariants} className="w-full">
-          <ProfilePanel
-            title="User Data"
-            icon={<UserCircleIcon />}
-            colorClass="neon-blue"
-          >
-            <div className="font-mono text-gray-300 space-y-2 sm:space-y-3 text-sm md:text-base text-left">
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                  Email ID
-                </span>
-                <span className="break-all">{currentUser.email}</span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                  Status
-                </span>
-                <span className="text-neon-green animate-pulse">ACTIVE</span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                  Registration Date
-                </span>
-                <span>
-                  {new Date(
-                    currentUser.metadata.creationTime
-                  ).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                  Last Active
-                </span>
-                <span>
-                  {new Date(
-                    currentUser.metadata.lastSignInTime
-                  ).toLocaleTimeString()}{" "}
-                  {new Date(
-                    currentUser.metadata.lastSignInTime
-                  ).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                  Clearance Level
-                </span>
-                <span>GAMMA (Simulated)</span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                  Assigned UID
-                </span>
-                <span className="break-all">
-                  {currentUser.uid.substring(0, 12)}... (Internal)
-                </span>
-              </div>
+        <ProfilePanel
+          title="User Data"
+          icon={<UserCircleIcon />}
+          colorClass="neon-blue"
+          delay={0.1}
+        >
+          <div className="font-mono text-gray-300 space-y-3 text-sm md:text-base text-left">
+            <div className="flex flex-col sm:flex-row sm:items-center">
+              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                Email ID
+              </span>
+              <span className="break-all">{currentUser.email}</span>
             </div>
-          </ProfilePanel>
-        </motion.div>
+            <div className="flex flex-col sm:flex-row sm:items-center">
+              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                Status
+              </span>
+              <span className="text-neon-green animate-pulse">ACTIVE</span>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center">
+              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                Registration Date
+              </span>
+              <span>
+                {new Date(
+                  currentUser.metadata.creationTime
+                ).toLocaleDateString()}
+              </span>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center">
+              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                Last Active
+              </span>
+              <span>
+                {new Date(
+                  currentUser.metadata.lastSignInTime
+                ).toLocaleTimeString()}{" "}
+                {new Date(
+                  currentUser.metadata.lastSignInTime
+                ).toLocaleDateString()}
+              </span>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center">
+              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                Clearance Level
+              </span>
+              <span>GAMMA (Simulated)</span>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center">
+              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                Assigned UID
+              </span>
+              <span className="break-all">
+                {currentUser.uid.substring(0, 12)}... (Internal)
+              </span>
+            </div>
+          </div>
+        </ProfilePanel>
 
         {/* --- Asset Archive --- */}
-        <motion.div variants={panelItemVariants} className="w-full">
-          <ProfilePanel
-            title="Personal Asset Archive"
-            icon={<ArchiveIcon />}
-            colorClass="neon-pink"
-          >
-            {assetsToDisplay.length > 0 ? (
-              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                <AnimatePresence>
-                  {assetsToDisplay.map((asset) => (
-                    <motion.div
-                      key={asset.id || asset.src}
-                      variants={gridItemVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="hidden"
-                      layout
-                      className="group relative aspect-square bg-cyber-bg/50 border border-cyber-border/50 rounded-md overflow-hidden hover:border-neon-pink transition-all cursor-pointer shadow-md hover:shadow-neon-sm-pink"
-                      onClick={() => openModal(asset)}
-                      whileHover={{ y: -3, scale: 1.03 }}
-                    >
-                      <img
-                        src={asset.src}
-                        alt={asset.alt}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 flex items-end p-2 transition-opacity">
-                        <p className="text-xs text-neon-pink font-mono truncate">
-                          {asset.alt}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <div className="text-center font-mono text-cyber-border py-8">
-                <p className="mb-4">// ARCHIVE EMPTY - NO ASSETS LOGGED //</p>
-                <Link to="/generate">
-                  <motion.button
-                    className="bg-neon-pink text-cyber-bg-darker font-bold py-2 px-6 border-2 border-neon-pink hover:bg-transparent hover:text-neon-pink transition-all duration-300 ease-in-out hover:shadow-neon-md-pink rounded-sm text-sm"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+        <ProfilePanel
+          title="Personal Asset Archive"
+          icon={<ArchiveIcon />}
+          colorClass="neon-pink"
+          delay={0.2}
+        >
+          {assetsToDisplay.length > 0 ? (
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              <AnimatePresence>
+                {assetsToDisplay.map((asset, i) => (
+                  <motion.div
+                    key={asset.id || asset.src}
+                    variants={gridItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    layout
+                    className="group relative aspect-square bg-cyber-bg/60 border border-cyber-border/50 rounded-xl overflow-hidden hover:border-neon-pink transition-all cursor-pointer shadow-md hover:shadow-neon-sm-pink"
+                    onClick={() => openModal(asset)}
+                    whileHover={{ y: -3, scale: 1.04 }}
                   >
-                    INITIATE FIRST SYNTHESIS //
-                  </motion.button>
-                </Link>
-              </div>
-            )}
-          </ProfilePanel>
-        </motion.div>
+                    <img
+                      src={asset.src}
+                      alt={asset.alt}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileHover={{ opacity: 1, y: 0 }}
+                      className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 flex items-end p-2 transition-opacity"
+                    >
+                      <p className="text-xs text-neon-pink font-mono truncate">
+                        {asset.alt}
+                      </p>
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <div className="text-center font-mono text-cyber-border py-8">
+              <p className="mb-4">ARCHIVE EMPTY - NO ASSETS LOGGED</p>
+              <Link to="/generate">
+                <motion.button
+                  className="bg-neon-pink text-cyber-bg-darker font-bold py-2 px-6 border-2 border-neon-pink hover:bg-transparent hover:text-neon-pink transition-all duration-300 ease-in-out hover:shadow-neon-md-pink rounded-sm text-sm"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  INITIATE FIRST SYNTHESIS //
+                </motion.button>
+              </Link>
+            </div>
+          )}
+        </ProfilePanel>
 
         {/* --- System Access & Protocols --- */}
-        <motion.div variants={panelItemVariants} className="w-full">
-          <ProfilePanel
-            title="System Access & Protocols"
-            icon={<SettingsIcon />}
-            colorClass="neon-green"
-          >
-            <div className="space-y-4 font-mono">
-              <motion.button
-                onClick={handleChangePasswordClick}
-                className="w-full sm:w-auto text-left block bg-cyber-bg/50 hover:bg-neon-green/20 hover:border-neon-green text-neon-green py-2 px-4 border border-neon-green/50 rounded-sm transition-all duration-200 text-sm"
-                whileHover={{ x: 5, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                RESET PASSWORD
-              </motion.button>
-              <motion.button
-                onClick={handleDeleteAccountClick}
-                className="w-full sm:w-auto text-left block bg-cyber-bg/50 hover:bg-red-500/20 hover:border-red-500 text-red-400 py-2 px-4 border border-red-500/50 rounded-sm transition-all duration-200 text-sm"
-                whileHover={{ x: 5, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                DELETE ACCOUNT
-              </motion.button>
-            </div>
-          </ProfilePanel>
-        </motion.div>
+        <ProfilePanel
+          title="System Access & Protocols"
+          icon={<SettingsIcon />}
+          colorClass="neon-green"
+          delay={0.3}
+        >
+          <div className="space-y-4 font-mono flex items-center justify-start sm:flex-row sm:space-x-4 sm:space-y-0">
+            <motion.button
+              onClick={handleChangePasswordClick}
+              className="flex text-left bg-cyber-bg/50 hover:bg-neon-green/20 hover:border-neon-green text-neon-green py-2 px-4 border border-neon-green/50 rounded-md transition-all duration-200 text-sm font-bold"
+              whileHover={{ x: 5, scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              RESET PASSWORD
+            </motion.button>
+            <motion.button
+              onClick={handleDeleteAccountClick}
+              className="flex text-left bg-cyber-bg/50 hover:bg-red-500/20 hover:border-red-500 text-red-400 py-2 px-4 border border-red-500/50 rounded-md transition-all duration-200 text-sm font-bold"
+              whileHover={{ x: 5, scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              DELETE ACCOUNT
+            </motion.button>
+          </div>
+        </ProfilePanel>
       </motion.div>
 
       {/* --- Asset Modal --- */}
@@ -375,7 +375,7 @@ function UserProfilePage() {
         {isModalOpen && selectedImage && (
           <Modal isOpen={isModalOpen} onClose={closeModal}>
             <div className="flex flex-col text-left max-w-xs sm:max-w-md md:max-w-lg mx-auto">
-              <div className="w-full mb-4 border-2 border-neon-pink/50 rounded-md overflow-hidden shadow-lg">
+              <div className="w-full mb-4 border-2 border-neon-pink/50 rounded-xl overflow-hidden shadow-lg">
                 <img
                   src={selectedImage.src}
                   alt={selectedImage.alt}
@@ -417,7 +417,7 @@ function UserProfilePage() {
                 onClick={closeModal}
                 className="mt-4 self-center font-mono text-neon-yellow hover:text-cyber-bg border-2 border-neon-yellow hover:bg-neon-yellow px-4 py-2 text-xs sm:text-sm transition-all duration-200 rounded-md hover:shadow-neon-lg-green"
               >
-                // CLOSE DATAVIEW //
+                CLOSE DATAVIEW
               </button>
             </div>
           </Modal>

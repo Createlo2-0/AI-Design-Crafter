@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { playClickSound } from "../utils/soundUtils";
+import Footer from "../components/Footer/Footer";
 
 // --- Animation Variants ---
 const variants = [
@@ -100,7 +101,7 @@ const IconLockSecure = () => (
 const SectionWrapper = ({ children, id, className = "" }) => (
   <motion.section
     id={id}
-    className={`py-12 md:py-20 container mx-auto px-4 md:px-6 ${className}`}
+    className={`py-12 md:py-20 container mx-auto px-3 sm:px-4 md:px-6 ${className} overflow-x-hidden`}
     initial="offscreen"
     whileInView="onscreen"
     viewport={{ once: true, amount: 0.15 }}
@@ -217,7 +218,7 @@ function HomePage() {
       >
         <motion.div variants={variants[0]}>
           <motion.h1
-            className="text-4xl sm:text-5xl md:text-6xl font-cyber text-neon-pink mb-6 tracking-wider uppercase"
+            className="text-[7.2vw] xs:text-4xl sm:text-4xl md:text-5xl font-cyber text-neon-pink mb-6 tracking-wider uppercase break-words"
             variants={variants[0]}
             whileHover={{
               animation: "glitch 0.4s steps(2, jump-none) infinite alternate",
@@ -229,22 +230,25 @@ function HomePage() {
           </motion.h1>
           <motion.p
             variants={variants[1]}
-            className="text-lg md:text-xl text-gray-300 font-mono max-w-2xl mx-auto mb-8"
+            className="text-base sm:text-lg md:text-xl text-gray-300 font-mono max-w-2xl mx-auto mb-8 px-1"
           >
             Interface with the Design Core // Synthesize high-fidelity visual
             posters & graphics from simple text directives using advanced neural
             network protocols.
           </motion.p>
         </motion.div>
-        <motion.div variants={variants[1]} className="w-full max-w-xl mb-10">
+        <motion.div
+          variants={variants[1]}
+          className="w-full max-w-xl mb-10 px-1"
+        >
           <AnimatedPromptConsole />
         </motion.div>
-        <motion.div variants={variants[2]} className="mb-12">
+        <motion.div variants={variants[2]} className="mb-12 w-full px-1">
           {currentUser ? (
             <Link to="/generate">
               <motion.button
                 onClick={playClickSound}
-                className="bg-neon-green text-cyber-bg-darker font-bold py-3 px-10 border-2 border-neon-green hover:bg-transparent hover:text-neon-green transition-all duration-300 ease-in-out hover:shadow-neon-lg-green rounded-sm text-lg"
+                className="bg-neon-green text-cyber-bg-darker font-bold py-3 px-6 sm:px-10 border-2 border-neon-green hover:bg-transparent hover:text-neon-green transition-all duration-300 ease-in-out hover:shadow-neon-lg-green rounded-sm text-base sm:text-lg w-full sm:w-auto"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -252,21 +256,21 @@ function HomePage() {
               </motion.button>
             </Link>
           ) : (
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/login">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+              <Link to="/login" className="w-full sm:w-auto">
                 <motion.button
                   onClick={playClickSound}
-                  className="bg-transparent hover:bg-neon-pink text-neon-pink hover:text-cyber-bg font-bold py-3 px-8 border-2 border-neon-pink focus:outline-none focus:shadow-outline transition-all duration-300 ease-in-out hover:shadow-neon-md-pink rounded-sm w-full sm:w-auto"
+                  className="bg-transparent hover:bg-neon-pink text-neon-pink hover:text-cyber-bg font-bold py-3 px-6 sm:px-8 border-2 border-neon-pink focus:outline-none focus:shadow-outline transition-all duration-300 ease-in-out hover:shadow-neon-md-pink rounded-sm w-full"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   LOGIN
                 </motion.button>
               </Link>
-              <Link to="/signup">
+              <Link to="/signup" className="w-full sm:w-auto">
                 <motion.button
                   onClick={playClickSound}
-                  className="bg-neon-blue text-cyber-bg-darker font-bold py-3 px-8 border-2 border-neon-blue hover:bg-transparent hover:text-neon-blue transition-all duration-300 ease-in-out hover:shadow-neon-sm-blue rounded-sm w-full sm:w-auto"
+                  className="bg-neon-blue text-cyber-bg-darker font-bold py-3 px-6 sm:px-8 border-2 border-neon-blue hover:bg-transparent hover:text-neon-blue transition-all duration-300 ease-in-out hover:shadow-neon-sm-blue rounded-sm w-full"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -278,7 +282,7 @@ function HomePage() {
         </motion.div>
         <motion.nav
           variants={variants[2]}
-          className="font-mono text-xs sm:text-sm space-x-4 sm:space-x-6"
+          className="font-mono text-xs sm:text-sm space-x-4 sm:space-x-6 w-full flex flex-wrap justify-center overflow-x-auto px-1"
         >
           {navLinks.map((link) => (
             <a
@@ -394,6 +398,12 @@ function HomePage() {
               key={step.title}
               variants={variants[idx]}
               className={`flex items-start space-x-4 p-4 md:p-6 border border-${step.color}/30 rounded-sm bg-cyber-primary/40 hover:border-${step.color} transition-all duration-300`}
+              whileHover={{
+                scale: 1.03,
+                boxShadow: "0 0 24px 0 rgba(0,255,255,0.13)",
+                borderColor: "var(--tw-color-" + step.color + ")",
+              }}
+              whileTap={{ scale: 0.98 }}
             >
               <span
                 className={`font-cyber text-2xl md:text-3xl text-${step.color} mt-0 leading-none`}
@@ -412,7 +422,6 @@ function HomePage() {
           ))}
         </div>
       </SectionWrapper>
-
     </div>
   );
 }
