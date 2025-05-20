@@ -46,15 +46,36 @@ function LoginPage() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
-      className="mx-auto mt-10 bg-cyber-primary/90 backdrop-blur-md p-6 sm:p-8 shadow-neon-sm-blue border border-cyber-border/50 rounded-sm"
-    >
-      <h2 className="text-3xl font-cyber mb-6 text-center text-neon-pink uppercase">
-        Login
-      </h2>
+     <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0 }}
+               className="relative bg-gray-900/80 backdrop-blur-md shadow-2xl rounded-tl-3xl rounded-br-3xl p-8 w-full max-w-md up-10 bottom-5 top-8 mx-auto"
+
+            >
+                {/* Animated Gradient Border */}
+               <motion.div
+                className="absolute inset-0 z-0 rounded-tl-3xl rounded-br-3xl border-4 border-transparent"
+                animate={{
+                    backgroundPosition: ["0% 0%", "100% 0%", "100% 100%", "0% 100%", "0% 0%"]
+                }}
+                transition={{
+                    repeat: Infinity,
+                    duration: 4,
+                    ease: "linear"
+                }}
+                style={{
+                    backgroundImage: "linear-gradient(90deg, #ff00ff, #00ffff, #00ff00, #ff00ff)",
+                    backgroundSize: "400% 400%",
+                    mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                    maskComposite: "exclude",
+                    WebkitMaskComposite: "destination-out",
+                    boxShadow: "0px 30px 30px #00ffff",
+                    pointerEvents: "none"
+                }}
+                />
+      <h2 className="text-3xl font-cyber text-center text-neon-blue mb-6 uppercase">Sign In</h2>
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
           <motion.p
@@ -72,17 +93,17 @@ function LoginPage() {
           >
             Email
           </label>
-          <input
-            id="email"
+            <input
             type="email"
-            placeholder="id@domain.corp"
+            id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
             required
             disabled={loading}
-            className="w-full py-2 px-3 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-none shadow-inner leading-tight focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-transparent placeholder-gray-500 transition-all"
-          />
-        </div>
+            className="w-full px-3 py-2 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
+            />
+          </div>
         <div>
           <label
             htmlFor="password"
@@ -91,34 +112,31 @@ function LoginPage() {
             Password
           </label>
           <input
-            id="password"
-            type="password"
-            placeholder="************"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={loading}
-            className="w-full py-2 px-3 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-none shadow-inner leading-tight focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-transparent placeholder-gray-500 transition-all"
-          />
+          type="password"
+               id="password"
+               value={password}
+              onChange={(e) => setPassword(e.target.value)}
+             placeholder="Enter your password"
+             required
+             disabled={loading}
+            className="w-full px-3 py-2 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
+                            />
         </div>
         <motion.button
-          type="submit"
-          disabled={loading}
-          className={`w-full bg-transparent hover:bg-neon-pink text-neon-pink hover:text-cyber-bg font-bold py-2 px-4 border-2 border-neon-pink rounded-sm focus:outline-none focus:shadow-outline transition-all duration-300 ease-in-out ${
-            loading
-              ? "opacity-50 cursor-not-allowed animate-pulse"
-              : "hover:shadow-neon-md-pink"
-          }`}
-          whileHover={!loading ? { scale: 1.03 } : {}}
-          whileTap={!loading ? { scale: 0.97 } : {}}
-        >
-          {loading ? "AUTHENTICATING..." : "Login"}
-        </motion.button>
-        <p className="text-center text-cyber-border text-xs font-mono mt-6">
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full bg-transparent border-2 border-neon-blue text-neon-blue font-bold py-2 px-4 rounded-sm transition-all duration-300 ease-in-out ${loading ? 'opacity-50 cursor-not-allowed animate-pulse' : 'hover:bg-neon-blue hover:text-cyber-bg hover:shadow-neon-md-blue'}`}
+                            whileHover={!loading ? { scale: 1.03 } : {}}
+                            whileTap={!loading ? { scale: 0.97 } : {}}
+                        >
+                            {loading ? 'Signing in...' : 'Sign In'}
+                        </motion.button>
+          
+        <p className="text-center text-cyber-border text-base font-mono mt-6">
           New User Registration &gt;&gt;&gt;{" "}
           <Link
             to="/signup"
-            className="text-neon-green hover:text-white font-bold"
+            className="text-neon-pink hover:text-white font-bold"
           >
             Signup
           </Link>
@@ -129,3 +147,5 @@ function LoginPage() {
 }
 
 export default LoginPage;
+
+

@@ -62,10 +62,31 @@ function SignupPage() {
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
-      className="max-w-md mx-auto mt-10 bg-cyber-primary/90 backdrop-blur-md p-6 sm:p-8 shadow-neon-sm-blue border border-cyber-border/50 rounded-sm"
+               className="relative bg-gray-900/80 backdrop-blur-md shadow-2xl rounded-tl-3xl rounded-br-3xl p-8 w-full max-w-md up-10 bottom-5 top-0 mx-auto"
     >
+       <motion.div
+                    className="absolute inset-0 z-0 rounded-tl-3xl rounded-br-3xl border-4 border-transparent"
+                    animate={{
+                        backgroundPosition: ["0% 0%", "100% 0%", "100% 100%", "0% 100%", "0% 0%"]
+                    }}
+                    transition={{
+                        repeat: Infinity,
+                        duration: 4,
+                        ease: "linear"
+                    }}
+                    style={{
+                        backgroundImage: "linear-gradient(90deg, #00ffff, #ff00ff, #00ff00, #00ffff)",
+                        backgroundSize: "400% 400%",
+                        mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                        maskComposite: "exclude",
+                        WebkitMaskComposite: "destination-out",
+                        boxShadow: "0px 30px 30px #ff00ff",
+                        pointerEvents: "none"
+                    }}
+                />
       <h2 className="text-3xl font-cyber mb-6 text-center text-neon-blue uppercase">
-        Registration
+        SIGN UP
       </h2>
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
@@ -84,16 +105,16 @@ function SignupPage() {
           >
             Email
           </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="id@domain.corp"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={loading}
-            className="w-full py-2 px-3 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-none shadow-inner leading-tight focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent placeholder-gray-500 transition-all"
-          />
+         <input
+                                type="email"
+                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter your email"
+                                required
+                                disabled={loading}
+                                className="w-full px-3 py-2 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-blue placeholder-gray-500"
+                            />
         </div>
         <div>
           <label
@@ -103,15 +124,15 @@ function SignupPage() {
             Password
           </label>
           <input
-            id="password"
-            type="password"
-            placeholder="Min. 6 Characters"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={loading}
-            className="w-full py-2 px-3 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-none shadow-inner leading-tight focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent placeholder-gray-500 transition-all"
-          />
+                                type="password"
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter a strong password"
+                                required
+                                disabled={loading}
+                                className="w-full px-3 py-2 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-blue placeholder-gray-500"
+                            />
         </div>
         <div>
           <label
@@ -120,39 +141,33 @@ function SignupPage() {
           >
             Confirm Password
           </label>
-          <input
-            id="confirm-password"
-            type="password"
-            placeholder="Retype Access Code"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            disabled={loading}
-            className="w-full py-2 px-3 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-none shadow-inner leading-tight focus:outline-none focus:ring-2 focus:ring-neon-blue focus:border-transparent placeholder-gray-500 transition-all"
-          />
+           <input
+                                type="password"
+                                id="confirmPassword"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="Retype your password"
+                                required
+                                disabled={loading}
+                                className="w-full px-3 py-2 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-blue placeholder-gray-500"
+                            />
         </div>
-        <motion.button
-          type="submit"
-          disabled={loading}
-          className={`w-full bg-neon-blue hover:bg-transparent text-cyber-bg-darker hover:text-neon-blue font-bold py-2 px-4 border-2 border-neon-blue rounded-sm focus:outline-none focus:shadow-outline transition-all duration-300 ease-in-out ${
-            loading
-              ? "opacity-50 cursor-not-allowed animate-pulse"
-              : "hover:shadow-neon-sm-blue"
-          }`}
-          whileHover={!loading ? { scale: 1.03 } : {}}
-          whileTap={!loading ? { scale: 0.97 } : {}}
-        >
-          {loading ? "REGISTERING USER..." : "Signup"}
-        </motion.button>
-        <p className="text-center text-cyber-border text-xs font-mono mt-6">
-          Existing Agent? &gt;&gt;&gt;{" "}
-          <Link
-            to="/login"
-            className="text-neon-pink hover:text-white font-bold"
-          >
-            Login
-          </Link>
-        </p>
+         <motion.button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full bg-transparent border-2 border-neon-blue text-neon-blue font-bold py-2 px-4 rounded-sm transition-all duration-300 ease-in-out ${loading ? 'opacity-50 cursor-not-allowed animate-pulse' : 'hover:bg-neon-blue hover:text-cyber-bg hover:shadow-neon-md-blue'}`}
+                            whileHover={!loading ? { scale: 1.03 } : {}}
+                            whileTap={!loading ? { scale: 0.97 } : {}}
+                        >
+                            {loading ? 'Signing up...' : 'Sign Up'}
+                        </motion.button>
+         
+        <p className="text-center text-cyber-border text-base font-mono mt-4">
+                            Already have an account?{' '}
+                            <Link to="/login" className="text-neon-pink hover:text-white font-bold">
+                                Sign In
+                            </Link>
+                        </p>
       </form>
     </motion.div>
   );
