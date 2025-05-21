@@ -10,6 +10,7 @@ import {
 } from "../utils/soundUtils";
 import { auth } from "../services/firebase";
 import { generatePoster } from "../services/posterService";
+import Button from "../components/Common/Button";
 
 // --- Spinner ---
 const CyberSpinner = () => (
@@ -38,7 +39,7 @@ const StyledInput = ({
       htmlFor={id}
       className="block text-neon-green text-lg font-semibold mb-2 tracking-wide uppercase"
     >
-       {label} 
+      {label}
     </label>
     {type === "textarea" ? (
       <textarea
@@ -303,7 +304,7 @@ function GeneratorPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        Design Core Interface 
+        Design Core Interface
       </motion.h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-start">
@@ -361,16 +362,18 @@ function GeneratorPage() {
             </div>
 
             <div className="mt-6 mb-2">
-              <button
+              <Button
                 type="button"
                 onClick={toggleAdvanced}
-                className="flex items-center justify-between w-full font-mono text-neon-yellow hover:text-white py-2 px-3 border-2 border-neon-yellow/50 hover:border-neon-yellow rounded-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neon-yellow/50"
+                variant="outline"
+                size="medium"
+                className="flex items-center justify-between w-full font-mono text-neon-yellow hover:text-white py-2 px-3 border-2 border-neon-yellow ounded-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neon-yellow hover:bg-transparent"
               >
                 <span className="text-sm uppercase tracking-wider">
                   Advanced Options
                 </span>
                 <ChevronIcon isOpen={isAdvancedOpen} />
-              </button>
+              </Button>
             </div>
 
             <AnimatePresence initial={false}>
@@ -428,16 +431,17 @@ function GeneratorPage() {
               )}
             </AnimatePresence>
 
-            <motion.button
+            <Button
               type="submit"
               disabled={loading}
+              variant="primary"
+              size="large"
               className={`w-full font-cyber text-lg mt-6 py-3 px-6 border-2 transition-all duration-300 ease-in-out rounded-sm flex items-center justify-center ${
                 loading
                   ? "bg-gray-600 text-gray-400 border-gray-600 cursor-not-allowed animate-pulse"
                   : "bg-neon-green text-cyber-bg-darker border-neon-green hover:bg-transparent hover:text-neon-green hover:shadow-neon-lg-green"
               }`}
-              whileHover={!loading ? { scale: 1.03 } : {}}
-              whileTap={!loading ? { scale: 0.97 } : {}}
+              style={{ transition: "transform 0.2s" }}
             >
               {loading ? (
                 <>
@@ -447,7 +451,7 @@ function GeneratorPage() {
               ) : (
                 "EXECUTE DIRECTIVE"
               )}
-            </motion.button>
+            </Button>
           </form>
         </motion.div>
 
@@ -526,19 +530,27 @@ function GeneratorPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    <motion.button
+                    <Button
                       onClick={handleDownloadAsset}
+                      variant="outline"
+                      size="small"
                       className="font-mono text-xs flex-1 bg-neon-blue/80 hover:bg-neon-blue text-cyber-bg-darker py-2 px-4 border border-neon-blue rounded-sm transition-all duration-200 shadow-md hover:shadow-neon-sm-blue"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
                     >
                       // DOWNLOAD ASSET //
-                    </motion.button>
-                    <motion.button
+                    </Button>
+                    <Button
                       onClick={handleSaveToArchive}
                       disabled={
                         saveStatus === "saving" || saveStatus === "saved"
                       }
+                      variant={
+                        saveStatus === "save_error"
+                          ? "danger"
+                          : saveStatus === "saved"
+                          ? "primary"
+                          : "outline"
+                      }
+                      size="small"
                       className={`font-mono text-xs flex-1 py-2 px-4 border rounded-sm transition-all duration-200 shadow-md ${
                         saveStatus === "saving"
                           ? "bg-cyber-border/50 text-gray-400 border-cyber-border cursor-wait animate-pulse"
@@ -548,22 +560,20 @@ function GeneratorPage() {
                           ? "bg-red-500/80 text-white border-red-500"
                           : "bg-cyber-border/70 hover:bg-neon-green hover:text-cyber-bg-darker text-gray-200 border-cyber-border"
                       }`}
-                      whileHover={!saveStatus ? { scale: 1.05 } : {}}
-                      whileTap={!saveStatus ? { scale: 0.95 } : {}}
                     >
                       {saveStatus === "saving" && "// SAVING... //"}
                       {saveStatus === "saved" && "// ARCHIVED //"}
                       {saveStatus === "save_error" && "// SAVE ERROR //"}
                       {!saveStatus && "// SAVE TO ARCHIVE //"}
-                    </motion.button>
-                    <motion.button
+                    </Button>
+                    <Button
                       onClick={handleGenerateVariations}
+                      variant="secondary"
+                      size="small"
                       className="font-mono text-xs flex-1 bg-cyber-border/70 hover:bg-neon-pink hover:text-cyber-bg-darker text-gray-200 py-2 px-4 border border-cyber-border rounded-sm transition-all duration-200 shadow-md"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
                     >
                       // GENERATE VARIATIONS //
-                    </motion.button>
+                    </Button>
                   </motion.div>
                 </motion.div>
               )}

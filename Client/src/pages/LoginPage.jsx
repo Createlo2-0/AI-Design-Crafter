@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
 import { playClickSound, playErrorSound } from "../utils/soundUtils";
+import Button from "../components/Common/Button";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -31,10 +32,13 @@ function LoginPage() {
             message = "Error: Invalid Email or Password.";
             break;
           case "auth/too-many-requests":
-            message = "Error: Access temporarily disabled [Too many attempts]. Try again later.";
+            message =
+              "Error: Access temporarily disabled [Too many attempts]. Try again later.";
             break;
           default:
-            message = `Error: ${err.code.replace("auth/", "").replace(/-/g, " ")}`;
+            message = `Error: ${err.code
+              .replace("auth/", "")
+              .replace(/-/g, " ")}`;
         }
       } else if (err.message) {
         message = err.message;
@@ -47,13 +51,43 @@ function LoginPage() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
-      className="mx-auto mt-10 bg-cyber-primary/90 backdrop-blur-md p-6 sm:p-8 shadow-neon-sm-blue border border-cyber-border/50 rounded-sm"
+      transition={{ duration: 0 }}
+      className="relative bg-gray-900/80 backdrop-blur-md shadow-2xl rounded-tl-3xl rounded-br-3xl p-8 w-full max-w-md up-10 bottom-5 top-8 mx-auto"
     >
-      <h2 className="text-3xl font-cyber mb-6 text-center text-neon-pink uppercase">
-        Login
+      {/* Animated Gradient Border */}
+      <motion.div
+        className="absolute inset-0 z-0 rounded-tl-3xl rounded-br-3xl border-4 border-transparent"
+        animate={{
+          backgroundPosition: [
+            "0% 0%",
+            "100% 0%",
+            "100% 100%",
+            "0% 100%",
+            "0% 0%",
+          ],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 4,
+          ease: "linear",
+        }}
+        style={{
+          backgroundImage:
+            "linear-gradient(90deg, #ff00ff, #00ffff, #00ff00, #ff00ff)",
+          backgroundSize: "400% 400%",
+          mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMask:
+            "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          maskComposite: "exclude",
+          WebkitMaskComposite: "destination-out",
+          boxShadow: "0px 30px 30px #00ffff",
+          pointerEvents: "none",
+        }}
+      />
+      <h2 className="text-3xl font-cyber text-center text-neon-blue mb-6 uppercase">
+        Sign In
       </h2>
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
@@ -73,14 +107,14 @@ function LoginPage() {
             Email
           </label>
           <input
-            id="email"
             type="email"
-            placeholder="id@domain.corp"
+            id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
             required
             disabled={loading}
-            className="w-full py-2 px-3 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-none shadow-inner leading-tight focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-transparent placeholder-gray-500 transition-all"
+            className="w-full px-3 py-2 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
           />
         </div>
         <div>
@@ -91,34 +125,30 @@ function LoginPage() {
             Password
           </label>
           <input
-            id="password"
             type="password"
-            placeholder="************"
+            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
             required
             disabled={loading}
-            className="w-full py-2 px-3 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-none shadow-inner leading-tight focus:outline-none focus:ring-2 focus:ring-neon-pink focus:border-transparent placeholder-gray-500 transition-all"
+            className="w-full px-3 py-2 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
           />
         </div>
-        <motion.button
+        <Button
           type="submit"
           disabled={loading}
-          className={`w-full bg-transparent hover:bg-neon-pink text-neon-pink hover:text-cyber-bg font-bold py-2 px-4 border-2 border-neon-pink rounded-sm focus:outline-none focus:shadow-outline transition-all duration-300 ease-in-out ${
-            loading
-              ? "opacity-50 cursor-not-allowed animate-pulse"
-              : "hover:shadow-neon-md-pink"
-          }`}
-          whileHover={!loading ? { scale: 1.03 } : {}}
-          whileTap={!loading ? { scale: 0.97 } : {}}
+          variant="primary"
+          size="large"
+          className="w-full font-bold"
         >
-          {loading ? "AUTHENTICATING..." : "Login"}
-        </motion.button>
-        <p className="text-center text-cyber-border text-xs font-mono mt-6">
+          {loading ? "Signing in..." : "Sign In"}
+        </Button>
+        <p className="text-center text-cyber-border text-base font-mono mt-6">
           New User Registration &gt;&gt;&gt;{" "}
           <Link
             to="/signup"
-            className="text-neon-green hover:text-white font-bold"
+            className="text-neon-pink hover:text-white font-bold"
           >
             Signup
           </Link>
