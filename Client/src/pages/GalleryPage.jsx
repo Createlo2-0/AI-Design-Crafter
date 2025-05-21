@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Modal from "../components/Modal";
 import { playClickSound, playModalOpenSound } from "../utils/soundUtils";
+import Button from "../components/Common/Button";
 
 // --- Gallery Data ---
 const initialGalleryItems = [
@@ -165,7 +166,9 @@ function GalleryPage() {
           className="font-mono text-center text-gray-400 max-w-2xl mx-auto mb-6 sm:mb-10 md:mb-12 text-xs sm:text-sm md:text-base"
           variants={paragraphEntryVariant}
         >
-          A curated selection of synthesized visuals from the DesignCrafter.AI Core. Each asset represents a unique directive executed by the neural network.
+          A curated selection of synthesized visuals from the DesignCrafter.AI
+          Core. Each asset represents a unique directive executed by the neural
+          network.
         </motion.p>
 
         {/* --- Filter Buttons --- */}
@@ -173,7 +176,9 @@ function GalleryPage() {
           className="mb-6 sm:mb-8 md:mb-12 flex flex-wrap justify-center gap-2 md:gap-3 font-mono text-xs"
           variants={filterSectionVariant}
         >
-          <span className="text-neon-green mr-2 self-center whitespace-nowrap">// FILTER BY STYLE:</span>
+          <span className="text-neon-green mr-2 self-center whitespace-nowrap">
+            // FILTER BY STYLE:
+          </span>
           {filterOptions.map((filter) => (
             <motion.button
               key={filter}
@@ -300,12 +305,14 @@ function GalleryPage() {
                   </p>
                 </div>
               </div>
-              <button
+              <Button
                 onClick={closeModal}
+                variant="outline"
+                size="small"
                 className="mt-4 sm:mt-6 self-center font-mono text-neon-yellow hover:text-cyber-bg border-2 border-neon-yellow hover:bg-neon-yellow px-4 sm:px-6 py-2 text-xs sm:text-sm transition-all duration-200 rounded-sm hover:shadow-neon-lg-green"
               >
-                // CLOSE DATAVIEW //
-              </button>
+                CLOSE DATAVIEW
+              </Button>
             </div>
           </Modal>
         )}

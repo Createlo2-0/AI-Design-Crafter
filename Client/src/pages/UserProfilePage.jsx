@@ -11,6 +11,7 @@ import {
   playModalOpenSound,
   playErrorSound,
 } from "../utils/soundUtils";
+import Button from "../components/Common/Button";
 
 // --- SVG Icons ---
 const UserCircleIcon = () => (
@@ -336,13 +337,18 @@ function UserProfilePage() {
             <div className="text-center font-mono text-cyber-border py-8">
               <p className="mb-4">ARCHIVE EMPTY - NO ASSETS LOGGED</p>
               <Link to="/generate">
-                <motion.button
-                  className="bg-neon-pink text-cyber-bg-darker font-bold py-2 px-6 border-2 border-neon-pink hover:bg-transparent hover:text-neon-pink transition-all duration-300 ease-in-out hover:shadow-neon-md-pink rounded-sm text-sm"
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  INITIATE FIRST SYNTHESIS //
-                </motion.button>
+                  <Button
+                    variant="secondary"
+                    size="medium"
+                    className="bg-neon-pink text-cyber-bg-darker font-bold py-2 px-6 border-2 border-neon-pink hover:bg-transparent hover:text-neon-pink transition-all duration-300 ease-in-out hover:shadow-neon-md-pink rounded-sm text-sm"
+                  >
+                    INITIATE FIRST SYNTHESIS //
+                  </Button>
+                </motion.div>
               </Link>
             </div>
           )}
@@ -356,22 +362,20 @@ function UserProfilePage() {
           delay={0.3}
         >
           <div className="space-y-4 font-mono flex items-center justify-start sm:flex-row sm:space-x-4 sm:space-y-0">
-            <motion.button
+            <Button
               onClick={handleChangePasswordClick}
-              className="flex text-left bg-cyber-bg/50 hover:bg-neon-green/20 hover:border-neon-green text-neon-green py-2 px-4 border border-neon-green/50 rounded-md transition-all duration-200 text-sm font-bold"
-              whileHover={{ x: 5, scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
+              variant="outline"
+              size="medium"
             >
               RESET PASSWORD
-            </motion.button>
-            <motion.button
+            </Button>
+            <Button
               onClick={handleDeleteAccountClick}
-              className="flex text-left bg-cyber-bg/50 hover:bg-red-500/20 hover:border-red-500 text-red-400 py-2 px-4 border border-red-500/50 rounded-md transition-all duration-200 text-sm font-bold"
-              whileHover={{ x: 5, scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
+              variant="danger"
+              size="medium"
             >
               DELETE ACCOUNT
-            </motion.button>
+            </Button>
           </div>
         </ProfilePanel>
       </motion.div>
@@ -419,12 +423,14 @@ function UserProfilePage() {
                   </p>
                 </div>
               </div>
-              <button
+              <Button
                 onClick={closeModal}
+                variant="outline"
+                size="small"
                 className="mt-4 self-center font-mono text-neon-yellow hover:text-cyber-bg border-2 border-neon-yellow hover:bg-neon-yellow px-4 py-2 text-xs sm:text-sm transition-all duration-200 rounded-md hover:shadow-neon-lg-green"
               >
                 CLOSE DATAVIEW
-              </button>
+              </Button>
             </div>
           </Modal>
         )}
