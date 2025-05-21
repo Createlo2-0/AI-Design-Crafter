@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../contexts/AuthContext";
@@ -11,7 +11,7 @@ const navLinks = [
 
 const authLinks = [
   { to: "/generate", label: "Generator" },
-  { to: "/profile", label: "Profile", color: "text-neon-yellow" },
+  { to: "/profile", label: "Profile" },
 ];
 
 const guestLinks = [
@@ -33,6 +33,7 @@ const Navbar = () => {
   const { currentUser, logout, loadingAuth } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef();
 
   const handleLogout = async () => {
     try {
@@ -43,32 +44,31 @@ const Navbar = () => {
     }
   };
 
-  // Hamburger icon
   const Hamburger = ({ open, toggle }) => (
     <button
-      className="sm:hidden flex flex-col justify-center items-center w-10 h-10 focus:outline-none"
+      className="lg:hidden flex flex-col justify-center items-center w-10 h-10 focus:outline-none"
       onClick={toggle}
       aria-label={open ? "Close menu" : "Open menu"}
+      aria-expanded={open}
     >
       <span
-        className={`block w-7 h-1 bg-white rounded transition-all duration-300 ${
+        className={`w-7 h-1 bg-white rounded transition-all duration-300 ${
           open ? "rotate-45 translate-y-2" : ""
         }`}
       />
       <span
-        className={`block w-7 h-1 bg-white rounded my-1 transition-all duration-300 ${
+        className={`w-7 h-1 bg-white rounded my-1 transition-all duration-300 ${
           open ? "opacity-0" : ""
         }`}
       />
       <span
-        className={`block w-7 h-1 bg-white rounded transition-all duration-300 ${
+        className={`w-7 h-1 bg-white rounded transition-all duration-300 ${
           open ? "-rotate-45 -translate-y-2" : ""
         }`}
       />
     </button>
   );
 
-  // Navigation links (for reuse)
   const NavLinks = ({ onClick }) => (
     <>
       {navLinks.map((link) => (
@@ -113,7 +113,7 @@ const Navbar = () => {
             handleLogout();
             if (onClick) onClick();
           }}
-          className="ml-0 sm:ml-4 px-5 py-1 font-bold rounded-full border-2 border-neon-yellow text-neon-yellow bg-transparent transition-all duration-200 tracking-widest text-[18px]
+          className="ml-0 lg:ml-4 px-5 py-1 font-bold rounded-full border-2 border-neon-yellow text-neon-yellow bg-transparent transition-all duration-200 tracking-widest text-[18px]
             hover:bg-transparent hover:text-neon-yellow hover:shadow-[0_0_16px_2px_rgba(255,230,0,0.3)] focus:outline-none focus:ring-2 focus:ring-neon-yellow focus:ring-offset-2"
           whileHover={{ scale: 1.09 }}
           whileTap={{ scale: 0.97 }}
@@ -123,6 +123,24 @@ const Navbar = () => {
       )}
     </>
   );
+
+  // Close menu on outside click or Esc key
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (menuOpen && menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [menuOpen]);
 
   return (
     <motion.nav
@@ -142,7 +160,7 @@ const Navbar = () => {
         </NavLink>
 
         {/* Desktop Nav */}
-        <div className="hidden sm:flex items-center gap-3 sm:gap-5 md:gap-8 ml-2">
+        <div className="hidden lg:flex items-center gap-3 sm:gap-5 md:gap-8 ml-2">
           <NavLinks />
         </div>
 
@@ -150,17 +168,18 @@ const Navbar = () => {
         <Hamburger open={menuOpen} toggle={() => setMenuOpen((v) => !v)} />
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* Mobile/Tablet Dropdown */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
+            ref={menuRef}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="sm:hidden overflow-hidden w-full"
+            transition={{ duration: 0.3 }}
+            className="lg:hidden w-full bg-cyber-primary/90 backdrop-blur-md shadow-inner z-40"
           >
-            <div className="flex flex-col items-center gap-3 py-4 w-full">
+            <div className="flex flex-col items-center gap-4 py-6 px-4 max-h-[90vh] overflow-y-auto">
               <NavLinks onClick={() => setMenuOpen(false)} />
             </div>
           </motion.div>

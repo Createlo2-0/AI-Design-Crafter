@@ -36,9 +36,9 @@ const StyledInput = ({
   <div className="mb-6">
     <label
       htmlFor={id}
-      className="block text-neon-green text-sm font-bold mb-2 tracking-wide uppercase"
+      className="block text-neon-green text-lg font-semibold mb-2 tracking-wide uppercase"
     >
-      // {label} //
+       {label} 
     </label>
     {type === "textarea" ? (
       <textarea
@@ -367,7 +367,7 @@ function GeneratorPage() {
                 className="flex items-center justify-between w-full font-mono text-neon-yellow hover:text-white py-2 px-3 border-2 border-neon-yellow/50 hover:border-neon-yellow rounded-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neon-yellow/50"
               >
                 <span className="text-sm uppercase tracking-wider">
-                  Advanced Calibration
+                  Advanced Options
                 </span>
                 <ChevronIcon isOpen={isAdvancedOpen} />
               </button>
@@ -404,7 +404,7 @@ function GeneratorPage() {
                     helpText="Synthesis depth (e.g., 20-150)."
                   />
                   <StyledInput
-                    label="Directive Adherence (CFG)"
+                    label="Prompt Adherence"
                     id="cfgScale"
                     type="number"
                     inputMode="decimal"
@@ -445,7 +445,7 @@ function GeneratorPage() {
                   <span className="ml-3">SYNTHESIZING...</span>
                 </>
               ) : (
-                "// EXECUTE DIRECTIVE //"
+                "EXECUTE DIRECTIVE"
               )}
             </motion.button>
           </form>
@@ -574,7 +574,7 @@ function GeneratorPage() {
                   animate={{ opacity: 1 }}
                   className="text-center font-mono text-cyber-border"
                 >
-                  <p className="text-lg mb-2">// OUTPUT CHANNEL - IDLE //</p>
+                  <p className="text-lg mb-2">OUTPUT CHANNEL - IDLE</p>
                   <p className="text-sm">
                     Awaiting synthesis directive from operative.
                   </p>
