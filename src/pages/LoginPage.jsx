@@ -17,12 +17,14 @@ function LoginPage() {
     playClickSound();
     setError("");
     setLoading(true);
+
     try {
       await login(email, password);
       navigate("/generate");
     } catch (err) {
       playErrorSound();
       let message = "Failed to log in. Check credentials.";
+
       if (err.code) {
         switch (err.code) {
           case "auth/user-not-found":
@@ -39,6 +41,7 @@ function LoginPage() {
       } else if (err.message) {
         message = err.message;
       }
+
       setError(message);
     } finally {
       setLoading(false);
@@ -46,106 +49,124 @@ function LoginPage() {
   };
 
   return (
-     <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0 }}
-               className="relative bg-gray-900/80 backdrop-blur-md shadow-2xl rounded-tl-3xl rounded-br-3xl p-8 w-full max-w-md up-10 bottom-5 top-8 mx-auto"
+    <div className="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="relative bg-gray-900/80 backdrop-blur-md shadow-2xl rounded-tl-3xl rounded-br-3xl 
+                   p-4 sm:p-6 md:p-8 w-full max-w-xs sm:max-w-sm md:max-w-md"
+      >
+        {/* Animated Gradient Border */}
+        <motion.div
+          className="absolute inset-0 z-0 rounded-tl-3xl rounded-br-3xl border-4 border-transparent"
+          animate={{
+            backgroundPosition: [
+              "0% 0%",
+              "100% 0%",
+              "100% 100%",
+              "0% 100%",
+              "0% 0%",
+            ],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 4,
+            ease: "linear",
+          }}
+          style={{
+            backgroundImage: "linear-gradient(90deg, #ff00ff, #00ffff, #00ff00, #ff00ff)",
+            backgroundSize: "400% 400%",
+            mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            maskComposite: "exclude",
+            WebkitMaskComposite: "destination-out",
+            boxShadow: "0px 30px 30px #00ffff",
+            pointerEvents: "none",
+          }}
+        />
 
+        <h2 className="text-2xl sm:text-3xl font-cyber text-center text-neon-blue mb-4 sm:mb-6 uppercase">
+          Sign In
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {error && (
+            <motion.p
+              className="mb-2 text-red-300 bg-red-900/50 border border-red-500 p-3 text-xs font-mono text-center rounded-sm"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
             >
-                {/* Animated Gradient Border */}
-               <motion.div
-                className="absolute inset-0 z-0 rounded-tl-3xl rounded-br-3xl border-4 border-transparent"
-                animate={{
-                    backgroundPosition: ["0% 0%", "100% 0%", "100% 100%", "0% 100%", "0% 0%"]
-                }}
-                transition={{
-                    repeat: Infinity,
-                    duration: 4,
-                    ease: "linear"
-                }}
-                style={{
-                    backgroundImage: "linear-gradient(90deg, #ff00ff, #00ffff, #00ff00, #ff00ff)",
-                    backgroundSize: "400% 400%",
-                    mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                    maskComposite: "exclude",
-                    WebkitMaskComposite: "destination-out",
-                    boxShadow: "0px 30px 30px #00ffff",
-                    pointerEvents: "none"
-                }}
-                />
-      <h2 className="text-3xl font-cyber text-center text-neon-blue mb-6 uppercase">Sign In</h2>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {error && (
-          <motion.p
-            className="mb-2 text-red-300 bg-red-900/50 border border-red-500 p-3 text-xs font-mono text-center rounded-sm"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            {error}
-          </motion.p>
-        )}
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-neon-green text-sm font-bold mb-1 tracking-wide"
-          >
-            Email
-          </label>
+              {error}
+            </motion.p>
+          )}
+
+          {/* Email Input */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-neon-green text-sm font-bold mb-1 tracking-wide"
+            >
+              Email
+            </label>
             <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-            disabled={loading}
-            className="w-full px-3 py-2 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+              disabled={loading}
+              className="w-full px-3 py-2 text-sm sm:text-base bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
             />
           </div>
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-neon-green text-sm font-bold mb-1 tracking-wide"
-          >
-            Password
-          </label>
-          <input
-          type="password"
-               id="password"
-               value={password}
+
+          {/* Password Input */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-neon-green text-sm font-bold mb-1 tracking-wide"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
-             placeholder="Enter your password"
-             required
-             disabled={loading}
-            className="w-full px-3 py-2 bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
-                            />
-        </div>
-        <motion.button
-                            type="submit"
-                            disabled={loading}
-                            className={`w-full bg-transparent border-2 border-neon-blue text-neon-blue font-bold py-2 px-4 rounded-sm transition-all duration-300 ease-in-out ${loading ? 'opacity-50 cursor-not-allowed animate-pulse' : 'hover:bg-neon-blue hover:text-cyber-bg hover:shadow-neon-md-blue'}`}
-                            whileHover={!loading ? { scale: 1.03 } : {}}
-                            whileTap={!loading ? { scale: 0.97 } : {}}
-                        >
-                            {loading ? 'Signing in...' : 'Sign In'}
-                        </motion.button>
-          
-        <p className="text-center text-cyber-border text-base font-mono mt-6">
-          New User Registration &gt;&gt;&gt;{" "}
-          <Link
-            to="/signup"
-            className="text-neon-pink hover:text-white font-bold"
+              placeholder="Enter your password"
+              required
+              disabled={loading}
+              className="w-full px-3 py-2 text-sm sm:text-base bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <motion.button
+            type="submit"
+            disabled={loading}
+            className={`w-full bg-transparent border-2 border-neon-blue text-neon-blue font-bold py-2 px-4 rounded-sm transition-all duration-300 ease-in-out text-sm sm:text-base ${
+              loading
+                ? "opacity-50 cursor-not-allowed animate-pulse"
+                : "hover:bg-neon-blue hover:text-cyber-bg hover:shadow-neon-md-blue"
+            }`}
+            whileHover={!loading ? { scale: 1.03 } : {}}
+            whileTap={!loading ? { scale: 0.97 } : {}}
           >
-            Signup
-          </Link>
-        </p>
-      </form>
-    </motion.div>
+            {loading ? "Signing in..." : "Sign In"}
+          </motion.button>
+
+          {/* Redirect to Signup */}
+          <p className="text-center text-cyber-border text-sm sm:text-base font-mono mt-6">
+            New User Registration &gt;&gt;&gt;{" "}
+            <Link to="/signup" className="text-neon-pink hover:text-white font-bold">
+              Signup
+            </Link>
+          </p>
+        </form>
+      </motion.div>
+    </div>
   );
 }
 
 export default LoginPage;
-
-
