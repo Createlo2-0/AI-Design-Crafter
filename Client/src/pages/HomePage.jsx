@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { playClickSound } from "../utils/soundUtils";
-import Footer from "../components/Footer/Footer";
+import Button from "../components/Common/Button";
 
 // --- Animation Variants ---
 const variants = [
@@ -246,36 +246,51 @@ function HomePage() {
         <motion.div variants={variants[2]} className="mb-12 w-full px-1">
           {currentUser ? (
             <Link to="/generate">
-              <motion.button
-                onClick={playClickSound}
-                className="bg-neon-green text-cyber-bg-darker font-bold py-3 px-6 sm:px-10 border-2 border-neon-green hover:bg-transparent hover:text-neon-green transition-all duration-300 ease-in-out hover:shadow-neon-lg-green rounded-sm text-base sm:text-lg w-full sm:w-auto"
+              <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                GET STARTED
-              </motion.button>
+                <Button
+                  onClick={playClickSound}
+                  variant="outline"
+                  size="large"
+                  className="w-full sm:w-auto"
+                >
+                  GET STARTED
+                </Button>
+              </motion.div>
             </Link>
           ) : (
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
               <Link to="/login" className="w-full sm:w-auto">
-                <motion.button
-                  onClick={playClickSound}
-                  className="bg-transparent hover:bg-neon-pink text-neon-pink hover:text-cyber-bg font-bold py-3 px-6 sm:px-8 border-2 border-neon-pink focus:outline-none focus:shadow-outline transition-all duration-300 ease-in-out hover:shadow-neon-md-pink rounded-sm w-full"
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  LOGIN
-                </motion.button>
+                  <Button
+                    onClick={playClickSound}
+                    variant="secondary"
+                    size="large"
+                    className="w-full"
+                  >
+                    LOGIN
+                  </Button>
+                </motion.div>
               </Link>
               <Link to="/signup" className="w-full sm:w-auto">
-                <motion.button
-                  onClick={playClickSound}
-                  className="bg-neon-blue text-cyber-bg-darker font-bold py-3 px-6 sm:px-8 border-2 border-neon-blue hover:bg-transparent hover:text-neon-blue transition-all duration-300 ease-in-out hover:shadow-neon-sm-blue rounded-sm w-full"
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  REGISTER
-                </motion.button>
+                  <Button
+                    onClick={playClickSound}
+                    variant="primary"
+                    size="large"
+                    className="w-full"
+                  >
+                    REGISTER
+                  </Button>
+                </motion.div>
               </Link>
             </div>
           )}
@@ -327,14 +342,20 @@ function HomePage() {
         </div>
         <motion.div variants={variants[1]} className="text-center mt-12">
           <Link to="/gallery">
-            <motion.button
-              onClick={playClickSound}
-              className="font-mono text-neon-yellow hover:text-cyber-bg border-2 border-neon-yellow hover:bg-neon-yellow px-6 py-2 text-sm transition-all duration-200 rounded-sm hover:shadow-neon-lg-green"
+            <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              className="inline-block"
             >
-              Access Full Archive &gt;&gt;
-            </motion.button>
+              <Button
+                onClick={playClickSound}
+                variant="outline"
+                size="medium"
+                className="font-mono"
+              >
+                Access Full Archive &gt;&gt;
+              </Button>
+            </motion.div>
           </Link>
         </motion.div>
       </SectionWrapper>
@@ -372,14 +393,20 @@ function HomePage() {
         </div>
         <motion.div variants={variants[0]} className="text-center mt-12">
           <Link to="/features">
-            <motion.button
-              onClick={playClickSound}
-              className="font-mono text-neon-yellow hover:text-cyber-bg border-2 border-neon-yellow hover:bg-neon-yellow px-6 py-2 text-sm transition-all duration-200 rounded-sm hover:shadow-neon-lg-green"
+            <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              className="inline-block"
             >
-              View Features &gt;&gt;
-            </motion.button>
+              <Button
+                onClick={playClickSound}
+                variant="outline"
+                size="medium"
+                className="font-mono"
+              >
+                View Features &gt;&gt;
+              </Button>
+            </motion.div>
           </Link>
         </motion.div>
       </SectionWrapper>
