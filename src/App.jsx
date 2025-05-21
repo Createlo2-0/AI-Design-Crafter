@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import Lenis from "@studio-freight/lenis";
 
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -52,13 +53,32 @@ const AnimatedPage = ({ children }) => {
 function App() {
   const location = useLocation();
 
+  //Apply Smooth scroll
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      smooth: true,
+      smoothTouch: true,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen font-sans">
       {/* Navbar */}
       <Navbar />
 
       {/* Main Content with Page Transitions */}
-      <main className="flex-grow container mx-auto p-6 relative z-10">
+      <main className="flex-grow container mx-auto p-6 relative z-10 overflow-x-hidden">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route
@@ -137,7 +157,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <Footer/>
+      <Footer />
     </div>
   );
 }
