@@ -10,6 +10,7 @@ import GeneratorPage from "./pages/GeneratorPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import GalleryPage from "./pages/GalleryPage";
 import UserProfilePage from "./pages/UserProfilePage";
+import ResetPasswordPage from "./components/ResetPasswordPage";
 
 import { useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/Navabar/Navbar";
@@ -140,6 +141,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route
               path="*"
               element={
