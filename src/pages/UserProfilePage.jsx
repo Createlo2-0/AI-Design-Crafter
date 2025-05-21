@@ -4,6 +4,8 @@ import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
 import Modal from "../components/Modal";
 import { useUserAssets } from "../contexts/UserAssetsContext";
+import { useNavigate } from "react-router-dom";
+
 import {
   playClickSound,
   playModalOpenSound,
@@ -156,10 +158,14 @@ function UserProfilePage() {
     setIsModalOpen(false);
     setSelectedImage(null);
   };
+  const navigate = useNavigate();
+  
+
   const handleChangePasswordClick = () => {
-    playClickSound();
-    alert("Initiate Access Code Modification Protocol (UI Placeholder)");
+  playClickSound();
+  navigate("/reset-password");
   };
+
   const handleDeleteAccountClick = () => {
     playClickSound();
     if (
