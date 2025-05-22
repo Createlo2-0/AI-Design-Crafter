@@ -74,12 +74,8 @@ function App() {
 
   return (
     <>
+      <Navbar />
       <div className="flex flex-col min-h-screen font-sans">
-        {/* Sticky Navbar */}
-        <div className="sticky top-0 z-50">
-          <Navbar />
-        </div>
-
         {/* Main Content */}
         <main className="flex-1 w-full mx-auto p-6 relative z-10 overflow-x-hidden">
           <AnimatePresence mode="wait">
@@ -167,7 +163,7 @@ function App() {
         </main>
 
         {/* Sticky Footer */}
-          <Footer />
+        <Footer />
       </div>
     </>
   );
