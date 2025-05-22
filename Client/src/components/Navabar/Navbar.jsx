@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../contexts/AuthContext";
+import Button from "../Common/Button.jsx";
 
 const navLinks = [
   { to: "/", label: "Home", exact: true },
@@ -108,18 +109,22 @@ const Navbar = () => {
           </NavLink>
         ))}
       {currentUser && (
-        <motion.button
-          onClick={() => {
-            handleLogout();
-            if (onClick) onClick();
-          }}
-          className="ml-0 lg:ml-4 px-5 py-1 font-bold rounded-full border-2 border-neon-yellow text-neon-yellow bg-transparent transition-all duration-200 tracking-widest text-[18px]
-            hover:bg-transparent hover:text-neon-yellow hover:shadow-[0_0_16px_2px_rgba(255,230,0,0.3)] focus:outline-none focus:ring-2 focus:ring-neon-yellow focus:ring-offset-2"
+        <motion.div
           whileHover={{ scale: 1.09 }}
           whileTap={{ scale: 0.97 }}
+          className="ml-0 lg:ml-4"
         >
-          Logout
-        </motion.button>
+          <Button
+            onClick={() => {
+              handleLogout();
+              if (onClick) onClick();
+            }}
+            className="px-5 py-1 font-bold rounded-full border-2  border-neon-yellow text-neon-yellow bg-transparent transition-all duration-200 tracking-widest text-[18px]
+              hover:bg-transparent hover:text-neon-yellow hover:shadow-[0_0_16px_2px_rgba(255,230,0,0.3)] focus:outline-none focus:ring-2 focus:ring-neon-yellow focus:ring-offset-2"
+          >
+            Logout
+          </Button>
+        </motion.div>
       )}
     </>
   );
