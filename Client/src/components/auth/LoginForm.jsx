@@ -1,17 +1,19 @@
-// E:\Createlo\AI-Design-Crafter\src\components\Auth\LoginForm.jsx
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase";
-import TextInput from "../UI/TextInput";
-import CheckboxInput from "../UI/CheckboxInput";
+import { auth } from "../../services/firebase";
+import TextInput from "../Forms/TextInput";
+import Button from "../Common/Button";
 
 const LoginForm = () => {
-  const [form, setForm] = useState({ email: "", password: "", remember: false });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleChange = (field, value) => {
-    setForm(prev => ({ ...prev, [field]: value }));
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -47,21 +49,15 @@ const LoginForm = () => {
         required
       />
 
-      <CheckboxInput
-        label="Remember me"
-        checked={form.remember}
-        onChange={(e) => handleChange("remember", e.target.checked)}
-      />
-
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <button
+      <Button
         type="submit"
-        className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 disabled:opacity-50"
+        className="w-full"
         disabled={loading}
       >
         {loading ? "Logging in..." : "Login"}
-      </button>
+      </Button>
     </form>
   );
 };
