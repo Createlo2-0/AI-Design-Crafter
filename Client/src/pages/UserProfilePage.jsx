@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
-import Modal from "../components/Modal";
+import Modal from "../components/Common/Modal";
 import { useUserAssets } from "../contexts/UserAssetsContext";
 import { useNavigate } from "react-router-dom";
 
