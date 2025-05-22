@@ -10,7 +10,7 @@ import GeneratorPage from "./pages/GeneratorPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import GalleryPage from "./pages/GalleryPage";
 import UserProfilePage from "./pages/UserProfilePage";
-import ResetPasswordPage from "./components/ResetPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 
 import { useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/Navabar/Navbar";
@@ -53,7 +53,7 @@ const AnimatedPage = ({ children }) => {
 function App() {
   const location = useLocation();
 
-  //Apply Smooth scroll
+  // Apply Smooth scroll
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -73,92 +73,103 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen font-sans">
-      {/* Navbar */}
-      <Navbar />
+    <>
+      <div className="flex flex-col min-h-screen font-sans">
+        {/* Sticky Navbar */}
+        <div className="sticky top-0 z-50">
+          <Navbar />
+        </div>
 
-      {/* Main Content with Page Transitions */}
-      <main className="flex-grow container mx-auto p-6 relative z-10 overflow-x-hidden">
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route
-              path="/"
-              element={
-                <AnimatedPage>
-                  <HomePage />
-                </AnimatedPage>
-              }
-            />
-            <Route
-              path="/login"
-              element={
-                <AnimatedPage>
-                  <LoginPage />
-                </AnimatedPage>
-              }
-            />
-            <Route
-              path="/signup"
-              element={
-                <AnimatedPage>
-                  <SignupPage />
-                </AnimatedPage>
-              }
-            />
-            <Route
-              path="/generate"
-              element={
-                <ProtectedRoute>
+        {/* Main Content */}
+        <main className="flex-1 w-full mx-auto p-6 relative z-10 overflow-x-hidden">
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route
+                path="/"
+                element={
                   <AnimatedPage>
-                    <GeneratorPage />
+                    <HomePage />
                   </AnimatedPage>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/features"
-              element={
-                <AnimatedPage>
-                  <FeaturesPage />
-                </AnimatedPage>
-              }
-            />
-            <Route
-              path="/gallery"
-              element={
-                <AnimatedPage>
-                  <GalleryPage />
-                </AnimatedPage>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
+                }
+              />
+              <Route
+                path="/login"
+                element={
                   <AnimatedPage>
-                    <UserProfilePage />
+                    <LoginPage />
                   </AnimatedPage>
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route
-              path="*"
-              element={
-                <AnimatedPage>
-                  <div className="text-center text-red-500 font-bold text-xl">
-                    404 // Not Found
-                  </div>
-                </AnimatedPage>
-              }
-            />
-          </Routes>
-        </AnimatePresence>
-      </main>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <AnimatedPage>
+                    <SignupPage />
+                  </AnimatedPage>
+                }
+              />
+              <Route
+                path="/generate"
+                element={
+                  <ProtectedRoute>
+                    <AnimatedPage>
+                      <GeneratorPage />
+                    </AnimatedPage>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/features"
+                element={
+                  <AnimatedPage>
+                    <FeaturesPage />
+                  </AnimatedPage>
+                }
+              />
+              <Route
+                path="/gallery"
+                element={
+                  <AnimatedPage>
+                    <GalleryPage />
+                  </AnimatedPage>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <AnimatedPage>
+                      <UserProfilePage />
+                    </AnimatedPage>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/reset-password"
+                element={
+                  <AnimatedPage>
+                    <ResetPasswordPage />
+                  </AnimatedPage>
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <AnimatedPage>
+                    <div className="text-center text-red-500 font-bold text-xl">
+                      404 // Not Found
+                    </div>
+                  </AnimatedPage>
+                }
+              />
+            </Routes>
+          </AnimatePresence>
+        </main>
 
-      {/* Footer */}
-      <Footer />
-    </div>
+        {/* Sticky Footer */}
+          <Footer />
+      </div>
+    </>
   );
 }
 

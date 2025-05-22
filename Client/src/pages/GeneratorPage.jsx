@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import CyberButtonGroup from "../components/CyberButtonGroup";
+import CyberButtonGroup from "../components/Common/CyberButtonGroup";
 import {
   playGenerateSound,
   playClickSound,
@@ -48,7 +48,8 @@ const StyledInput = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="font-mono w-full bg-cyber-bg-darker/80 border-2 border-cyber-border/50 focus:border-neon-pink focus:ring-1 focus:ring-neon-pink p-3 text-gray-200 rounded-sm shadow-inner transition-all duration-200 placeholder-gray-500"
+        className="font-mono w-full bg-cyber-bg-darker/80 border-2 border-cyber-border/50 focus:border-neon-pink focus:ring-1 focus:ring-neon-pink p-3 text-gray-200 rounded-sm shadow-inner transition-all duration-200 placeholder-gray-500 resize-none"
+        // 'resize-none' disables resizing
       />
     ) : (
       <input
@@ -515,7 +516,7 @@ function GeneratorPage() {
                   className="w-full flex flex-col items-center"
                 >
                   <h3 className="font-cyber text-xl text-neon-green mb-4 text-center">
-                    // VISUAL OUTPUT ONLINE //
+                    VISUAL OUTPUT ONLINE
                   </h3>
                   <div className="w-full aspect-square bg-cyber-bg-darker border-2 border-neon-green/50 rounded-sm overflow-hidden shadow-lg mb-6">
                     <img

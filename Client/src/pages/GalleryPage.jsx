@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Modal from "../components/Modal";
+import Modal from "../components/Common/Modal";
 import { playClickSound, playModalOpenSound } from "../utils/soundUtils";
 import Button from "../components/Common/Button";
 
