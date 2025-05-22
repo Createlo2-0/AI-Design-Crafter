@@ -1,72 +1,77 @@
 import React, { useState } from "react";
-import TextInput from "../components/Forms/TextInput";
-import SelectInput from "../components/Forms/SelectInput";
-import CheckboxInput from "../components/Forms/CheckboxInput";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../services/firebase";
+import TextInput from "../Forms/TextInput";
+import Button from "../Common/Button";
 
-function SignupForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState(""); // example dropdown
-  const [termsAccepted, setTermsAccepted] = useState(false);
+const SignupForm = () => {
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const roles = [
-    { value: "user", label: "User" },
-    { value: "admin", label: "Admin" },
-  ];
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Your signup logic
+    setError("");
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    setLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, form.email, form.password);
+      // Handle post-signup (e.g., redirect)
+    } catch (err) {
+      setError("Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <TextInput
         label="Email"
-        id="signup-email"
         type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter your email"
-        error={error}
+        value={form.email}
+        onChange={(e) => handleChange("email", e.target.value)}
+        required
       />
 
       <TextInput
         label="Password"
-        id="signup-password"
         type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Enter your password"
-        error={error}
+        value={form.password}
+        onChange={(e) => handleChange("password", e.target.value)}
+        required
       />
 
-      <SelectInput
-        label="Role"
-        id="signup-role"
-        value={role}
-        onChange={(e) => setRole(e.target.value)}
-        options={roles}
-        error={error}
+      <TextInput
+        label="Confirm Password"
+        type="password"
+        value={form.confirmPassword}
+        onChange={(e) => handleChange("confirmPassword", e.target.value)}
+        required
       />
 
-      <CheckboxInput
-        id="terms"
-        checked={termsAccepted}
-        onChange={(e) => setTermsAccepted(e.target.checked)}
-        label="I accept the terms and conditions"
-        error={error}
-      />
+      {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <button
+      <Button
         type="submit"
-        className="w-full bg-neon-pink text-cyber-bg py-2 rounded-sm font-bold"
+        className="w-full text-gray-800 disabled:opacity-50"
+        disabled={loading}
       >
-        Sign Up
-      </button>
+        {loading ? "Signing up..." : "Sign Up"}
+      </Button>
     </form>
   );
-}
+};
 
 export default SignupForm;

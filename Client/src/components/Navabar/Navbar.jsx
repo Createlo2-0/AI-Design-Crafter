@@ -152,7 +152,7 @@ const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 120, damping: 15 }}
-      className="bg-cyber-primary/80 backdrop-blur-sm p-3 sm:p-4 text-gray-300 shadow-lg border-b-2 border-neon-blue/70 sticky top-0 z-50"
+      className="bg-cyber-primary/80 sticky backdrop-blur-sm p-3 sm:p-4 text-gray-300 shadow-lg border-b-2 border-neon-blue/70 top-0 z-50"
     >
       <div className="container mx-auto flex justify-between items-center px-2 sm:px-4">
         {/* Logo */}
