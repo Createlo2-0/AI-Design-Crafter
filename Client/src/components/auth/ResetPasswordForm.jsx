@@ -1,50 +1,95 @@
-// E:\Createlo\AI-Design-Crafter\src\components\Auth\ResetPasswordForm.jsx
 import React, { useState } from "react";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "@/firebase";
-import TextInput from "../UI/TextInput";
+import { useAuth } from "../../contexts/AuthContext";
+import { playClickSound, playErrorSound } from "../../utils/soundUtils";
+import {
+  updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+} from "firebase/auth";
+import TextInput from "../Forms/TextInput";
+import Button from "../Common/Button";
+import { useNavigate } from "react-router-dom";
 
 const ResetPasswordForm = () => {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  const { currentUser } = useAuth();
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handlePasswordUpdate = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    playClickSound();
 
+    if (newPassword !== confirmPassword) {
+      playErrorSound();
+      setMessage("Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
     try {
-      await sendPasswordResetEmail(auth, email);
-      setSent(true);
-    } catch (err) {
-      setError("Unable to send reset email. Please check the email address.");
+      // Step 1: Reauthenticate
+      const credential = EmailAuthProvider.credential(
+        currentUser.email,
+        currentPassword
+      );
+      await reauthenticateWithCredential(currentUser, credential);
+
+      // Step 2: Update password
+      await updatePassword(currentUser, newPassword);
+      setMessage("Password successfully updated.");
+
+      setTimeout(() => navigate("/profile"), 2000);
+    } catch (error) {
+      playErrorSound();
+      setMessage(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handlePasswordUpdate} className="space-y-4">
       <TextInput
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        type="password"
+        label="Current Password"
+        placeholder="Current Password"
+        value={currentPassword}
+        onChange={(e) => setCurrentPassword(e.target.value)}
         required
       />
-
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-      {sent && <p className="text-green-600 text-sm">Password reset email sent!</p>}
-
-      <button
+      <TextInput
+        type="password"
+        label="New Password"
+        placeholder="New Password"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+        required
+      />
+      <TextInput
+        type="password"
+        label="Confirm New Password"
+        placeholder="Confirm New Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        required
+      />
+      <Button
         type="submit"
-        className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 disabled:opacity-50"
+        className="w-full"
         disabled={loading}
       >
-        {loading ? "Sending..." : "Send Reset Link"}
-      </button>
+        {loading ? "Updating..." : "UPDATE PASSWORD"}
+      </Button>
+      {message && (
+        <p className="mt-4 text-sm text-center font-mono text-neon-pink">
+          {message}
+        </p>
+      )}
     </form>
   );
 };

@@ -4,12 +4,15 @@ function CheckboxInput({
   checked,
   onChange,
   label,
-  id = `checkbox-${name || Math.random().toString(36).slice(2)}`,
+  id,
   name,
   disabled = false,
   error = "",
   className = "",
 }) {
+  // Generate id if not provided
+  const generatedId =
+    id || `checkbox-${name || Math.random().toString(36).slice(2)}`;
   const baseClasses = "form-checkbox h-5 w-5 text-neon-pink rounded-sm";
 
   const checkboxClasses = disabled
@@ -20,7 +23,7 @@ function CheckboxInput({
     <div className={`flex items-center ${className}`}>
       <input
         type="checkbox"
-        id={id}
+        id={generatedId}
         name={name}
         checked={checked}
         onChange={onChange}
@@ -29,7 +32,7 @@ function CheckboxInput({
       />
       {label && (
         <label
-          htmlFor={id}
+          htmlFor={generatedId}
           className="ml-2 text-neon-green text-sm font-bold tracking-wide select-none cursor-pointer"
         >
           {label}

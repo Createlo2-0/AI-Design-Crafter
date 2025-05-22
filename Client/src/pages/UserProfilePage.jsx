@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Modal from "../components/Common/Modal";
+import Card from "../components/Common/Card";
 import { useUserAssets } from "../contexts/UserAssetsContext";
-import { useNavigate } from "react-router-dom";
-
 import {
   playClickSound,
   playModalOpenSound,
@@ -166,11 +165,10 @@ function UserProfilePage() {
     setSelectedImage(null);
   };
   const navigate = useNavigate();
-  
 
   const handleChangePasswordClick = () => {
-  playClickSound();
-  navigate("/reset-password");
+    playClickSound();
+    navigate("/reset-password");
   };
 
   const handleDeleteAccountClick = () => {
@@ -303,7 +301,7 @@ function UserProfilePage() {
           {assetsToDisplay.length > 0 ? (
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               <AnimatePresence>
-                {assetsToDisplay.map((asset, i) => (
+                {assetsToDisplay.map((asset) => (
                   <motion.div
                     key={asset.id || asset.src}
                     variants={gridItemVariants}
@@ -311,24 +309,15 @@ function UserProfilePage() {
                     animate="visible"
                     exit="hidden"
                     layout
-                    className="group relative aspect-square bg-cyber-bg/60 border border-cyber-border/50 rounded-xl overflow-hidden hover:border-neon-pink transition-all cursor-pointer shadow-md hover:shadow-neon-sm-pink"
+                    className="group relative"
                     onClick={() => openModal(asset)}
                     whileHover={{ y: -3, scale: 1.04 }}
                   >
-                    <img
-                      src={asset.src}
-                      alt={asset.alt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    <Card
+                      image={asset.src}
+                      title={asset.alt}
+                      className="w-full h-56 sm:h-64 md:h-72 aspect-square cursor-pointer"
                     />
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      whileHover={{ opacity: 1, y: 0 }}
-                      className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 flex items-end p-2 transition-opacity"
-                    >
-                      <p className="text-xs text-neon-pink font-mono truncate">
-                        {asset.alt}
-                      </p>
-                    </motion.div>
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -384,18 +373,16 @@ function UserProfilePage() {
       <AnimatePresence>
         {isModalOpen && selectedImage && (
           <Modal isOpen={isModalOpen} onClose={closeModal}>
-            <div className="flex flex-col text-left max-w-xs sm:max-w-md md:max-w-lg mx-auto">
-              <div className="w-full mb-4 border-2 border-neon-pink/50 rounded-xl overflow-hidden shadow-lg">
-                <img
-                  src={selectedImage.src}
-                  alt={selectedImage.alt}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="font-mono text-xs sm:text-sm text-gray-300 space-y-3 bg-cyber-bg/40 p-3 rounded-md border border-cyber-border/30">
-                <h2 className="text-lg sm:text-xl font-cyber text-neon-pink mb-2 uppercase tracking-wide">
+            <Card
+              image={selectedImage.src}
+              title={
+                <span className="text-lg sm:text-xl font-cyber text-neon-pink uppercase tracking-wide">
                   {selectedImage.alt}
-                </h2>
+                </span>
+              }
+              className="w-full max-w-md mx-auto bg-cyber-bg/40 p-0 border border-cyber-border/30 h-auto"
+            >
+              <div className="font-mono text-xs sm:text-sm text-gray-300 space-y-3 p-3">
                 <p>
                   <strong className="text-neon-green/80 w-24 inline-block">
                     STYLE:
@@ -431,7 +418,7 @@ function UserProfilePage() {
               >
                 CLOSE DATAVIEW
               </Button>
-            </div>
+            </Card>
           </Modal>
         )}
       </AnimatePresence>

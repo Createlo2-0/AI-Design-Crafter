@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Modal from "../components/Common/Modal";
+import Card from "../components/Common/Card";
 import { playClickSound, playModalOpenSound } from "../utils/soundUtils";
 import Button from "../components/Common/Button";
 
@@ -92,14 +93,6 @@ const itemVariants = {
     transition: { type: "spring", stiffness: 90 },
   },
   exit: { y: 30, opacity: 0, scale: 0.9, transition: { duration: 0.2 } },
-};
-const overlayVariants = {
-  hidden: { opacity: 0, y: "100%" },
-  hover: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
-};
-const overlayTextVariants = {
-  hidden: { opacity: 0, y: 10 },
-  hover: { opacity: 1, y: 0, transition: { delay: 0.1, duration: 0.3 } },
 };
 const titleEntryVariant = {
   hidden: { opacity: 0, y: -20 },
@@ -212,35 +205,33 @@ function GalleryPage() {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                className="group relative aspect-square bg-cyber-primary/50 border-2 border-cyber-border/30 rounded-sm overflow-hidden shadow-lg hover:border-neon-blue transition-colors duration-300 ease-in-out cursor-pointer"
-                whileHover="hover"
+                className="group cursor-pointer"
+                whileHover={{ scale: 1.03 }}
                 onClick={() => openModal(item)}
               >
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  loading="lazy"
-                />
-                {/* --- Hover Overlay --- */}
-                <motion.div
-                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-cyber-bg/95 via-cyber-bg/70 to-transparent p-2 sm:p-3 md:p-4 overflow-hidden"
-                  variants={overlayVariants}
-                  initial="hidden"
+                <Card
+                  image={item.src}
+                  title={
+                    <span className="font-cyber text-xs sm:text-sm text-neon-pink truncate block">
+                      {item.alt}
+                    </span>
+                  }
+                  className="aspect-square bg-cyber-primary/50 border-2 border-cyber-border/30 rounded-sm overflow-hidden shadow-lg hover:border-neon-blue transition-colors duration-300 ease-in-out p-0"
                 >
-                  <motion.h3
-                    variants={overlayTextVariants}
-                    className="font-cyber text-xs sm:text-sm text-neon-pink mb-1 truncate"
-                  >
-                    {item.alt}
-                  </motion.h3>
-                  <motion.p
-                    variants={overlayTextVariants}
-                    className="font-mono text-[10px] sm:text-xs text-gray-300 truncate hidden sm:block"
-                  >
-                    Style: {item.style}
-                  </motion.p>
-                </motion.div>
+                  <div className="px-4 py-2">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-mono text-[10px] sm:text-xs text-gray-300">
+                        Style: {item.style}
+                      </span>
+                      <span className="font-mono text-[10px] sm:text-xs text-gray-400">
+                        {item.dimensions}
+                      </span>
+                    </div>
+                    <p className="font-mono text-[10px] sm:text-xs text-gray-400 truncate">
+                      {item.prompt}
+                    </p>
+                  </div>
+                </Card>
               </motion.div>
             ))}
           </AnimatePresence>
@@ -266,18 +257,16 @@ function GalleryPage() {
       <AnimatePresence>
         {isModalOpen && selectedImage && (
           <Modal isOpen={isModalOpen} onClose={closeModal}>
-            <div className="flex flex-col text-left max-h-[80vh] overflow-y-auto p-2 sm:p-4">
-              <div className="w-full mb-4 sm:mb-6 border-2 border-neon-blue/50 rounded-sm overflow-hidden shadow-lg max-h-[40vh] sm:max-h-[65vh]">
-                <img
-                  src={selectedImage.src}
-                  alt={selectedImage.alt}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="font-mono text-xs sm:text-sm text-gray-300 space-y-3 bg-cyber-bg/40 p-3 sm:p-4 rounded-sm border border-cyber-border/30">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-cyber text-neon-pink mb-2 sm:mb-3 uppercase tracking-wide">
+            <Card
+              image={selectedImage.src}
+              title={
+                <span className="text-lg sm:text-xl md:text-2xl font-cyber text-neon-pink uppercase tracking-wide">
                   {selectedImage.alt}
-                </h2>
+                </span>
+              }
+              className="w-full max-w-2xl mx-auto bg-cyber-bg/40 p-0 border border-cyber-border/30"
+            >
+              <div className="font-mono text-xs sm:text-sm text-gray-300 space-y-3 p-3 sm:p-4">
                 <p>
                   <strong className="text-neon-green/80 w-24 sm:w-28 inline-block">
                     // STYLE:
@@ -313,7 +302,7 @@ function GalleryPage() {
               >
                 CLOSE DATAVIEW
               </Button>
-            </div>
+            </Card>
           </Modal>
         )}
       </AnimatePresence>
