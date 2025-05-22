@@ -1,12 +1,11 @@
-// src/components/CyberButtonGroup.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 
 const CyberButtonGroup = ({ label, id, options, selectedValue, onChange, helpText = "" }) => {
     return (
         <div className="mb-6">
-            <label htmlFor={id} className="block text-neon-green text-sm font-bold mb-3 tracking-wide uppercase">
-                // {label} //
+            <label htmlFor={id} className="block text-neon-green text-lg font-semibold mb-3 tracking-wide uppercase">
+                 {label} 
             </label>
             <div id={id} className="flex flex-wrap gap-2">
                 {options.map((option) => (

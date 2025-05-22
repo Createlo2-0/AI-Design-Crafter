@@ -1,7 +1,7 @@
 // src/components/Modal.jsx
 import React from 'react';
 import { motion } from 'framer-motion'; // Removed AnimatePresence import as it's used in the parent
-import { playModalCloseSound } from '../utils/soundUtils'; // Import close sound utility
+import { playModalCloseSound } from '../../utils/soundUtils'; // Import close sound utility
 
 // Simple X icon for close button
 const CloseIcon = () => (

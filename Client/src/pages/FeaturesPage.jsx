@@ -220,7 +220,6 @@ function FeaturesPage() {
           <FeatureCard key={feature.title} {...feature} delay={0.2 + i * 0.2} />
         ))}
       </div>
-      import Button from "../components/Common/Button"; // ...existing code...
       <motion.div
         className="text-center mt-12 sm:mt-16 md:mt-20"
         variants={{
