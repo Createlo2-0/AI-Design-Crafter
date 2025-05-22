@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
 import { playClickSound, playErrorSound } from "../utils/soundUtils";
+import TextInput from "../components/Forms/TextInput";  // <-- Import here
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -48,6 +49,10 @@ function LoginPage() {
     }
   };
 
+  // Determine error messages for inputs if applicable
+  const emailError = error.toLowerCase().includes("email") ? error : "";
+  const passwordError = error.toLowerCase().includes("password") ? error : "";
+
   return (
     <div className="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <motion.div
@@ -87,7 +92,7 @@ function LoginPage() {
         />
 
         <h2 className="text-2xl sm:text-3xl font-cyber text-center text-neon-blue mb-4 sm:mb-6 uppercase">
-          Sign In
+          LogIn
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -102,44 +107,30 @@ function LoginPage() {
           )}
 
           {/* Email Input */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-neon-green text-sm font-bold mb-1 tracking-wide"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              disabled={loading}
-              className="w-full px-3 py-2 text-sm sm:text-base bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
-            />
-          </div>
+          <TextInput
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            required
+            disabled={loading}
+            label="Email"
+            error={emailError}
+          />
 
           {/* Password Input */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-neon-green text-sm font-bold mb-1 tracking-wide"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-              disabled={loading}
-              className="w-full px-3 py-2 text-sm sm:text-base bg-cyber-bg text-gray-200 font-mono border border-cyber-border rounded-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-neon-pink placeholder-gray-500"
-            />
-          </div>
+          <TextInput
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            required
+            disabled={loading}
+            label="Password"
+            error={passwordError}
+          />
 
           {/* Submit Button */}
           <motion.button

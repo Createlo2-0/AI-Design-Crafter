@@ -10,7 +10,7 @@ import GeneratorPage from "./pages/GeneratorPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import GalleryPage from "./pages/GalleryPage";
 import UserProfilePage from "./pages/UserProfilePage";
-import ResetPasswordPage from "./components/ResetPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 import { useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/Navabar/Navbar";
