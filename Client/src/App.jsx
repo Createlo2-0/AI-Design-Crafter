@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Lenis from "@studio-freight/lenis";
@@ -52,14 +52,18 @@ const AnimatedPage = ({ children }) => {
 
 function App() {
   const location = useLocation();
+  const lenisRef = useRef(null);
 
-  // Apply Smooth scroll
+  // Initialize Lenis for smooth scrolling
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.8, // Increased for smoother inertia
       smooth: true,
       smoothTouch: true,
+      gestureOrientation: "vertical",
+      direction: "vertical",
     });
+    lenisRef.current = lenis;
 
     function raf(time) {
       lenis.raf(time);
@@ -72,12 +76,20 @@ function App() {
     };
   }, []);
 
+  // Reset scroll and resize Lenis on route change
+  useEffect(() => {
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+      lenisRef.current.resize();
+    }
+  }, [location.pathname]);
+
   return (
     <>
       <Navbar />
       <div className="flex flex-col min-h-screen font-sans">
         {/* Main Content */}
-        <main className="flex-1 w-full mx-auto p-6 relative z-10 overflow-x-hidden">
+        <main className="flex-1 w-full mx-auto p-6 relative z-10">
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               <Route
