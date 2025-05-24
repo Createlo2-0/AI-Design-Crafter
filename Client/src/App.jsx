@@ -11,12 +11,13 @@ import FeaturesPage from "./pages/FeaturesPage";
 import GalleryPage from "./pages/GalleryPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
+import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 
 import { useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/Navabar/Navbar";
 import Footer from "./components/Footer/Footer";
 
-// --- Protected Route Wrapper ---
+
 function ProtectedRoute({ children }) {
   const { currentUser, loadingAuth } = useAuth();
   if (loadingAuth) {
@@ -29,7 +30,6 @@ function ProtectedRoute({ children }) {
   return currentUser ? children : <Navigate to="/login" replace />;
 }
 
-// --- Page Transition Wrapper ---
 const AnimatedPage = ({ children }) => {
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
@@ -84,9 +84,12 @@ function App() {
     }
   }, [location.pathname]);
 
+  // Check if current route is admin
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <>
-      <Navbar />
+      {!isAdminRoute && <Navbar />}
       <div className="flex flex-col min-h-screen font-sans">
         {/* Main Content */}
         <main className="flex-1 w-full mx-auto p-6 relative z-10">
@@ -100,6 +103,16 @@ function App() {
                   </AnimatedPage>
                 }
               />
+
+              <Route
+                path="/admin/*"
+                element={
+                  <AnimatedPage>
+                    <AdminDashboard />
+                  </AnimatedPage>
+                }
+              />
+
               <Route
                 path="/login"
                 element={
@@ -173,9 +186,7 @@ function App() {
             </Routes>
           </AnimatePresence>
         </main>
-
-        {/* Sticky Footer */}
-        <Footer />
+        {!isAdminRoute && <Footer />}
       </div>
     </>
   );
