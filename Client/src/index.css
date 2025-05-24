@@ -12,7 +12,6 @@
     @apply bg-cyber-bg text-gray-300 font-sans selection:bg-neon-pink selection:text-cyber-bg-darker;
     background-image: url(/cyberpunk-site-bg.png);
     background-position: center center;
-    background-size: cover;
     min-height: 100vh;
   }
 
