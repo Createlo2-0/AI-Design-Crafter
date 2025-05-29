@@ -172,19 +172,19 @@ function HomePage() {
   const features = [
     {
       icon: <IconAiChip />,
-      title: "// Advanced AI Core //",
+      title: " Advanced AI Core ",
       color: "neon-pink",
       desc: "Utilizes state-of-the-art diffusion models for unparalleled image quality and prompt adherence.",
     },
     {
       icon: <IconPalette />,
-      title: "// Dynamic Styling Matrix //",
+      title: " Dynamic Styling Matrix ",
       color: "neon-blue",
       desc: "Access predefined style protocols or define custom parameters for unique visual outputs.",
     },
     {
       icon: <IconLockSecure />,
-      title: "// Secure Asset Ledger //",
+      title: " Secure Asset Ledger ",
       color: "neon-green",
       desc: "User authentication via secure protocols. Save and manage your generated assets directly in your designated datastore.",
     },
@@ -232,7 +232,8 @@ function HomePage() {
             variants={variants[1]}
             className="text-base sm:text-lg md:text-xl text-gray-300 font-mono max-w-2xl mx-auto mb-8 px-1"
           >
-            Interface with the Design Core // Synthesize high-fidelity visual
+            Interface with the Design Core <br />
+            Synthesize high-fidelity visual
             posters & graphics from simple text directives using advanced neural
             network protocols.
           </motion.p>
@@ -441,7 +442,7 @@ function HomePage() {
                 <h4
                   className={`font-bold text-lg text-${step.color} mb-1 uppercase tracking-wide`}
                 >
-                  // {step.title} //
+                   {step.title} 
                 </h4>
                 <p>{step.text}</p>
               </div>
