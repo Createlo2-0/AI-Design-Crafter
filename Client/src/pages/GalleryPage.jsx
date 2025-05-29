@@ -153,7 +153,7 @@ function GalleryPage() {
           }}
           transition={{ duration: 0.1 }}
         >
-          // Visual Datastream: Asset Archive //
+           Visual Datastream: Asset Archive 
         </motion.h1>
         <motion.p
           className="font-mono text-center text-gray-400 max-w-2xl mx-auto mb-6 sm:mb-10 md:mb-12 text-xs sm:text-sm md:text-base"
@@ -170,7 +170,7 @@ function GalleryPage() {
           variants={filterSectionVariant}
         >
           <span className="text-neon-green mr-2 self-center whitespace-nowrap">
-            // FILTER BY STYLE:
+             FILTER BY STYLE:
           </span>
           {filterOptions.map((filter) => (
             <motion.button
@@ -247,7 +247,7 @@ function GalleryPage() {
               exit={{ opacity: 0, y: -10 }}
               className="text-center font-mono text-neon-yellow col-span-full mt-8 sm:mt-10 py-8 sm:py-10 border border-dashed border-cyber-border/50 rounded-sm text-xs sm:text-base"
             >
-              // No assets found matching filter: {activeFilter} //
+               No assets found matching filter: {activeFilter} 
             </motion.div>
           )}
         </AnimatePresence>
@@ -269,25 +269,25 @@ function GalleryPage() {
               <div className="font-mono text-xs sm:text-sm text-gray-300 space-y-3 p-3 sm:p-4">
                 <p>
                   <strong className="text-neon-green/80 w-24 sm:w-28 inline-block">
-                    // STYLE:
+                     STYLE:
                   </strong>{" "}
                   {selectedImage.style}
                 </p>
                 <p>
                   <strong className="text-neon-green/80 w-24 sm:w-28 inline-block">
-                    // SEED:
+                     SEED:
                   </strong>{" "}
                   {selectedImage.seed || "N/A"}
                 </p>
                 <p>
                   <strong className="text-neon-green/80 w-24 sm:w-28 inline-block">
-                    // DIMENSIONS:
+                     DIMENSIONS:
                   </strong>{" "}
                   {selectedImage.dimensions || "N/A"}
                 </p>
                 <div>
                   <strong className="text-neon-green/80 block mb-1">
-                    // PROMPT DIRECTIVE:
+                     PROMPT DIRECTIVE:
                   </strong>
                   <p className="text-[10px] sm:text-xs md:text-sm text-gray-400 italic leading-relaxed bg-cyber-bg-darker/50 p-2 border border-cyber-border/20 rounded-sm">
                     {selectedImage.prompt}

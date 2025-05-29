@@ -111,15 +111,15 @@ function GeneratorPage() {
 
   // --- Options ---
   const loadingMessages = [
-    "// Analyzing Directive...",
-    "// Routing To Neural Core...",
-    "// Calibrating Photonic Matrix...",
-    "// Engaging Quantum Entanglement...",
-    "// Compiling Visual Directives...",
-    "// SYNTHESIS ALGORITHM ENGAGED...",
-    "// Rendering Datastream...",
-    "// Upscaling Quantum Pixels...",
-    "// Final Integrity Check...",
+    " Analyzing Directive...",
+    " Routing To Neural Core...",
+    " Calibrating Photonic Matrix...",
+    " Engaging Quantum Entanglement...",
+    " Compiling Visual Directives...",
+    " SYNTHESIS ALGORITHM ENGAGED...",
+    " Rendering Datastream...",
+    " Upscaling Quantum Pixels...",
+    " Final Integrity Check...",
   ];
   const availableStyles = [
     { value: "Cyberpunk", label: "Cyberpunk Dystopia" },
@@ -503,7 +503,7 @@ function GeneratorPage() {
                   className="text-center font-mono p-4 bg-red-900/50 border border-red-500 rounded-sm w-full"
                 >
                   <p className="text-red-300 font-bold mb-2 text-lg font-cyber">
-                    // TRANSMISSION ERROR //
+                     TRANSMISSION ERROR 
                   </p>
                   <p className="text-red-400 text-sm">{error}</p>
                 </motion.div>
@@ -537,7 +537,7 @@ function GeneratorPage() {
                       size="small"
                       className="font-mono text-xs flex-1 bg-neon-blue/80 hover:bg-neon-blue text-cyber-bg-darker py-2 px-4 border border-neon-blue rounded-sm transition-all duration-200 shadow-md hover:shadow-neon-sm-blue"
                     >
-                      // DOWNLOAD ASSET //
+                       DOWNLOAD ASSET 
                     </Button>
                     <Button
                       onClick={handleSaveToArchive}
@@ -562,10 +562,10 @@ function GeneratorPage() {
                           : "bg-cyber-border/70 hover:bg-neon-green hover:text-cyber-bg-darker text-gray-200 border-cyber-border"
                       }`}
                     >
-                      {saveStatus === "saving" && "// SAVING... //"}
-                      {saveStatus === "saved" && "// ARCHIVED //"}
-                      {saveStatus === "save_error" && "// SAVE ERROR //"}
-                      {!saveStatus && "// SAVE TO ARCHIVE //"}
+                      {saveStatus === "saving" && " SAVING... "}
+                      {saveStatus === "saved" && " ARCHIVED "}
+                      {saveStatus === "save_error" && " SAVE ERROR "}
+                      {!saveStatus && " SAVE TO ARCHIVE "}
                     </Button>
                     <Button
                       onClick={handleGenerateVariations}
@@ -573,7 +573,7 @@ function GeneratorPage() {
                       size="small"
                       className="font-mono text-xs flex-1 bg-cyber-border/70 hover:bg-neon-pink hover:text-cyber-bg-darker text-gray-200 py-2 px-4 border border-cyber-border rounded-sm transition-all duration-200 shadow-md"
                     >
-                      // GENERATE VARIATIONS //
+                       GENERATE VARIATIONS 
                     </Button>
                   </motion.div>
                 </motion.div>

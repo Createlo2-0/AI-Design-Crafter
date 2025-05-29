@@ -40,15 +40,7 @@ const Modal = ({ isOpen, onClose, children }) => {
         variants={modalVariants}
         onClick={(e) => e.stopPropagation()}
       >
-        <motion.button
-          onClick={handleClose}
-          className="absolute top-3 right-3 text-cyber-border hover:text-neon-pink transition-colors z-10 p-1 rounded-full hover:bg-cyber-border/20"
-          whileHover={{ scale: 1.1, rotate: 90 }}
-          whileTap={{ scale: 0.9 }}
-          aria-label="Close modal"
-        >
-          <CloseIcon />
-        </motion.button>
+      
         {children}
       </motion.div>
     </motion.div>

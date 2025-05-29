@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import TextInput from "../Forms/TextInput";
 import Button from "../Common/Button";
 
 const SignupForm = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -20,14 +22,17 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
+
     setLoading(true);
+
     try {
       await createUserWithEmailAndPassword(auth, form.email, form.password);
-      // Handle post-signup (e.g., redirect)
+      navigate("/"); // redirect to homepage
     } catch (err) {
       setError("Signup failed. Please try again.");
     } finally {
