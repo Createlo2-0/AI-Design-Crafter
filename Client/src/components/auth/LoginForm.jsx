@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import TextInput from "../Forms/TextInput";
 import Button from "../Common/Button";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -23,7 +25,7 @@ const LoginForm = () => {
 
     try {
       await signInWithEmailAndPassword(auth, form.email, form.password);
-      // Handle post-login (e.g., redirect)
+      navigate("/"); // redirect to homepage
     } catch (err) {
       setError("Invalid email or password.");
     } finally {
@@ -51,11 +53,7 @@ const LoginForm = () => {
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={loading}
-      >
+      <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </Button>
     </form>
