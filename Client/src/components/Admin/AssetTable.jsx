@@ -6,7 +6,7 @@ const assets = [
     userId: "u001",
     name: "Cyberpunk Cityscape",
     owner: "user@example.com",
-    prompt: "Futuristic skyline with neon lights",
+    prompt: "Futuristic skyline with neon lights in a dystopian city under a digital aurora",
     date: "2025-05-24",
     image:
       "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=80&h=80",
@@ -16,7 +16,7 @@ const assets = [
     userId: "u002",
     name: "Glitching Android Portrait",
     owner: "admin@example.com",
-    prompt: "Close-up portrait of a glitching android",
+    prompt: "Close-up portrait of a glitching android with electric sparks and a shattered background",
     date: "2025-05-25",
     image:
       "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=facearea&w=80&h=80",
@@ -58,16 +58,16 @@ export default function AssetTable() {
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[960px] bg-cyber-bg-darker text-sm">
+        <table className="w-full min-w-[1000px] bg-cyber-bg-darker text-sm table-fixed">
           <thead>
             <tr className="text-neon-pink font-cyber text-left border-b border-cyber-border">
-              <th className="py-3 px-4">Thumbnail</th>
-              <th className="py-3 px-4">Poster Name</th>
-              <th className="py-3 px-4">Owner</th>
-              <th className="py-3 px-4">User ID</th>
-              <th className="py-3 px-4">Prompt</th>
-              <th className="py-3 px-4">Date</th>
-              <th className="py-3 px-4">Actions</th>
+              <th className="py-3 px-4 w-20">Thumbnail</th>
+              <th className="py-3 px-4 w-40">Poster Name</th>
+              <th className="py-3 px-4 w-40">Owner</th>
+              <th className="py-3 px-4 w-32">User ID</th>
+              <th className="py-3 px-4 w-[300px]">Prompt</th>
+              <th className="py-3 px-4 w-32 whitespace-nowrap">Date</th>
+              <th className="py-3 px-4 w-28">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -81,7 +81,7 @@ export default function AssetTable() {
               filteredAssets.map((asset) => (
                 <tr
                   key={asset.id}
-                  className="text-gray-300 font-mono hover:bg-cyber-bg transition border-b border-cyber-border"
+                  className="text-gray-300 font-mono hover:bg-cyber-bg transition border-b border-cyber-border align-top"
                 >
                   <td className="py-4 px-4">
                     <img
@@ -94,11 +94,8 @@ export default function AssetTable() {
                   <td className="py-4 px-4 break-words">{asset.owner}</td>
                   <td className="py-4 px-4 break-words">{asset.userId}</td>
                   <td className="py-4 px-4 break-words">{asset.prompt}</td>
-                  <td className="py-4 px-4">{asset.date}</td>
-                  <td className="py-4 px-4 space-x-2 whitespace-nowrap">
-                    <button className="px-3 py-1 bg-neon-blue text-cyber-bg rounded text-xs font-bold hover:bg-neon-pink transition-colors duration-200">
-                      Edit
-                    </button>
+                  <td className="py-4 px-4 whitespace-nowrap">{asset.date}</td>
+                  <td className="py-4 px-4">
                     <button className="px-3 py-1 bg-neon-pink text-white rounded text-xs font-bold hover:bg-neon-blue transition-colors duration-200">
                       Remove
                     </button>
