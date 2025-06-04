@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import Modal from "../components/Common/Modal";
 import Card from "../components/Common/Card";
@@ -150,10 +149,21 @@ const placeholderUserAssets = [
 
 // --- Main UserProfilePage ---
 function UserProfilePage() {
-  const { currentUser } = useAuth();
+  // Remove useAuth and use currentUser mock data
+  // const { currentUser } = useAuth();
   const { userAssets } = useUserAssets();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  // Mock user data for UI only
+  const currentUser = {
+    email: "demo.user@example.com",
+    metadata: {
+      creationTime: new Date().toISOString(),
+      lastSignInTime: new Date().toISOString(),
+    },
+    uid: "demoUID1234567890",
+  };
 
   const openModal = (image) => {
     playModalOpenSound();
