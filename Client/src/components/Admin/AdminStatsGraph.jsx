@@ -101,20 +101,22 @@ export default function AdminStatsGraph() {
               offset: 10,
             }}
           />
-          <Tooltip
-            contentStyle={{
-              background: "#232a34",
-              border: "1px solid #00eaff",
-              borderRadius: 8,
-              color: "#fff",
-            }}
-            labelStyle={{ color: "#00eaff" }}
-            itemStyle={{ fontWeight: "bold" }}
-            formatter={(value, name) => [
-              value,
-              name === "users" ? "Users" : "Assets",
-            ]}
-          />
+          // ...existing code...
+<Tooltip
+  contentStyle={{
+    background: "#232a34",
+    border: "1px solid #00eaff",
+    borderRadius: 8,
+    color: "#fff",
+  }}
+  labelStyle={{ color: "#00eaff" }}
+  itemStyle={{ fontWeight: "bold" }}
+  formatter={(value, name) => [
+    value,
+    name === "users" ? "Users" : name === "assets" ? "Assets" : name,
+  ]}
+/>
+// ...existing code...
           <Legend
             verticalAlign="top"
             align="right"
