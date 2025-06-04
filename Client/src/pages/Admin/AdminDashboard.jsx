@@ -8,7 +8,8 @@ import DashboardHome from "./DashboardHome";
 
 export default function AdminDashboard() {
   return (
-    <div className="flex mt-4 min-h-screen bg-gradient-to-r from-slate-900 to-slate-700 border border-cyber-border">
+    <div className="flex min-h-screen bg-gradient-to-r from-slate-900 to-slate-700 border border-cyber-border">
+      {/* Sidebar with full screen height */}
       <AdminSidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader />
