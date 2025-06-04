@@ -26,23 +26,11 @@ export default function AdminSidebar() {
         aria-label="Toggle sidebar"
       >
         {open ? (
-          <svg
-            width="28"
-            height="28"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M6 6l16 16M6 22L22 6" />
           </svg>
         ) : (
-          <svg
-            width="28"
-            height="28"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M4 8h20M4 16h20" />
           </svg>
         )}
@@ -51,48 +39,54 @@ export default function AdminSidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full z-40
+          fixed inset-y-0 left-0 z-40
           ${sidebarBg}
-          w-72 flex flex-col shadow-2xl border-r-2 border-[#2563eb]/20
+          w-72 flex flex-col
+          shadow-2xl border-r-2 border-[#2563eb]/20
           transition-transform duration-300
           ${open ? "translate-x-0" : "-translate-x-full"}
-          sm:translate-x-0 sm:static sm:w-64 sm:min-h-screen sm:p-7 p-5
+          sm:translate-x-0 sm:static sm:w-64 sm:h-screen
+          p-0
         `}
         style={{ minWidth: "220px" }}
       >
-        <div className="mb-12 mt-8 sm:mt-0">
-          <NavLink
-            to="/admin/"
-            className="text-xl font-cyber text-neon-pink hover:scale-105 hover:text-white transition-all duration-200"
-            style={{ letterSpacing: "1.5px" }}
-          >
-            Design<span className="text-neon-blue">Crafter.AI</span>
-          </NavLink>
-        </div>
-        <nav className="flex flex-col gap-3">
-          {links.map((link) => {
-            const isActive =
-              location.pathname === link.to ||
-              (link.to !== "/admin" && location.pathname.startsWith(link.to));
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`font-mono px-5 py-2 rounded-lg transition-all duration-200 text-base border-l-4
-                  ${isActive ? activeLink : inactiveLink}
-                `}
-                onClick={() => setOpen(false)}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="mt-auto pt-10 text-xs text-[#a5b4fc]/70 text-center font-mono tracking-wide">
-          <span className="text-[#60a5fa] font-bold">Welcome, Admin!</span>
-          <br />
-          &copy; {new Date().getFullYear()}{" "}
-          <span className="text-[#2563eb]">Createlo</span>
+        <div className="flex flex-col h-full">
+          <div className="pt-8 pb-2 px-5 sm:pt-7 sm:pb-2">
+            <NavLink
+              to="/admin/"
+              className="text-xl font-cyber text-neon-pink hover:scale-105 hover:text-white transition-all duration-200"
+              style={{ letterSpacing: "1.5px" }}
+            >
+              Design<span className="text-neon-blue">Crafter.AI</span>
+            </NavLink>
+          </div>
+
+          <nav className="flex flex-col gap-3 mt-6 px-5">
+            {links.map((link) => {
+              const isActive =
+                location.pathname === link.to ||
+                (link.to !== "/admin" && location.pathname.startsWith(link.to));
+              return (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`font-mono px-5 py-2 rounded-lg transition-all duration-200 text-base border-l-4
+                    ${isActive ? activeLink : inactiveLink}
+                  `}
+                  onClick={() => setOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="mt-auto pt-10 pb-4 px-5 text-xs text-[#a5b4fc]/70 text-center font-mono tracking-wide">
+            <span className="text-[#60a5fa] font-bold">Welcome, Admin!</span>
+            <br />
+            &copy; {new Date().getFullYear()}{" "}
+            <span className="text-[#2563eb]">Createlo</span>
+          </div>
         </div>
       </aside>
 
