@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "../../contexts/AuthContext";
 import Button from "../Common/Button.jsx";
 
 const navLinks = [
@@ -31,18 +30,17 @@ const navLinkClass = ({ isActive }) =>
   `;
 
 const Navbar = () => {
-  const { currentUser, logout, loadingAuth } = useAuth();
+  // Remove AuthContext, use mock user for UI only
+  const [currentUser, setCurrentUser] = useState(null); // or mock user object for demo
+  const [loadingAuth, setLoadingAuth] = useState(false);
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
 
+  // Dummy logout handler for UI only
   const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    setCurrentUser(null);
+    navigate("/login");
   };
 
   const Hamburger = ({ open, toggle }) => (
