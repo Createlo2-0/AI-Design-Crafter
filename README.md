@@ -47,7 +47,6 @@ cd designcrafter-ai
     ```bash
     npm run dev
     ```
-    The app will be available at [http://localhost:5173](http://localhost:5173) (or as shown in your terminal).
 
 ---
 
@@ -73,6 +72,5 @@ cd designcrafter-ai
 
 4. **Start the backend server:**
     ```bash
-    npm run dev
+    nodemon index.js
     ```
-    The backend API will be available at [http://localhost:5000](http://localhost:5000)
