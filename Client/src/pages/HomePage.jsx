@@ -417,7 +417,9 @@ function HomePage() {
         className="bg-cyber-bg-darker/70 backdrop-blur-sm border-y-2 border-cyber-border/20 rounded-lg shadow-xl my-12 md:my-16"
       >
         <h2 className="text-3xl md:text-4xl font-cyber text-neon-blue mb-10 md:mb-12 text-center">
+          
           Generation Protocol
+
         </h2>
         <div className="max-w-3xl mx-auto font-mono text-gray-300 space-y-8 text-left text-sm md:text-base">
           {processSteps.map((step, idx) => (
