@@ -443,7 +443,7 @@ function HomePage() {
                 <h4
                   className={`font-bold text-lg text-${step.color} mb-1 uppercase tracking-wide`}
                 >
-                  {step.title}
+                   {step.title} 
                 </h4>
                 <p>{step.text}</p>
               </div>
