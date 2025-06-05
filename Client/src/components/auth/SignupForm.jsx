@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../services/firebase";
 import TextInput from "../Forms/TextInput";
 import Button from "../Common/Button";
 
@@ -25,14 +23,8 @@ const SignupForm = () => {
       return;
     }
     setLoading(true);
-    try {
-      await createUserWithEmailAndPassword(auth, form.email, form.password);
-      // Handle post-signup (e.g., redirect)
-    } catch (err) {
-      setError("Signup failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    // Signup logic goes here
+    setLoading(false);
   };
 
   return (
