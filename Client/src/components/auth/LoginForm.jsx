@@ -3,6 +3,7 @@ import TextInput from "../Forms/TextInput";
 import Button from "../Common/Button";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -44,11 +45,7 @@ const LoginForm = () => {
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={loading}
-      >
+      <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </Button>
     </form>

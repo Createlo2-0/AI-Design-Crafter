@@ -232,9 +232,15 @@ function HomePage() {
             variants={variants[1]}
             className="text-base sm:text-lg md:text-xl text-gray-300 font-mono max-w-2xl mx-auto mb-8 px-1"
           >
+<<<<<<< HEAD
+            Interface with the Design Core // Synthesize high-fidelity visual
+            posters & graphics from simple text directives using advanced neural
+            network protocols.
+=======
             Interface with the Design Core <br />
             Synthesize high-fidelity visual posters & graphics from simple text
             directives using advanced neural network protocols.
+>>>>>>> e123ec11d746b1c2884e39586c1cd9f139a68477
           </motion.p>
         </motion.div>
         <motion.div
@@ -443,7 +449,7 @@ function HomePage() {
                 <h4
                   className={`font-bold text-lg text-${step.color} mb-1 uppercase tracking-wide`}
                 >
-                   {step.title} 
+                  // {step.title} //
                 </h4>
                 <p>{step.text}</p>
               </div>
