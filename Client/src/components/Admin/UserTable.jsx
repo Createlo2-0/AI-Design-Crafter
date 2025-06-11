@@ -1,7 +1,5 @@
-// /Users/anjalikarki/Downloads/designcrafter/AI-Design-Crafter/Client/src/components/Admin/UserTable.jsx
 import React, { useState, Fragment } from "react";
 
-// Example users data (replace with real data/fetch as needed)
 const initialUsers = [
   {
     id: "1",
@@ -19,9 +17,7 @@ const initialUsers = [
   },
 ];
 
-// UPDATED: Define available roles
 const ROLES = ["user", "admin"];
-// NEW: Define available statuses
 const STATUSES = ["Active", "Inactive"];
 
 export default function UserTable() {
