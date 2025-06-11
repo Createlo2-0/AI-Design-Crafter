@@ -8,8 +8,6 @@ import {
   playSuccessSound,
   playToggleSound,
 } from "../utils/soundUtils";
-import { auth } from "../services/firebase";
-import { generatePoster } from "../services/posterService";
 import Button from "../components/Common/Button";
 
 // --- Spinner ---

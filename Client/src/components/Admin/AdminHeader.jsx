@@ -1,7 +1,11 @@
-import { useAuth } from "../../contexts/AuthContext";
+import React from "react";
 
 export default function AdminHeader() {
-  const { currentUser, logout } = useAuth();
+  const currentUser = { email: "admin@example.com" };
+
+  const logout = () => {
+    window.location.href = "/login";
+  };
 
   return (
     <header className="flex items-center sm:flex-row sm:items-center sm:justify-between gap-4 px-4 py-2 border-b border-cyber-border/40 bg-cyber-bg/80">
@@ -10,7 +14,7 @@ export default function AdminHeader() {
       </h1>
       <div className="flex items-center justify-center sm:justify-end gap-4">
         <span className="font-mono text-neon-green break-all text-sm sm:text-base">
-          {currentUser?.email}
+          {currentUser.email}
         </span>
         <button
           onClick={logout}

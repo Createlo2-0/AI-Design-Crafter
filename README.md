@@ -27,27 +27,10 @@ cd designcrafter-ai
     npm install
     ```
 
-3. **Create a `.env` file in the `Client` folder with your Firebase and API config:**
-    ```
-    VITE_FIREBASE_API_KEY=
-    VITE_FIREBASE_AUTH_DOMAIN=
-    VITE_FIREBASE_PROJECT_ID=
-    VITE_FIREBASE_STORAGE_BUCKET=
-    VITE_FIREBASE_MESSAGING_SENDER_ID=
-    VITE_FIREBASE_APP_ID=
-    VITE_FIREBASE_DATABASE_URL=
-    VITE_FIREBASE_MEASUREMENT_ID=
-    VITE_GCP_POSTER_FUNCTION_URL=
-    VITE_USE_OPENAI_DIRECT=
-    VITE_OPENAI_API_KEY=
-    OPENAI_API_KEY=
-    ```
-
-4. **Start the frontend development server:**
+3. **Start the frontend development server:**
     ```bash
     npm run dev
     ```
-    The app will be available at [http://localhost:5173](http://localhost:5173) (or as shown in your terminal).
 
 ---
 
@@ -73,6 +56,5 @@ cd designcrafter-ai
 
 4. **Start the backend server:**
     ```bash
-    npm run dev
+    nodemon index.js
     ```
-    The backend API will be available at [http://localhost:5000](http://localhost:5000)

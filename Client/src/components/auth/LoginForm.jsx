@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../services/firebase";
 import TextInput from "../Forms/TextInput";
 import Button from "../Common/Button";
 
@@ -18,19 +15,14 @@ const LoginForm = () => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    try {
-      await signInWithEmailAndPassword(auth, form.email, form.password);
-      navigate("/"); // redirect to homepage
-    } catch (err) {
-      setError("Invalid email or password.");
-    } finally {
+    // UI only: No authentication logic
+    setTimeout(() => {
       setLoading(false);
-    }
+    }, 1000);
   };
 
   return (

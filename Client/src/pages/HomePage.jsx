@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuth } from "../contexts/AuthContext";
 import { playClickSound } from "../utils/soundUtils";
 import Button from "../components/Common/Button";
 
@@ -159,7 +158,8 @@ const AnimatedPromptConsole = () => {
 
 // --- Main HomePage ---
 function HomePage() {
-  const { currentUser } = useAuth();
+  // Removed useAuth and currentUser
+  const currentUser = null;
 
   // --- Navigation Links ---
   const navLinks = [
@@ -232,9 +232,15 @@ function HomePage() {
             variants={variants[1]}
             className="text-base sm:text-lg md:text-xl text-gray-300 font-mono max-w-2xl mx-auto mb-8 px-1"
           >
+<<<<<<< HEAD
             Interface with the Design Core // Synthesize high-fidelity visual
             posters & graphics from simple text directives using advanced neural
             network protocols.
+=======
+            Interface with the Design Core <br />
+            Synthesize high-fidelity visual posters & graphics from simple text
+            directives using advanced neural network protocols.
+>>>>>>> e123ec11d746b1c2884e39586c1cd9f139a68477
           </motion.p>
         </motion.div>
         <motion.div
@@ -417,7 +423,9 @@ function HomePage() {
         className="bg-cyber-bg-darker/70 backdrop-blur-sm border-y-2 border-cyber-border/20 rounded-lg shadow-xl my-12 md:my-16"
       >
         <h2 className="text-3xl md:text-4xl font-cyber text-neon-blue mb-10 md:mb-12 text-center">
+          
           Generation Protocol
+
         </h2>
         <div className="max-w-3xl mx-auto font-mono text-gray-300 space-y-8 text-left text-sm md:text-base">
           {processSteps.map((step, idx) => (
