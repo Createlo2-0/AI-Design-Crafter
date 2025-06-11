@@ -40,7 +40,10 @@ const Modal = ({ isOpen, onClose, children }) => {
         variants={modalVariants}
         onClick={(e) => e.stopPropagation()}
       >
+<<<<<<< HEAD
       
+=======
+>>>>>>> e123ec11d746b1c2884e39586c1cd9f139a68477
         {children}
       </motion.div>
     </motion.div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Lenis from "@studio-freight/lenis";
 
@@ -13,21 +13,11 @@ import UserProfilePage from "./pages/UserProfilePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 
-import { useAuth } from "./contexts/AuthContext";
 import Navbar from "./components/Navabar/Navbar";
 import Footer from "./components/Footer/Footer";
 
-
 function ProtectedRoute({ children }) {
-  const { currentUser, loadingAuth } = useAuth();
-  if (loadingAuth) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-cyber-bg">
-        <p className="text-neon-blue font-mono">Authenticating Access...</p>
-      </div>
-    );
-  }
-  return currentUser ? children : <Navigate to="/login" replace />;
+  return children;
 }
 
 const AnimatedPage = ({ children }) => {
@@ -57,7 +47,7 @@ function App() {
   // Initialize Lenis for smooth scrolling
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.8, // Increased for smoother inertia
+      duration: 1.8,
       smooth: true,
       smoothTouch: true,
       gestureOrientation: "vertical",

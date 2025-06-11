@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase";
+=======
+>>>>>>> e123ec11d746b1c2884e39586c1cd9f139a68477
 import TextInput from "../Forms/TextInput";
 import Button from "../Common/Button";
 
@@ -29,6 +32,7 @@ const SignupForm = () => {
     }
 
     setLoading(true);
+<<<<<<< HEAD
 
     try {
       await createUserWithEmailAndPassword(auth, form.email, form.password);
@@ -38,6 +42,10 @@ const SignupForm = () => {
     } finally {
       setLoading(false);
     }
+=======
+    // Signup logic goes here
+    setLoading(false);
+>>>>>>> e123ec11d746b1c2884e39586c1cd9f139a68477
   };
 
   return (
