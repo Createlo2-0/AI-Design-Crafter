@@ -345,7 +345,7 @@ function UserProfilePage() {
                     size="medium"
                     className="bg-neon-pink text-cyber-bg-darker font-bold py-2 px-6 border-2 border-neon-pink hover:bg-transparent hover:text-neon-pink transition-all duration-300 ease-in-out hover:shadow-neon-md-pink rounded-sm text-sm"
                   >
-                    INITIATE FIRST SYNTHESIS //
+                    INITIATE FIRST SYNTHESIS 
                   </Button>
                 </motion.div>
               </Link>

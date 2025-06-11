@@ -1,9 +1,10 @@
+// E:\Createlo\AI-Design-Crafter\Client\src\pages\Admin\DashboardHome.jsx
+
 import React from "react";
 import AdminStatsGraph from "../../components/Admin/AdminStatsGraph";
 import QuickStatsCards from "../../components/Admin/QuickStatsCards";
 import AdminTips from "../../components/Admin/Tips";
 
-// Example quick stats (replace with real data as needed)
 const quickStats = [
   {
     label: "Total Users",
@@ -62,30 +63,33 @@ const quickStats = [
 
 export default function DashboardHome() {
   return (
-    <div className="w-full">
-      {/* Welcome */}
-      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="w-full space-y-8">
+      {/* Welcome Header */}
+      <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h2 className="font-cyber text-2xl sm:text-3xl text-neon-blue mb-2">
             Welcome, Admin!
           </h2>
           <p className="font-mono text-gray-300">
-            Manage users, assets, and monitor platform growth. All controls are
-            available in the sidebar.
+            Manage users, assets, and monitor platform growth. Use the sidebar to navigate.
           </p>
         </div>
-      </div>
+      </section>
 
       {/* Quick Stats */}
-      <QuickStatsCards stats={quickStats} />
+      <section>
+        <QuickStatsCards stats={quickStats} />
+      </section>
 
-      {/* Graph Section */}
-      <div className="bg-cyber-bg-darker rounded-xl shadow-lg p-6 mb-10 hover:shadow-xl transition-shadow duration-200">
+      {/* Platform Growth Graph */}
+      <section className="bg-cyber-bg-darker rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
         <AdminStatsGraph />
-      </div>
+      </section>
 
-      {/* Tips or Announcements */}
-      <AdminTips />
+      {/* Admin Tips / Announcements */}
+      <section>
+        <AdminTips />
+      </section>
     </div>
   );
 }

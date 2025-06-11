@@ -247,7 +247,7 @@ function GalleryPage() {
               exit={{ opacity: 0, y: -10 }}
               className="text-center font-mono text-neon-yellow col-span-full mt-8 sm:mt-10 py-8 sm:py-10 border border-dashed border-cyber-border/50 rounded-sm text-xs sm:text-base"
             >
-              // No assets found matching filter: {activeFilter} //
+               No assets found matching filter: {activeFilter} 
             </motion.div>
           )}
         </AnimatePresence>
