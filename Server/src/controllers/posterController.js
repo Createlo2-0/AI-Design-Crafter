@@ -1,7 +1,7 @@
 const { db } = require("../config/firebase");
 const PosterModel = require("../models/posterModel");
 const { generatePosterWithGemini } = require("../services/geminiService");
-// Create a new poster
+
 async function createPoster(req, res) {
   try {
     const {
@@ -45,7 +45,6 @@ async function createPoster(req, res) {
   }
 }
 
-// Get all posters
 async function getAllPosters(req, res) {
   try {
     const snapshot = await db.collection("posters").get();
@@ -59,7 +58,6 @@ async function getAllPosters(req, res) {
   }
 }
 
-// Get poster by ID
 async function getPosterById(req, res) {
   const { id } = req.params;
   try {
@@ -73,7 +71,6 @@ async function getPosterById(req, res) {
   }
 }
 
-// Update poster
 async function updatePoster(req, res) {
   const { id } = req.params;
   const {
@@ -112,7 +109,6 @@ async function updatePoster(req, res) {
   }
 }
 
-// Delete poster
 async function deletePoster(req, res) {
   const { id } = req.params;
   try {
@@ -132,6 +128,23 @@ async function totalPosterCount(req, res) {
   }
 }
 
+async function getAllPostersByUserId(req, res) {
+  const { userId } = req.params;
+  try {
+    const snapshot = await db
+      .collection("posters")
+      .where("userId", "==", userId)
+      .get();
+    const posters = [];
+    snapshot.forEach((doc) => {
+      posters.push({ id: doc.id, ...doc.data() });
+    });
+    res.status(200).json(posters);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 module.exports = {
   createPoster,
   getAllPosters,
@@ -139,4 +152,5 @@ module.exports = {
   updatePoster,
   deletePoster,
   totalPosterCount,
+  getAllPostersByUserId,
 };
