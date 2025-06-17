@@ -4,6 +4,8 @@ require("dotenv").config();
 
 const { db } = require("./src/config/firebase");
 const authRoutes = require("./src/routes/authRoutes");
+const userRoutes = require("./src/routes/userRoutes");
+const posterRoutes = require("./src/routes/posterRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,6 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/posters", posterRoutes);
 
 //DB Connectivity
 db.listCollections()

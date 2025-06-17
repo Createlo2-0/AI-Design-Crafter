@@ -1,4 +1,4 @@
-const { auth } = require("../config/firebase");
+const { auth, db } = require("../config/firebase");
 const UserModel = require("../models/userModel");
 const axios = require("axios");
 
@@ -21,6 +21,11 @@ async function signup(req, res) {
       createdAt: new Date(),
       lastLogin: new Date(),
     });
+
+    await db
+      .collection("users")
+      .doc(user.id)
+      .set({ ...user });
 
     res.status(201).json({
       message: "User created successfully",
