@@ -49,3 +49,9 @@ firebase-debug.log
 public/images/generated/
 Client/public/images/generated/
 client/public/images/generated/
+
+# Ignore Firebase Admin SDK key
+src/config/serviceAccountKey.json
+
+# Ignore Firebase Admin SDK service account keys
+**/serviceAccountKey.json
