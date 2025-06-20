@@ -44,6 +44,7 @@ Thumbs.db
 # Firebase emulators
 firebase-debug.log
 .firebaserc
+Server/service.json
 
 # Optional: ignore generated images/assets
 public/images/generated/

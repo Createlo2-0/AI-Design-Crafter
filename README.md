@@ -52,6 +52,13 @@ cd designcrafter-ai
     FIREBASE_CLIENT_EMAIL=
     FIREBASE_PRIVATE_KEY=
     PORT=5000
+    PORT=5000
+    FIREBASE_API_KEY =
+    GEMINI_API_URL =
+    GEMINI_API_KEY =
+    GCLOUD_PROJECT=
+    GCS_BUCKET=
+    GOOGLE_APPLICATION_CREDENTIALS=absolute/path/to/your/service-account.json
     ```
 
 4. **Start the backend server:**

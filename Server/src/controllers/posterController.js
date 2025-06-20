@@ -1,6 +1,105 @@
 const { db } = require("../config/firebase");
-const PosterModel = require("../models/posterModel");
-const { generatePosterWithGemini } = require("../services/geminiService");
+
+// async function createPoster(req, res) {
+//   try {
+//     const {
+//       userId,
+//       prompt,
+//       negativePrompt,
+//       style,
+//       aspectRatio,
+//       seed,
+//       dimensions,
+//       metadata,
+//     } = req.body;
+
+//     // Build a custom prompt
+//     const customPrompt = `
+// Create a high-resolution poster image of: ${prompt}.
+// ${style ? `Style: ${style}.` : ""}
+// ${aspectRatio ? `Aspect Ratio: ${aspectRatio}.` : ""}
+// ${dimensions ? `Dimensions: ${dimensions}.` : ""}
+// ${seed ? `Seed: ${seed}.` : ""}
+// ${
+//   metadata && Object.keys(metadata).length
+//     ? `Additional details: ${JSON.stringify(metadata)}.`
+//     : ""
+// }
+// ${negativePrompt ? `Avoid: ${negativePrompt}.` : ""}
+// Use vibrant colors and a modern art style.
+// `
+//       .replace(/\n\s+/g, " ")
+//       .trim();
+
+//     console.log("[createPoster] Custom prompt:", customPrompt);
+
+//     // 1. Generate image using OpenAI
+//     let imageBuffer;
+//     try {
+//       imageBuffer = await generatePosterWithOpenAI(customPrompt, {
+//         size: dimensions || "1024x1024",
+//       });
+//       console.log("[createPoster] Image generated successfully.");
+//     } catch (genError) {
+//       console.error("[createPoster] Error generating image:", genError);
+//       throw new Error(
+//         "Image generation failed: " + (genError.message || genError.toString())
+//       );
+//     }
+
+//     // 2. Upload image to GCS
+//     const filename = `posters/${userId}_${uuidv4()}.png`;
+//     let imageUrl;
+//     try {
+//       imageUrl = await uploadToGCS(imageBuffer, filename, "image/png");
+//       console.log("[createPoster] Image uploaded to GCS:", imageUrl);
+//     } catch (uploadError) {
+//       console.error(
+//         "[createPoster] Error uploading image to GCS:",
+//         uploadError
+//       );
+//       throw new Error(
+//         "Image upload failed: " +
+//           (uploadError.message || uploadError.toString())
+//       );
+//     }
+
+//     // 3. Create poster model instance
+//     const poster = new PosterModel({
+//       userId,
+//       imageUrl,
+//       prompt,
+//       negativePrompt,
+//       style,
+//       aspectRatio,
+//       seed,
+//       dimensions,
+//       metadata,
+//     });
+
+//     // 4. Save poster to Firestore
+//     try {
+//       const posterRef = await db.collection("posters").add({ ...poster });
+//       const posterDoc = await posterRef.get();
+//       console.log(
+//         "[createPoster] Poster saved to Firestore with ID:",
+//         posterDoc.id
+//       );
+//       res.status(201).json({ id: posterDoc.id, ...posterDoc.data() });
+//     } catch (dbError) {
+//       console.error(
+//         "[createPoster] Error saving poster to Firestore:",
+//         dbError
+//       );
+//       throw new Error(
+//         "Saving to Firestore failed: " + (dbError.message || dbError.toString())
+//       );
+//     }
+//   } catch (error) {
+//     console.error("[createPoster] Error:", error);
+//     res.status(400).json({ error: error.message || error.toString() });
+//   }
+// }
 
 async function createPoster(req, res) {
   try {
@@ -15,15 +114,9 @@ async function createPoster(req, res) {
       metadata,
     } = req.body;
 
-    const customPrompt = `Create a high-resolution poster image of: ${prompt}. Use vibrant colors and a modern art style.`;
+    let imageUrl = "https://dummyimage.com/600x400/000/fff&text=Test+Poster";
 
-    // 1. Generate image using Gemini AI
-    const imageUrl = await generatePosterWithGemini({
-      prompt: customPrompt,
-    });
-
-    // 2. Create poster model instance
-    const poster = new PosterModel({
+    const poster = {
       userId,
       imageUrl,
       prompt,
@@ -33,15 +126,29 @@ async function createPoster(req, res) {
       seed,
       dimensions,
       metadata,
-    });
+    };
 
-    // 3. Save poster to Firestore
-    const posterRef = await db.collection("posters").add({ ...poster });
-    const posterDoc = await posterRef.get();
-
-    res.status(201).json({ id: posterDoc.id, ...posterDoc.data() });
+    // Save poster to Firestore
+    try {
+      const posterRef = await db.collection("posters").add(poster);
+      const posterDoc = await posterRef.get();
+      console.log(
+        "[createPoster] Poster saved to Firestore with ID:",
+        posterDoc.id
+      );
+      res.status(201).json({ id: posterDoc.id, ...posterDoc.data() });
+    } catch (dbError) {
+      console.error(
+        "[createPoster] Error saving poster to Firestore:",
+        dbError
+      );
+      throw new Error(
+        "Saving to Firestore failed: " + (dbError.message || dbError.toString())
+      );
+    }
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("[createPoster] Error:", error);
+    res.status(400).json({ error: error.message || error.toString() });
   }
 }
 
@@ -129,19 +236,22 @@ async function totalPosterCount(req, res) {
 }
 
 async function getAllPostersByUserId(req, res) {
-  const { userId } = req.params;
   try {
+    const userId = req.params.id;
+    if (!userId) {
+      return res.status(400).json({ error: "Missing userId parameter." });
+    }
+
     const snapshot = await db
       .collection("posters")
       .where("userId", "==", userId)
       .get();
     const posters = [];
-    snapshot.forEach((doc) => {
-      posters.push({ id: doc.id, ...doc.data() });
-    });
-    res.status(200).json(posters);
+    snapshot.forEach((doc) => posters.push({ id: doc.id, ...doc.data() }));
+    res.json(posters);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("[getAllPostersByUserId] Error:", error);
+    res.status(400).json({ error: error.message || error.toString() });
   }
 }
 

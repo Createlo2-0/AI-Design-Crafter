@@ -7,18 +7,19 @@ const {
   updatePoster,
   deletePoster,
   totalPosterCount,
+  getAllPostersByUserId,
 } = require("../controllers/posterController");
 const { verifyFirebaseToken } = require("../middlewares/authMiddleware");
 
 // Only authenticated users can create, update, or delete posters
-router.post("/", verifyFirebaseToken, createPoster);
+router.post("/", createPoster);
 router.patch("/:id", verifyFirebaseToken, updatePoster);
-router.delete("/:id", verifyFirebaseToken, deletePoster);
-router.get("/user/:userId", verifyFirebaseToken, getAllPostersByUserId);
+router.delete("/:id", deletePoster);
+router.get("/user/:id", getAllPostersByUserId);
 
 // Anyone can view posters or get the count
 router.get("/", getAllPosters);
+router.get("/count/ttc", totalPosterCount);
 router.get("/:id", getPosterById);
-router.get("/ttc", totalPosterCount);
 
 module.exports = router;
