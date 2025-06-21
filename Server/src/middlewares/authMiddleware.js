@@ -1,18 +1,33 @@
-const { auth } = require("../config/firebase");
+// File: Server/src/middlewares/authMiddleware.js (Verified Version)
 
-async function verifyFirebaseToken(req, res, next) {
+const { admin } = require('../config/firebase');
+
+const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "No token provided" });
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    // If no token is provided, send "Unauthorized"
+    return res.status(401).json({ message: 'Unauthorized: No authentication token was provided.' });
   }
-  const idToken = authHeader.split(" ")[1];
+
+  // Extract the token from the "Bearer <token>" string
+  const idToken = authHeader.split('Bearer ')[1];
+
   try {
-    const decodedToken = await auth.verifyIdToken(idToken);
+    // Use the Firebase Admin SDK to verify the token is valid
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    
+    // As per the task, attach the user's information to the request object.
+    // The decodedToken contains uid, email, etc.
     req.user = decodedToken;
+    
+    // If verification is successful, pass control to the next function (the controller)
     next();
   } catch (error) {
-    return res.status(401).json({ error: "Invalid or expired token" });
+    console.error('Error verifying Firebase ID token:', error);
+    // If the token is invalid (expired, wrong format, etc.), send "Forbidden"
+    return res.status(403).json({ message: 'Forbidden: Invalid or expired token.' });
   }
-}
+};
 
-module.exports = { verifyFirebaseToken };
+module.exports = authMiddleware;
