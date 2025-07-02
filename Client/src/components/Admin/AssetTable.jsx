@@ -1,44 +1,46 @@
-import React, { useState } from "react";
-
-const initialAssets = [
-  {
-    id: "a1",
-    name: "Cyberpunk Cityscape",
-    owner: "user@example.com",
-    prompt: "Futuristic skyline with neon lights and a flying car in a dystopian city.",
-    date: "2025-05-24",
-    image:
-      "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=80&h=80",
-  },
-  {
-    id: "a2",
-    name: "Glitching Android Portrait",
-    owner: "admin@example.com",
-    prompt: "Close-up portrait of a glitching android, with high-contrast light, neon lines, and fragmented data effects.",
-    date: "2025-05-25",
-    image:
-      "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=facearea&w=80&h=80",
-  },
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import API_BASE_URL from "../../utils/api";
 
 export default function AssetTable() {
-  const [assets, setAssets] = useState(initialAssets);
+  const [assets, setAssets] = useState([]);
   const [search, setSearch] = useState("");
   const [filterDate, setFilterDate] = useState("");
 
+  // Fetch assets from backend API
+  useEffect(() => {
+    axios
+      .get(`${API_BASE_URL}/posters`)
+      .then((res) => setAssets(res.data))
+      .catch(() => setAssets([]));
+  }, []);
+
   const filteredAssets = assets.filter((asset) => {
+    // Defensive: check if fields exist before using toLowerCase
+    const name = asset.name ? asset.name.toLowerCase() : "";
+    const userId = asset.userId ? asset.userId.toLowerCase() : "";
+    const prompt = asset.prompt ? asset.prompt.toLowerCase() : "";
+    const searchTerm = search.toLowerCase();
     const matchesSearch =
-      asset.name.toLowerCase().includes(search.toLowerCase()) ||
-      asset.owner.toLowerCase().includes(search.toLowerCase()) ||
-      asset.prompt.toLowerCase().includes(search.toLowerCase());
+      name.includes(searchTerm) ||
+      userId.includes(searchTerm) ||
+      prompt.includes(searchTerm);
     const matchesDate = filterDate ? asset.date === filterDate : true;
     return matchesSearch && matchesDate;
   });
 
-  const handleRemove = (id) => {
-    const confirm = window.confirm("Are you sure you want to remove this poster?");
+  // DELETE asset
+  const handleRemove = async (id) => {
+    const confirm = window.confirm(
+      "Are you sure you want to remove this poster?"
+    );
     if (confirm) {
-      setAssets((prev) => prev.filter((asset) => asset.id !== id));
+      try {
+        await axios.delete(`${API_BASE_URL}/posters/${id}`);
+        setAssets((prev) => prev.filter((asset) => asset.id !== id));
+      } catch {
+        alert("Failed to delete asset.");
+      }
     }
   };
 
@@ -48,16 +50,10 @@ export default function AssetTable() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <input
           type="text"
-          placeholder="Search by name, owner, or prompt..."
+          placeholder="Search by name, user ID, or prompt..."
           className="w-full sm:w-80 px-4 py-2 rounded border border-cyber-border bg-cyber-bg text-neon-pink font-mono text-sm focus:outline-none focus:ring-2 focus:ring-neon-pink transition"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-        />
-        <input
-          type="date"
-          className="w-full sm:w-60 px-4 py-2 rounded border border-cyber-border bg-cyber-bg text-neon-blue font-mono text-sm focus:outline-none focus:ring-2 focus:ring-neon-blue transition"
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)}
         />
       </div>
 
@@ -66,19 +62,21 @@ export default function AssetTable() {
         <table className="w-full min-w-[1100px] bg-cyber-bg-darker text-sm table-fixed">
           <thead>
             <tr className="text-neon-pink font-cyber text-middle border-b border-cyber-border text-sm">
-              <th className="py-3 px-3 w-12">ID</th>
-              <th className="py-3 px-3 w-20">Thumbnail</th>
-              <th className="py-3 px-3 w-48">Poster Name</th>
-              <th className="py-3 px-3 w-48">Owner</th>
+              <th className="py-3 px-3 w-12">#</th>
+              <th className="py-3 px-3 w-20">Image</th>
+              <th className="py-3 px-3 w-48">User ID</th>
               <th className="py-3 px-3 w-[30rem]">Prompt</th>
-              <th className="py-3 px-3 w-32">Date</th>
+              <th className="py-3 px-3 w-28">Date</th>
               <th className="py-3 px-3 w-28">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredAssets.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center text-gray-400 py-8 font-mono">
+                <td
+                  colSpan={7}
+                  className="text-center text-gray-400 py-8 font-mono"
+                >
                   No posters found.
                 </td>
               </tr>
@@ -91,15 +89,26 @@ export default function AssetTable() {
                   <td className="py-4 px-3 text-center">{index + 1}</td>
                   <td className="py-4 px-3">
                     <img
-                      src={asset.image}
-                      alt={asset.name}
+                      src={asset.imageUrl}
+                      alt={asset.name || "Poster"}
                       className="w-12 h-12 object-cover rounded shadow border border-cyber-border"
                     />
                   </td>
-                  <td className="py-4 px-3 break-words">{asset.name}</td>
-                  <td className="py-4 px-3 break-words">{asset.owner}</td>
-                  <td className="py-4 px-3 break-words">{asset.prompt}</td>
-                  <td className="py-4 px-3 whitespace-nowrap">{asset.date}</td>
+                  <td className="py-4 px-3 break-words">
+                    {asset.userId || "-"}
+                  </td>
+                  <td className="py-4 px-3 break-words">
+                    {asset.prompt || "-"}
+                  </td>
+                  <td className="py-4 px-3 whitespace-nowrap">
+                    {asset.date
+                      ? new Date(asset.date).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })
+                      : ""}
+                  </td>
                   <td className="py-4 px-3">
                     <button
                       onClick={() => handleRemove(asset.id)}

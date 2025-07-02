@@ -1,3 +1,4 @@
+require("dotenv").config(); // Load .env variables
 const admin = require("firebase-admin");
 
 try {
@@ -9,9 +10,11 @@ try {
         privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
       }),
     });
+    console.log("Firebase Admin Initialized");
   }
 } catch (error) {
-  throw new Error("Failed to initialize Firebase Admin SDK", error.message);
+  console.error("Firebase Admin Init Error:", error);
+  throw new Error("Failed to initialize Firebase Admin SDK: " + error.message);
 }
 
 const db = admin.firestore();

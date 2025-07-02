@@ -1,63 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import Modal from "../components/Common/Modal";
 import Card from "../components/Common/Card";
 import { useUserAssets } from "../contexts/UserAssetsContext";
-import {
-  playClickSound,
-  playModalOpenSound,
-  playErrorSound,
-} from "../utils/soundUtils";
 import Button from "../components/Common/Button";
+import API_BASE_URL from "../utils/api";
 
 // --- SVG Icons ---
 const UserCircleIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className="w-9 h-9"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-    />
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-9 h-9">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
   </svg>
 );
+
 const ArchiveIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className="w-9 h-9"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"
-    />
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-9 h-9">
+    <path strokeLinecap="round" strokeLinejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
   </svg>
 );
+
 const SettingsIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className="w-9 h-9"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H5.625c-.621 0-1.125.504-1.125 1.125v1.125c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V13.125c0-.621-.504-1.125-1.125-1.125H18.75m-1.5 0H5.625m13.125 0H18.75m0 0H21m-1.5 0H5.625M3.75 6.75h16.5M3.75 9.75h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
-    />
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-9 h-9">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H5.625c-.621 0-1.125.504-1.125 1.125v1.125c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V13.125c0-.621-.504-1.125-1.125-1.125H18.75m-1.5 0H5.625m13.125 0H18.75m0 0H21m-1.5 0H5.625M3.75 6.75h16.5M3.75 9.75h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
   </svg>
 );
 
@@ -93,17 +58,13 @@ const ProfilePanel = ({
       className={`w-full max-w-3xl mx-auto bg-gradient-to-br from-cyber-primary/90 to-cyber-bg-darker/80 backdrop-blur-md p-4 sm:p-6 md:p-8 rounded-2xl shadow-2xl border-t-4 ${borderColorClass} relative overflow-hidden mb-10`}
     >
       <div className="relative z-10">
-        <div
-          className={`flex items-center gap-4 mb-6 border-b pb-3 border-${colorClass}/30`}
-        >
+        <div className={`flex items-center gap-4 mb-6 border-b pb-3 border-${colorClass}/30`}>
           <span className="flex items-center h-10">
             {React.cloneElement(icon, {
               className: `${titleColor} flex-shrink-0 drop-shadow-neon w-9 h-9`,
             })}
           </span>
-          <h2
-            className={`text-xl sm:text-2xl md:text-3xl font-cyber mt-3 ${titleColor} uppercase tracking-wide flex-grow text-left leading-tight flex items-center`}
-          >
+          <h2 className={`text-xl sm:text-2xl md:text-3xl font-cyber mt-3 ${titleColor} uppercase tracking-wide flex-grow text-left leading-tight flex items-center`}>
             {title}
           </h2>
         </div>
@@ -113,60 +74,48 @@ const ProfilePanel = ({
   );
 };
 
-// --- Placeholder Asset Data ---
-const placeholderUserAssets = [
-  {
-    id: "001",
-    src: "/images/gallery/image1.png",
-    alt: "Cyberpunk Cityscape",
-    prompt:
-      "Expansive neon-drenched cyberpunk metropolis at twilight, flying vehicles, towering skyscrapers, cinematic lighting, volumetric fog, reflection on wet streets.",
-    style: "Cyberpunk",
-    seed: 12345,
-    dimensions: "1024x1024",
-  },
-  {
-    id: "002",
-    src: "/images/gallery/image2.png",
-    alt: "Glitching Android Portrait",
-    prompt:
-      "Close-up portrait of a melancholic android, subtle glitch effects, intricate circuit tattoos, moody atmosphere, shallow depth of field.",
-    style: "Portrait",
-    seed: 67890,
-    dimensions: "768x1024",
-  },
-  {
-    id: "003",
-    src: "/images/gallery/image3.png",
-    alt: "Abstract Data Stream",
-    prompt:
-      "Flowing abstract representation of a digital data stream, vibrant neon colors, complex geometric patterns, sense of motion, particles.",
-    style: "Abstract",
-    seed: 11223,
-    dimensions: "1024x768",
-  },
-];
-
 // --- Main UserProfilePage ---
 function UserProfilePage() {
-  // Remove useAuth and use currentUser mock data
-  // const { currentUser } = useAuth();
   const { userAssets } = useUserAssets();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Mock user data for UI only
-  const currentUser = {
-    email: "demo.user@example.com",
-    metadata: {
-      creationTime: new Date().toISOString(),
-      lastSignInTime: new Date().toISOString(),
-    },
-    uid: "demoUID1234567890",
-  };
+  // User data state
+  const [userData, setUserData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editFields, setEditFields] = useState({});
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  // Fetch user data from backend on mount
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || !user.id) {
+      setError("User not found.");
+      setLoading(false);
+      return;
+    }
+    fetch(`${API_BASE_URL}/users/${user.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setUserData(data);
+        setEditFields({
+          name: data.name || "",
+          email: data.email || "",
+          displayName: data.displayName || "",
+          avatarUrl: data.avatarUrl || "",
+        });
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Failed to fetch user data.");
+        setLoading(false);
+      });
+  }, []);
 
   const openModal = (image) => {
-    playModalOpenSound();
     setSelectedImage(image);
     setIsModalOpen(true);
   };
@@ -176,30 +125,57 @@ function UserProfilePage() {
   };
   const navigate = useNavigate();
 
-  const handleChangePasswordClick = () => {
-    playClickSound();
-    navigate("/reset-password");
+  // Handle edit field changes
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFields((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleDeleteAccountClick = () => {
-    playClickSound();
-    if (
-      window.confirm(
-        "Are you sure you want to request data purge? This action is irreversible."
-      )
-    ) {
-      playErrorSound();
-      alert("Account deletion protocol not implemented in demo.");
+  // Handle avatar upload
+  const handleAvatarChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setAvatarFile(e.target.files[0]);
+      setEditFields((prev) => ({
+        ...prev,
+        avatarUrl: URL.createObjectURL(e.target.files[0]),
+      }));
     }
   };
 
-  if (!currentUser) {
-    return (
-      <div className="text-center font-mono text-red-500 p-10">
-        Error: No user data available. Access denied.
-      </div>
-    );
-  }
+  // Save profile changes
+  const handleSaveProfile = async () => {
+    setError("");
+    setSuccess("");
+    setLoading(true);
+    try {
+      let avatarUrl = editFields.avatarUrl;
+      // If avatar file is selected, upload it (implement your own upload logic or skip if not needed)
+      // For demo, we'll just use the local URL
+      // If you have an upload endpoint, upload the file and get the URL here
+
+      const user = JSON.parse(localStorage.getItem("user"));
+      const patchData = {
+        ...editFields,
+        avatarUrl,
+      };
+
+      const response = await fetch(`${API_BASE_URL}/users/${user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patchData),
+      });
+      if (!response.ok) throw new Error("Failed to update profile.");
+      const updated = await response.json();
+      setUserData(updated);
+      setEditMode(false);
+      setSuccess("Profile updated successfully!");
+      // Optionally update localStorage
+      localStorage.setItem("user", JSON.stringify({ ...user, ...updated }));
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
 
   // Animation Variants
   const pageVariants = {
@@ -219,9 +195,24 @@ function UserProfilePage() {
     },
   };
 
-  // Use assets from context, or fallback to placeholder
-  const assetsToDisplay =
-    userAssets.length > 0 ? userAssets : placeholderUserAssets;
+  // Use assets from context, or fallback to empty
+  const assetsToDisplay = userAssets.length > 0 ? userAssets : [];
+
+  if (loading) {
+    return (
+      <div className="text-center font-mono text-neon-blue p-10">
+        Loading profile...
+      </div>
+    );
+  }
+
+  if (error || !userData) {
+    return (
+      <div className="text-center font-mono text-red-500 p-10">
+        Error: {error || "No user data available. Access denied."}
+      </div>
+    );
+  }
 
   return (
     <>
@@ -248,56 +239,168 @@ function UserProfilePage() {
           colorClass="neon-blue"
           delay={0.1}
         >
-          <div className="font-mono text-gray-300 space-y-3 text-sm md:text-base text-left">
-            <div className="flex flex-col sm:flex-row sm:items-center">
-              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                Email ID
-              </span>
-              <span className="break-all">{currentUser.email}</span>
+          <div className="flex flex-col items-center gap-4">
+            {/* Avatar */}
+            <div className="flex flex-col items-center">
+              <img
+                src={
+                  editMode
+                    ? editFields.avatarUrl ||
+                      "https://ui-avatars.com/api/?name=User"
+                    : userData.avatarUrl ||
+                      "https://ui-avatars.com/api/?name=User"
+                }
+                alt="Avatar"
+                className="w-24 h-24 rounded-full border-4 border-neon-blue shadow-lg object-cover mb-2"
+              />
+              {editMode && (
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="block mt-2 text-xs"
+                />
+              )}
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center">
-              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                Status
-              </span>
-              <span className="text-neon-green animate-pulse">ACTIVE</span>
+            {/* Editable fields */}
+            <div className="font-mono text-gray-300 space-y-3 text-sm md:text-base text-left w-full max-w-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                  Name
+                </span>
+                {editMode ? (
+                  <input
+                    type="text"
+                    name="name"
+                    value={editFields.name}
+                    onChange={handleEditChange}
+                    className="bg-cyber-bg/30 border border-cyber-border px-2 py-1 rounded text-white w-full"
+                  />
+                ) : (
+                  <span className="break-all">{userData.name || <span className="text-cyber-border">Not set</span>}</span>
+                )}
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                  Email ID
+                </span>
+                {editMode ? (
+                  <input
+                    type="email"
+                    name="email"
+                    value={editFields.email}
+                    onChange={handleEditChange}
+                    className="bg-cyber-bg/30 border border-cyber-border px-2 py-1 rounded text-white w-full"
+                  />
+                ) : (
+                  <span className="break-all">{userData.email || <span className="text-cyber-border">Not set</span>}</span>
+                )}
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                  Display Name
+                </span>
+                {editMode ? (
+                  <input
+                    type="text"
+                    name="displayName"
+                    value={editFields.displayName}
+                    onChange={handleEditChange}
+                    className="bg-cyber-bg/30 border border-cyber-border px-2 py-1 rounded text-white w-full"
+                  />
+                ) : (
+                  <span className="break-all">{userData.displayName || <span className="text-cyber-border">Not set</span>}</span>
+                )}
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                  Status
+                </span>
+                <span className="text-neon-green animate-pulse">
+                  {userData.status || "ACTIVE"}
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                  Registration Date
+                </span>
+                <span>
+                  {userData.createdAt
+                    ? new Date(userData.createdAt).toLocaleDateString()
+                    : <span className="text-cyber-border">Not set</span>}
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                  Last Active
+                </span>
+                <span>
+                  {userData.lastLogin
+                    ? new Date(userData.lastLogin).toLocaleString()
+                    : <span className="text-cyber-border">Not set</span>}
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                  Clearance Level
+                </span>
+                <span>
+                  {userData.role ? userData.role.toUpperCase() : "USER"}
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
+                  Assigned UID
+                </span>
+                <span className="break-all">
+                  {userData.id ? userData.id.substring(0, 12) + "..." : <span className="text-cyber-border">Not set</span>}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center">
-              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                Registration Date
-              </span>
-              <span>
-                {new Date(
-                  currentUser.metadata.creationTime
-                ).toLocaleDateString()}
-              </span>
+            {/* Edit/Save/Cancel Buttons */}
+            <div className="flex gap-3 mt-4">
+              {!editMode ? (
+                <Button
+                  onClick={() => setEditMode(true)}
+                  variant="outline"
+                  size="medium"
+                  className="border-neon-blue text-neon-blue"
+                >
+                  Edit Profile
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleSaveProfile}
+                    variant="primary"
+                    size="medium"
+                    className="border-neon-green text-neon-green"
+                    disabled={loading}
+                  >
+                    {loading ? "Saving..." : "Save"}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setEditMode(false);
+                      setEditFields({
+                        name: userData.name || "",
+                        email: userData.email || "",
+                        displayName: userData.displayName || "",
+                        avatarUrl: userData.avatarUrl || "",
+                      });
+                      setAvatarFile(null);
+                    }}
+                    variant="outline"
+                    size="medium"
+                    className="border-cyber-border text-cyber-border"
+                  >
+                    Cancel
+                  </Button>
+                </>
+              )}
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center">
-              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                Last Active
-              </span>
-              <span>
-                {new Date(
-                  currentUser.metadata.lastSignInTime
-                ).toLocaleTimeString()}{" "}
-                {new Date(
-                  currentUser.metadata.lastSignInTime
-                ).toLocaleDateString()}
-              </span>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center">
-              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                Clearance Level
-              </span>
-              <span>GAMMA (Simulated)</span>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center">
-              <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                Assigned UID
-              </span>
-              <span className="break-all">
-                {currentUser.uid.substring(0, 12)}... (Internal)
-              </span>
-            </div>
+            {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+            {success && <div className="text-green-500 text-sm mt-2">{success}</div>}
           </div>
         </ProfilePanel>
 
@@ -345,7 +448,7 @@ function UserProfilePage() {
                     size="medium"
                     className="bg-neon-pink text-cyber-bg-darker font-bold py-2 px-6 border-2 border-neon-pink hover:bg-transparent hover:text-neon-pink transition-all duration-300 ease-in-out hover:shadow-neon-md-pink rounded-sm text-sm"
                   >
-                    INITIATE FIRST SYNTHESIS 
+                    INITIATE FIRST SYNTHESIS
                   </Button>
                 </motion.div>
               </Link>
@@ -362,14 +465,14 @@ function UserProfilePage() {
         >
           <div className="space-y-4 font-mono flex items-center justify-start sm:flex-row sm:space-x-4 sm:space-y-0">
             <Button
-              onClick={handleChangePasswordClick}
+              onClick={() => navigate("/reset-password")}
               variant="outline"
               size="medium"
             >
               RESET PASSWORD
             </Button>
             <Button
-              onClick={handleDeleteAccountClick}
+              onClick={() => alert("Account deletion protocol not implemented in demo.")}
               variant="danger"
               size="medium"
             >

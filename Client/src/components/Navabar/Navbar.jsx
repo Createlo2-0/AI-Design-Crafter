@@ -30,15 +30,35 @@ const navLinkClass = ({ isActive }) =>
   `;
 
 const Navbar = () => {
-  // Remove AuthContext, use mock user for UI only
-  const [currentUser, setCurrentUser] = useState(null); // or mock user object for demo
-  const [loadingAuth, setLoadingAuth] = useState(false);
-  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
+  const navigate = useNavigate();
 
-  // Dummy logout handler for UI only
+  // Check login status from localStorage
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  });
+
+  // Listen for login/logout changes in localStorage
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        setCurrentUser(JSON.parse(localStorage.getItem("user")));
+      } catch {
+        setCurrentUser(null);
+      }
+    };
+    window.addEventListener("storage", syncUser);
+    return () => window.removeEventListener("storage", syncUser);
+  }, []);
+
   const handleLogout = async () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
     setCurrentUser(null);
     navigate("/login");
   };
@@ -95,7 +115,6 @@ const Navbar = () => {
           </NavLink>
         ))}
       {!currentUser &&
-        !loadingAuth &&
         guestLinks.map((link) => (
           <NavLink
             key={link.to}

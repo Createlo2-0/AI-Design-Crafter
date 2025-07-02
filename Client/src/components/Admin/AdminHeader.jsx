@@ -1,9 +1,12 @@
 import React from "react";
 
 export default function AdminHeader() {
-  const currentUser = { email: "admin@example.com" };
+  // Get user from localStorage (set after login)
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
     window.location.href = "/login";
   };
 
@@ -14,7 +17,7 @@ export default function AdminHeader() {
       </h1>
       <div className="flex items-center justify-center sm:justify-end gap-4">
         <span className="font-mono text-neon-green break-all text-sm sm:text-base">
-          {currentUser.email}
+          {currentUser?.email || "admin"}
         </span>
         <button
           onClick={logout}

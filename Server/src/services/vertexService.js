@@ -1,38 +1,82 @@
-const aiplatform = require("@google-cloud/aiplatform");
-const { PredictionServiceClient } = aiplatform.v1;
+const path = require("path");
+const { GoogleAuth } = require("google-auth-library");
+const axios = require("axios");
+const logger = require("../utils/logger");
 
-const project = process.env.GCLOUD_PROJECT;
-const location = "us-central1"; // Change if your model is in a different region
-const endpoint = `${location}-aiplatform.googleapis.com`;
+const keyFilePath =
+  process.env.VERTEX_KEY_PATH ||
+  path.join(__dirname, "../config/vertex-key.json");
+const projectId = require(keyFilePath).project_id;
+const location = "us-central1";
+const modelId = "imagen-4.0-generate-preview-06-06"; // Or your model
 
-const client = new PredictionServiceClient({ apiEndpoint: endpoint });
+async function generatePosterWithVertex({
+  prompt,
+  aspectRatio = "1:1",
+  sampleCount = 1,
+  negativePrompt = "blur",
+  enhancePrompt = false,
+  addWatermark = true,
+  includeRaiReason = true,
+  language = "auto",
+}) {
+  if (!prompt) throw new Error("Prompt is required");
 
-async function generatePosterWithVertex(prompt) {
-  console.log("[VertexAI] Generating image with prompt:", prompt);
+  logger.info("[VertexAI] Generating image for prompt:", prompt);
 
-  const model = `projects/${project}/locations/${location}/publishers/google/models/imagegeneration`;
+  const auth = new GoogleAuth({
+    keyFile: keyFilePath,
+    scopes: ["https://www.googleapis.com/auth/cloud-platform"],
+  });
 
-  const instance = { prompt };
-  const instances = [instance];
-  const parameters = {}; // Add parameters if needed
+  const client = await auth.getClient();
+  const tokenResponse = await client.getAccessToken();
+  const token =
+    typeof tokenResponse === "string" ? tokenResponse : tokenResponse.token;
 
-  const request = {
-    endpoint: model,
-    instances,
+  if (!token) {
+    logger.error("[VertexAI] Failed to get access token");
+    throw new Error("Failed to get access token");
+  }
+
+  const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelId}:predict`;
+
+  const parameters = {
+    aspectRatio,
+    sampleCount,
+    negativePrompt,
+    enhancePrompt,
+    addWatermark,
+    includeRaiReason,
+    language,
+  };
+
+  // Remove undefined parameters
+  Object.keys(parameters).forEach(
+    (key) => parameters[key] === undefined && delete parameters[key]
+  );
+
+  const payload = {
+    instances: [{ prompt }],
     parameters,
   };
 
-  try {
-    const [response] = await client.predict(request);
-    // The response format may vary; adjust as needed
-    // For Imagen, the image is usually in response.predictions[0].bytesBase64Encoded
-    const base64Image = response.predictions?.[0]?.bytesBase64Encoded;
-    if (!base64Image) throw new Error("No image data returned from Vertex AI");
-    return Buffer.from(base64Image, "base64");
-  } catch (error) {
-    console.error("[VertexAI] Error generating image:", error);
-    throw error;
+  logger.debug("[VertexAI] Sending request to Vertex endpoint");
+  const response = await axios.post(endpoint, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const base64 = response.data?.predictions?.[0]?.bytesBase64Encoded;
+  if (!base64) {
+    logger.error("[VertexAI] No image data returned from Vertex AI");
+    throw new Error("No image data returned from Vertex AI");
   }
+
+  logger.info("[VertexAI] Image generated successfully");
+  return { base64 };
 }
 
 module.exports = { generatePosterWithVertex };
