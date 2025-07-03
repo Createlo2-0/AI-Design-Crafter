@@ -26,24 +26,25 @@ export default function UserTable() {
 
   // DELETE user
   const handleRemoveUser = async (userId) => {
-      try {
-        await axios.delete(`${API_BASE_URL}/users/${userId}`);
-        setCurrentUsers((prevUsers) =>
-          prevUsers.filter((user) => user.id !== userId)
-        );
-        alert(`User has been removed.`);
-      } catch (err) {
-        console.log(err);
-        alert("Failed to delete user.");
-      }
+    try {
+      await axios.delete(`${API_BASE_URL}/users/${userId}`);
+      setCurrentUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== userId)
+      );
+      alert(`User has been removed.`);
+    } catch (err) {
+      console.log(err);
+      alert("Failed to delete user.");
+    }
   };
 
   const filteredUsers = currentUsers.filter(
     (user) =>
-      user.email.toLowerCase().includes(search.toLowerCase()) ||
-      user.role.toLowerCase().includes(search.toLowerCase()) ||
-      user.status.toLowerCase().includes(search.toLowerCase()) ||
-      user.id.toLowerCase().includes(search.toLowerCase())
+      (user.email && user.email.toLowerCase().includes(search.toLowerCase())) ||
+      (user.role && user.role.toLowerCase().includes(search.toLowerCase())) ||
+      (user.status &&
+        user.status.toLowerCase().includes(search.toLowerCase())) ||
+      (user.id && user.id.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
@@ -60,11 +61,15 @@ export default function UserTable() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[700px] bg-cyber-bg-darker rounded">
+        <table className="w-full min-w-[1200px] bg-cyber-bg-darker rounded">
           <thead>
             <tr className="text-neon-blue font-cyber text-left">
               <th className="p-3 border-b border-cyber-border">#</th>
+              <th className="p-3 border-b border-cyber-border">Avatar</th>
+              <th className="p-3 border-b border-cyber-border">Display Name</th>
               <th className="p-3 border-b border-cyber-border">Email</th>
+              <th className="p-3 border-b border-cyber-border">Phone</th>
+              <th className="p-3 border-b border-cyber-border">Provider</th>
               <th className="p-3 border-b border-cyber-border">Role</th>
               <th className="p-3 border-b border-cyber-border">Status</th>
               <th className="p-3 border-b border-cyber-border">Actions</th>
@@ -74,7 +79,7 @@ export default function UserTable() {
             {filteredUsers.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={12}
                   className="text-center text-gray-400 py-6 font-mono"
                 >
                   No users found.
@@ -92,7 +97,33 @@ export default function UserTable() {
                       {idx + 1}
                     </td>
                     <td className="p-3 border-b border-cyber-border">
+                      {user.avatarUrl ? (
+                        <img
+                          src={user.avatarUrl}
+                          alt={user.displayName || user.email}
+                          className="w-10 h-10 rounded-full object-cover border border-cyber-border"
+                        />
+                      ) : (
+                        <span className="text-cyber-border">N/A</span>
+                      )}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border">
+                      {user.displayName || (
+                        <span className="text-cyber-border">N/A</span>
+                      )}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border">
                       {user.email}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border">
+                      {user.phoneNumber || (
+                        <span className="text-cyber-border">N/A</span>
+                      )}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border">
+                      {user.provider || (
+                        <span className="text-cyber-border">N/A</span>
+                      )}
                     </td>
                     <td className="p-3 border-b border-cyber-border capitalize">
                       {user.role}
@@ -100,7 +131,7 @@ export default function UserTable() {
                     <td className="p-3 border-b border-cyber-border">
                       <span
                         className={`px-2 py-1 rounded text-xs font-bold ${
-                          user.status === "Active"
+                          user.status === "active"
                             ? "bg-neon-green/20 text-neon-green"
                             : "bg-neon-pink/20 text-neon-pink"
                         }`}
@@ -118,70 +149,6 @@ export default function UserTable() {
                       </button>
                     </td>
                   </tr>
-                  {editingUserId === user.id && (
-                    <tr className="bg-cyber-bg-lighter text-gray-300 font-mono">
-                      <td className="p-3 border-b border-cyber-border">
-                        {idx + 1}
-                      </td>
-                      <td className="p-3 border-b border-cyber-border">
-                        <input
-                          type="email"
-                          value={editedEmail}
-                          onChange={(e) => setEditedEmail(e.target.value)}
-                          className="w-full px-2 py-1 rounded border border-cyber-border bg-cyber-bg-dark text-neon-blue font-mono focus:outline-none focus:ring-2 focus:ring-neon-blue"
-                        />
-                      </td>
-                      <td className="p-3 border-b border-cyber-border">
-                        <select
-                          value={editedRole}
-                          onChange={(e) => setEditedRole(e.target.value)}
-                          className="w-full px-2 py-1 rounded border border-cyber-border bg-neon-blue text-cyber-bg font-mono focus:outline-none focus:ring-2 focus:ring-neon-blue capitalize"
-                        >
-                          {ROLES.map((roleOption) => (
-                            <option
-                              key={roleOption}
-                              value={roleOption}
-                              className="capitalize bg-white text-gray-800"
-                            >
-                              {roleOption}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="p-3 border-b border-cyber-border">
-                        <select
-                          value={editedStatus}
-                          onChange={(e) => setEditedStatus(e.target.value)}
-                          className="w-full px-2 py-1 rounded border border-cyber-border bg-neon-blue text-cyber-bg font-mono focus:outline-none focus:ring-2 focus:ring-neon-blue capitalize"
-                        >
-                          {STATUSES.map((statusOption) => (
-                            <option
-                              key={statusOption}
-                              value={statusOption}
-                              className="capitalize bg-white text-gray-800"
-                            >
-                              {statusOption}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                  
-                      <td className="p-3 border-b border-cyber-border">
-                        <button
-                          onClick={() => handleSaveEdit(user.id)}
-                          className="px-2 py-1 bg-neon-green text-cyber-bg-dark rounded text-xs font-bold hover:bg-green-400 transition-colors duration-200 mr-2"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="px-2 py-1 bg-gray-500 text-white rounded text-xs font-bold hover:bg-gray-600 transition-colors duration-200"
-                        >
-                          Cancel
-                        </button>
-                      </td>
-                    </tr>
-                  )}
                 </Fragment>
               ))
             )}

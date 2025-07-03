@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CyberButtonGroup from "../components/Common/CyberButtonGroup";
 import {
@@ -9,6 +9,7 @@ import {
   playToggleSound,
 } from "../utils/soundUtils";
 import Button from "../components/Common/Button";
+import API_BASE_URL from "../utils/api";
 
 // --- Spinner ---
 const CyberSpinner = () => (
@@ -31,6 +32,7 @@ const StyledInput = ({
   helpText = "",
   inputMode = "text",
   step = "any",
+  required = false,
 }) => (
   <div className="mb-6">
     <label
@@ -38,6 +40,7 @@ const StyledInput = ({
       className="block text-neon-green text-lg font-semibold mb-2 tracking-wide uppercase"
     >
       {label}
+      {required && <span className="text-red-500 ml-1">*</span>}
     </label>
     {type === "textarea" ? (
       <textarea
@@ -46,8 +49,8 @@ const StyledInput = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        required={required}
         className="font-mono w-full bg-cyber-bg-darker/80 border-2 border-cyber-border/50 focus:border-neon-pink focus:ring-1 focus:ring-neon-pink p-3 text-gray-200 rounded-sm shadow-inner transition-all duration-200 placeholder-gray-500 resize-none"
-        // 'resize-none' disables resizing
       />
     ) : (
       <input
@@ -58,6 +61,7 @@ const StyledInput = ({
         onChange={onChange}
         inputMode={inputMode}
         step={step}
+        required={required}
         className="font-mono w-full bg-cyber-bg-darker/80 border-2 border-cyber-border/50 focus:border-neon-pink focus:ring-1 focus:ring-neon-pink p-3 text-gray-200 rounded-sm shadow-inner transition-all duration-200 placeholder-gray-500"
       />
     )}
@@ -87,6 +91,49 @@ const ChevronIcon = ({ isOpen }) => (
   </motion.svg>
 );
 
+// --- API call to backend ---
+async function generatePosterViaAPI({
+  prompt,
+  negativePrompt,
+  style,
+  aspectRatio,
+  seed,
+  steps,
+  cfgScale,
+  sampler,
+  dimensions,
+  metadata,
+}) {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user || !user.id) throw new Error("User not logged in.");
+
+  const payload = {
+    userId: user.id,
+    prompt,
+    negativePrompt,
+    style,
+    aspectRatio,
+    seed,
+    steps,
+    cfgScale,
+    sampler,
+    dimensions,
+    metadata,
+  };
+
+  const response = await fetch(`${API_BASE_URL}/posters/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.error || "Failed to generate image.");
+  }
+  return await response.json();
+}
+
 // --- Main GeneratorPage ---
 function GeneratorPage() {
   // --- Form State ---
@@ -99,6 +146,10 @@ function GeneratorPage() {
   const [steps, setSteps] = useState(50);
   const [cfgScale, setCfgScale] = useState(7.5);
   const [sampler, setSampler] = useState("EulerA");
+  const [dimensions, setDimensions] = useState("");
+  // Metadata fields
+  const [campaign, setCampaign] = useState("");
+  const [priority, setPriority] = useState("");
 
   // --- Process State ---
   const [loading, setLoading] = useState(false);
@@ -106,6 +157,9 @@ function GeneratorPage() {
   const [posterResult, setPosterResult] = useState(null);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [saveStatus, setSaveStatus] = useState(null);
+
+  // For direct download via anchor
+  const downloadLinkRef = useRef(null);
 
   // --- Options ---
   const loadingMessages = [
@@ -160,11 +214,26 @@ function GeneratorPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     playGenerateSound();
-    if (!prompt.trim()) {
-      setError("Directive input cannot be empty, agent.");
+
+    // Validate all required fields
+    if (
+      !prompt.trim() ||
+      !negativePrompt.trim() ||
+      !style ||
+      !aspectRatio ||
+      !seed.trim() ||
+      !steps ||
+      !cfgScale ||
+      !sampler ||
+      !dimensions.trim() ||
+      !campaign.trim() ||
+      !priority.trim()
+    ) {
+      setError("All fields are required.");
       playErrorSound();
       return;
     }
+
     setLoading(true);
     setError(null);
     setPosterResult(null);
@@ -175,13 +244,18 @@ function GeneratorPage() {
       negativePrompt,
       style,
       aspectRatio,
-      ...(seed.trim() !== "" && { seed: parseInt(seed, 10) }),
+      seed: parseInt(seed, 10),
       steps: parseInt(steps, 10),
       cfgScale: parseFloat(cfgScale),
       sampler,
+      dimensions,
+      metadata: {
+        campaign: campaign.trim(),
+        priority: priority.trim(),
+      },
     };
     try {
-      const result = await generatePoster(generationParams);
+      const result = await generatePosterViaAPI(generationParams);
       if (result && (result.imageUrl || result.url)) {
         setPosterResult(result.imageUrl || result.url);
       } else {
@@ -195,37 +269,12 @@ function GeneratorPage() {
     }
   };
 
+  // --- Direct Download Handler (no blob, no CORS) ---
   const handleDownloadAsset = useCallback(() => {
     playClickSound();
     if (!posterResult || typeof posterResult !== "string") return;
-    try {
-      const link = document.createElement("a");
-      link.href = posterResult;
-      let derivedFilename = "";
-      try {
-        const url = new URL(posterResult);
-        const pathnameParts = url.pathname.split("/");
-        derivedFilename = pathnameParts[pathnameParts.length - 1];
-      } catch {
-        const pathParts = posterResult.split("?")[0].split("/");
-        derivedFilename = pathParts[pathParts.length - 1];
-      }
-      let finalFilename =
-        derivedFilename && derivedFilename.trim() !== ""
-          ? derivedFilename
-          : `DesignCrafter_AI_${Date.now()}.png`;
-      if (!/\.(png|jpg|jpeg|webp)$/i.test(finalFilename)) {
-        finalFilename = `${finalFilename.split(".")[0]}.png`;
-      }
-      link.download = finalFilename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (e) {
-      playErrorSound();
-      alert(
-        "Asset download failed. Please try right-clicking and saving the image."
-      );
+    if (downloadLinkRef.current) {
+      downloadLinkRef.current.click();
     }
   }, [posterResult]);
 
@@ -244,11 +293,6 @@ function GeneratorPage() {
         setTimeout(() => setSaveStatus(null), 3000);
       }
     }, 1500);
-  };
-
-  const handleGenerateVariations = () => {
-    playClickSound();
-    alert("Generate Variations: Protocol initiated! (UI Placeholder)");
   };
 
   const toggleAdvanced = () => {
@@ -325,6 +369,7 @@ function GeneratorPage() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               helpText="Describe your vision. Detail enhances synthesis."
+              required
             />
             <StyledInput
               label="ELEMENTS TO AVOID"
@@ -335,6 +380,7 @@ function GeneratorPage() {
               value={negativePrompt}
               onChange={(e) => setNegativePrompt(e.target.value)}
               helpText="Specify elements to avoid."
+              required
             />
 
             <div className="grid grid-cols-1 gap-0 mb-0">
@@ -394,6 +440,7 @@ function GeneratorPage() {
                     value={seed}
                     onChange={(e) => setSeed(e.target.value)}
                     helpText="Numeric seed for reproducible patterns."
+                    required
                   />
                   <StyledInput
                     label="Iteration Steps"
@@ -404,6 +451,7 @@ function GeneratorPage() {
                     value={steps}
                     onChange={(e) => setSteps(Number(e.target.value))}
                     helpText="Synthesis depth (e.g., 20-150)."
+                    required
                   />
                   <StyledInput
                     label="Prompt Adherence"
@@ -415,6 +463,7 @@ function GeneratorPage() {
                     value={cfgScale}
                     onChange={(e) => setCfgScale(Number(e.target.value))}
                     helpText="Prompt conformity (e.g., 1.0-20.0)."
+                    required
                   />
                   <CyberButtonGroup
                     label="Sampler Algorithm"
@@ -425,6 +474,36 @@ function GeneratorPage() {
                       playClickSound();
                       setSampler(value);
                     }}
+                  />
+                  <StyledInput
+                    label="Dimensions"
+                    id="dimensions"
+                    type="text"
+                    placeholder="e.g., 1024x576"
+                    value={dimensions}
+                    onChange={(e) => setDimensions(e.target.value)}
+                    helpText="Custom output size (e.g., 1024x576)"
+                    required
+                  />
+                  <StyledInput
+                    label="Campaign (Metadata)"
+                    id="campaign"
+                    type="text"
+                    placeholder="e.g., nature-theme"
+                    value={campaign}
+                    onChange={(e) => setCampaign(e.target.value)}
+                    helpText="Campaign tag for this image"
+                    required
+                  />
+                  <StyledInput
+                    label="Priority (Metadata)"
+                    id="priority"
+                    type="text"
+                    placeholder="e.g., high"
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value)}
+                    helpText="Priority tag for this image"
+                    required
                   />
                 </motion.div>
               )}
@@ -501,7 +580,7 @@ function GeneratorPage() {
                   className="text-center font-mono p-4 bg-red-900/50 border border-red-500 rounded-sm w-full"
                 >
                   <p className="text-red-300 font-bold mb-2 text-lg font-cyber">
-                     TRANSMISSION ERROR 
+                    TRANSMISSION ERROR
                   </p>
                   <p className="text-red-400 text-sm">{error}</p>
                 </motion.div>
@@ -523,6 +602,26 @@ function GeneratorPage() {
                       className="w-full h-full object-contain"
                     />
                   </div>
+                  {/* Hidden anchor for direct download */}
+                  <a
+                    href={posterResult}
+                    download={(() => {
+                      try {
+                        const urlObj = new URL(posterResult);
+                        const parts = urlObj.pathname.split("/");
+                        if (parts.length > 1 && parts[parts.length - 1]) {
+                          return parts[parts.length - 1];
+                        }
+                      } catch {
+                        // fallback
+                      }
+                      return "DesignCrafter_AI.png";
+                    })()}
+                    ref={downloadLinkRef}
+                    style={{ display: "none" }}
+                  >
+                    Download
+                  </a>
                   <motion.div
                     className="flex flex-col sm:flex-row sm:space-x-3 space-y-3 sm:space-y-0 w-full max-w-md justify-center"
                     initial={{ opacity: 0, y: 10 }}
@@ -535,7 +634,7 @@ function GeneratorPage() {
                       size="small"
                       className="font-mono text-xs flex-1 bg-neon-blue/80 hover:bg-neon-blue text-cyber-bg-darker py-2 px-4 border border-neon-blue rounded-sm transition-all duration-200 shadow-md hover:shadow-neon-sm-blue"
                     >
-                       DOWNLOAD ASSET 
+                      DOWNLOAD ASSET
                     </Button>
                     <Button
                       onClick={handleSaveToArchive}
@@ -564,14 +663,6 @@ function GeneratorPage() {
                       {saveStatus === "saved" && " ARCHIVED "}
                       {saveStatus === "save_error" && " SAVE ERROR "}
                       {!saveStatus && " SAVE TO ARCHIVE "}
-                    </Button>
-                    <Button
-                      onClick={handleGenerateVariations}
-                      variant="secondary"
-                      size="small"
-                      className="font-mono text-xs flex-1 bg-cyber-border/70 hover:bg-neon-pink hover:text-cyber-bg-darker text-gray-200 py-2 px-4 border border-cyber-border rounded-sm transition-all duration-200 shadow-md"
-                    >
-                       GENERATE VARIATIONS 
                     </Button>
                   </motion.div>
                 </motion.div>

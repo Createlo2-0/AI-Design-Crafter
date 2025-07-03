@@ -8,7 +8,7 @@ const keyFilePath =
   path.join(__dirname, "../config/vertex-key.json");
 const projectId = require(keyFilePath).project_id;
 const location = "us-central1";
-const modelId = "imagen-4.0-generate-preview-06-06"; // Or your model
+const modelId = "imagen-4.0-generate-preview-06-06";
 
 async function generatePosterWithVertex({
   prompt,

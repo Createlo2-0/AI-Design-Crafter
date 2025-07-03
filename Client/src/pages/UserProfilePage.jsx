@@ -3,26 +3,59 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import Modal from "../components/Common/Modal";
 import Card from "../components/Common/Card";
-import { useUserAssets } from "../contexts/UserAssetsContext";
 import Button from "../components/Common/Button";
 import API_BASE_URL from "../utils/api";
+import axios from "axios";
 
 // --- SVG Icons ---
 const UserCircleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-9 h-9">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-9 h-9"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+    />
   </svg>
 );
 
 const ArchiveIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-9 h-9">
-    <path strokeLinecap="round" strokeLinejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-9 h-9"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"
+    />
   </svg>
 );
 
 const SettingsIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-9 h-9">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H5.625c-.621 0-1.125.504-1.125 1.125v1.125c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V13.125c0-.621-.504-1.125-1.125-1.125H18.75m-1.5 0H5.625m13.125 0H18.75m0 0H21m-1.5 0H5.625M3.75 6.75h16.5M3.75 9.75h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-9 h-9"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H5.625c-.621 0-1.125.504-1.125 1.125v1.125c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V13.125c0-.621-.504-1.125-1.125-1.125H18.75m-1.5 0H5.625m13.125 0H18.75m0 0H21m-1.5 0H5.625M3.75 6.75h16.5M3.75 9.75h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
+    />
   </svg>
 );
 
@@ -58,13 +91,17 @@ const ProfilePanel = ({
       className={`w-full max-w-3xl mx-auto bg-gradient-to-br from-cyber-primary/90 to-cyber-bg-darker/80 backdrop-blur-md p-4 sm:p-6 md:p-8 rounded-2xl shadow-2xl border-t-4 ${borderColorClass} relative overflow-hidden mb-10`}
     >
       <div className="relative z-10">
-        <div className={`flex items-center gap-4 mb-6 border-b pb-3 border-${colorClass}/30`}>
+        <div
+          className={`flex items-center gap-4 mb-6 border-b pb-3 border-${colorClass}/30`}
+        >
           <span className="flex items-center h-10">
             {React.cloneElement(icon, {
               className: `${titleColor} flex-shrink-0 drop-shadow-neon w-9 h-9`,
             })}
           </span>
-          <h2 className={`text-xl sm:text-2xl md:text-3xl font-cyber mt-3 ${titleColor} uppercase tracking-wide flex-grow text-left leading-tight flex items-center`}>
+          <h2
+            className={`text-xl sm:text-2xl md:text-3xl font-cyber mt-3 ${titleColor} uppercase tracking-wide flex-grow text-left leading-tight flex items-center`}
+          >
             {title}
           </h2>
         </div>
@@ -76,7 +113,6 @@ const ProfilePanel = ({
 
 // --- Main UserProfilePage ---
 function UserProfilePage() {
-  const { userAssets } = useUserAssets();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -84,35 +120,48 @@ function UserProfilePage() {
   const [userData, setUserData] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editFields, setEditFields] = useState({});
-  const [avatarFile, setAvatarFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Fetch user data from backend on mount
+  // User's generated posts
+  const [userPosts, setUserPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+
+  // Fetch user data and posters from backend on mount
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || !user.id) {
-      setError("User not found.");
-      setLoading(false);
-      return;
-    }
-    fetch(`${API_BASE_URL}/users/${user.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setUserData(data);
+    const fetchData = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.id) {
+        setError("User not found.");
+        setLoading(false);
+        return;
+      }
+      try {
+        // Fetch user data
+        const userRes = await axios.get(`${API_BASE_URL}/users/${user.id}`);
+        setUserData(userRes.data);
         setEditFields({
-          name: data.name || "",
-          email: data.email || "",
-          displayName: data.displayName || "",
-          avatarUrl: data.avatarUrl || "",
+          email: userRes.data.email || "",
+          displayName: userRes.data.displayName || "",
+          avatarUrl: userRes.data.avatarUrl || "",
         });
         setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to fetch user data.");
+
+        // Fetch all posters generated by this user
+        setPostsLoading(true);
+        const postersRes = await axios.get(
+          `${API_BASE_URL}/posters/user/${user.id}`
+        );
+        setUserPosts(Array.isArray(postersRes.data) ? postersRes.data : []);
+        setPostsLoading(false);
+      } catch (err) {
+        setError("Failed to fetch user data or posters.");
         setLoading(false);
-      });
+        setPostsLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   const openModal = (image) => {
@@ -131,17 +180,6 @@ function UserProfilePage() {
     setEditFields((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle avatar upload
-  const handleAvatarChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setAvatarFile(e.target.files[0]);
-      setEditFields((prev) => ({
-        ...prev,
-        avatarUrl: URL.createObjectURL(e.target.files[0]),
-      }));
-    }
-  };
-
   // Save profile changes
   const handleSaveProfile = async () => {
     setError("");
@@ -149,30 +187,30 @@ function UserProfilePage() {
     setLoading(true);
     try {
       let avatarUrl = editFields.avatarUrl;
-      // If avatar file is selected, upload it (implement your own upload logic or skip if not needed)
-      // For demo, we'll just use the local URL
-      // If you have an upload endpoint, upload the file and get the URL here
-
       const user = JSON.parse(localStorage.getItem("user"));
       const patchData = {
         ...editFields,
         avatarUrl,
       };
 
-      const response = await fetch(`${API_BASE_URL}/users/${user.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patchData),
-      });
-      if (!response.ok) throw new Error("Failed to update profile.");
-      const updated = await response.json();
-      setUserData(updated);
+      const response = await axios.patch(
+        `${API_BASE_URL}/users/${user.id}`,
+        patchData,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      setUserData(response.data);
       setEditMode(false);
       setSuccess("Profile updated successfully!");
-      // Optionally update localStorage
-      localStorage.setItem("user", JSON.stringify({ ...user, ...updated }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...user, ...response.data })
+      );
     } catch (err) {
-      setError(err.message);
+      setError(
+        err?.response?.data?.error ||
+          err?.message ||
+          "Failed to update profile."
+      );
     }
     setLoading(false);
   };
@@ -194,9 +232,6 @@ function UserProfilePage() {
       transition: { type: "spring", stiffness: 120 },
     },
   };
-
-  // Use assets from context, or fallback to empty
-  const assetsToDisplay = userAssets.length > 0 ? userAssets : [];
 
   if (loading) {
     return (
@@ -252,34 +287,21 @@ function UserProfilePage() {
                 }
                 alt="Avatar"
                 className="w-24 h-24 rounded-full border-4 border-neon-blue shadow-lg object-cover mb-2"
+                style={{ background: "#181c2f" }}
               />
               {editMode && (
                 <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  className="block mt-2 text-xs"
+                  type="text"
+                  name="avatarUrl"
+                  value={editFields.avatarUrl}
+                  onChange={handleEditChange}
+                  placeholder="Paste image URL here"
+                  className="block mt-2 text-xs bg-cyber-bg/30 border border-cyber-border px-2 py-1 rounded text-white w-64 sm:w-80 md:w-96"
                 />
               )}
             </div>
             {/* Editable fields */}
             <div className="font-mono text-gray-300 space-y-3 text-sm md:text-base text-left w-full max-w-lg">
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                  Name
-                </span>
-                {editMode ? (
-                  <input
-                    type="text"
-                    name="name"
-                    value={editFields.name}
-                    onChange={handleEditChange}
-                    className="bg-cyber-bg/30 border border-cyber-border px-2 py-1 rounded text-white w-full"
-                  />
-                ) : (
-                  <span className="break-all">{userData.name || <span className="text-cyber-border">Not set</span>}</span>
-                )}
-              </div>
               <div className="flex flex-col sm:flex-row sm:items-center">
                 <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
                   Email ID
@@ -293,7 +315,11 @@ function UserProfilePage() {
                     className="bg-cyber-bg/30 border border-cyber-border px-2 py-1 rounded text-white w-full"
                   />
                 ) : (
-                  <span className="break-all">{userData.email || <span className="text-cyber-border">Not set</span>}</span>
+                  <span className="break-all">
+                    {userData.email || (
+                      <span className="text-cyber-border">Not set</span>
+                    )}
+                  </span>
                 )}
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center">
@@ -309,7 +335,11 @@ function UserProfilePage() {
                     className="bg-cyber-bg/30 border border-cyber-border px-2 py-1 rounded text-white w-full"
                   />
                 ) : (
-                  <span className="break-all">{userData.displayName || <span className="text-cyber-border">Not set</span>}</span>
+                  <span className="break-all">
+                    {userData.displayName || (
+                      <span className="text-cyber-border">Not set</span>
+                    )}
+                  </span>
                 )}
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center">
@@ -318,26 +348,6 @@ function UserProfilePage() {
                 </span>
                 <span className="text-neon-green animate-pulse">
                   {userData.status || "ACTIVE"}
-                </span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                  Registration Date
-                </span>
-                <span>
-                  {userData.createdAt
-                    ? new Date(userData.createdAt).toLocaleDateString()
-                    : <span className="text-cyber-border">Not set</span>}
-                </span>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="text-neon-blue/80 w-40 min-w-[9rem] font-semibold">
-                  Last Active
-                </span>
-                <span>
-                  {userData.lastLogin
-                    ? new Date(userData.lastLogin).toLocaleString()
-                    : <span className="text-cyber-border">Not set</span>}
                 </span>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center">
@@ -353,7 +363,11 @@ function UserProfilePage() {
                   Assigned UID
                 </span>
                 <span className="break-all">
-                  {userData.id ? userData.id.substring(0, 12) + "..." : <span className="text-cyber-border">Not set</span>}
+                  {userData.id ? (
+                    userData.id.substring(0, 12) + "..."
+                  ) : (
+                    <span className="text-cyber-border">Not set</span>
+                  )}
                 </span>
               </div>
             </div>
@@ -372,9 +386,9 @@ function UserProfilePage() {
                 <>
                   <Button
                     onClick={handleSaveProfile}
-                    variant="primary"
+                    variant="outline"
                     size="medium"
-                    className="border-neon-green text-neon-green"
+                    className="border-cyber-border text-cyber-border"
                     disabled={loading}
                   >
                     {loading ? "Saving..." : "Save"}
@@ -383,12 +397,10 @@ function UserProfilePage() {
                     onClick={() => {
                       setEditMode(false);
                       setEditFields({
-                        name: userData.name || "",
                         email: userData.email || "",
                         displayName: userData.displayName || "",
                         avatarUrl: userData.avatarUrl || "",
                       });
-                      setAvatarFile(null);
                     }}
                     variant="outline"
                     size="medium"
@@ -400,23 +412,29 @@ function UserProfilePage() {
               )}
             </div>
             {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-            {success && <div className="text-green-500 text-sm mt-2">{success}</div>}
+            {success && (
+              <div className="text-green-500 text-sm mt-2">{success}</div>
+            )}
           </div>
         </ProfilePanel>
 
-        {/* --- Asset Archive --- */}
+        {/* --- User Generated Posts --- */}
         <ProfilePanel
-          title="Personal Asset Archive"
+          title="Your Generated Posters"
           icon={<ArchiveIcon />}
           colorClass="neon-pink"
           delay={0.2}
         >
-          {assetsToDisplay.length > 0 ? (
+          {postsLoading ? (
+            <div className="text-center font-mono text-neon-blue py-8">
+              Loading your posters...
+            </div>
+          ) : userPosts.length > 0 ? (
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               <AnimatePresence>
-                {assetsToDisplay.map((asset) => (
+                {userPosts.map((asset) => (
                   <motion.div
-                    key={asset.id || asset.src}
+                    key={asset.id || asset.imageUrl}
                     variants={gridItemVariants}
                     initial="hidden"
                     animate="visible"
@@ -427,8 +445,8 @@ function UserProfilePage() {
                     whileHover={{ y: -3, scale: 1.04 }}
                   >
                     <Card
-                      image={asset.src}
-                      title={asset.alt}
+                      image={asset.imageUrl}
+                      title={asset.prompt}
                       className="w-full h-56 sm:h-64 md:h-72 aspect-square cursor-pointer"
                     />
                   </motion.div>
@@ -437,7 +455,7 @@ function UserProfilePage() {
             </div>
           ) : (
             <div className="text-center font-mono text-cyber-border py-8">
-              <p className="mb-4">ARCHIVE EMPTY - NO ASSETS LOGGED</p>
+              <p className="mb-4">NO GENERATED POSTERS FOUND</p>
               <Link to="/generate">
                 <motion.div
                   whileHover={{ scale: 1.05 }}
@@ -471,13 +489,6 @@ function UserProfilePage() {
             >
               RESET PASSWORD
             </Button>
-            <Button
-              onClick={() => alert("Account deletion protocol not implemented in demo.")}
-              variant="danger"
-              size="medium"
-            >
-              DELETE ACCOUNT
-            </Button>
           </div>
         </ProfilePanel>
       </motion.div>
@@ -487,10 +498,10 @@ function UserProfilePage() {
         {isModalOpen && selectedImage && (
           <Modal isOpen={isModalOpen} onClose={closeModal}>
             <Card
-              image={selectedImage.src}
+              image={selectedImage.imageUrl}
               title={
                 <span className="text-lg sm:text-xl font-cyber text-neon-pink uppercase tracking-wide">
-                  {selectedImage.alt}
+                  {selectedImage.prompt}
                 </span>
               }
               className="w-full max-w-md mx-auto bg-cyber-bg/40 p-0 border border-cyber-border/30 h-auto"
