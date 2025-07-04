@@ -2,27 +2,34 @@ const { auth, db } = require("../config/firebase");
 const UserModel = require("../models/userModel");
 const logger = require("../utils/logger");
 
+const admin = require("firebase-admin");
+
 async function signup(req, res) {
-  const { email, password } = req.body;
-  logger.info("[signup] Attempt for:", email);
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: "No token provided" });
+
+  const idToken = authHeader.split(" ")[1];
+
   try {
-    const userRecord = await auth.createUser({ email, password });
-    logger.info("[signup] Firebase user created:", userRecord.uid);
-    const user = new UserModel({
-      id: userRecord.uid,
-      email: userRecord.email,
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { uid, email, picture } = decodedToken;
+
+    logger.info("[signup] Token verified for:", email);
+
+    const user = {
+      id: uid,
+      email: email,
       role: "user",
-      avatarUrl: userRecord.photoURL || "",
+      avatarUrl: picture || "",
       status: "active",
       createdAt: new Date(),
       lastLogin: new Date(),
-    });
-    await db
-      .collection("users")
-      .doc(user.id)
-      .set({ ...user });
-    logger.info("[signup] User saved to Firestore:", user.id);
-    res.status(201).json({ message: "User created", user });
+    };
+
+    await db.collection("users").doc(uid).set(user);
+
+    logger.info("[signup] User saved to Firestore:", uid);
+    res.status(201).json({ message: "User saved", user });
   } catch (error) {
     logger.error("[signup] Error:", error);
     res.status(400).json({ error: error.message });

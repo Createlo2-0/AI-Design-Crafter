@@ -158,9 +158,6 @@ function GeneratorPage() {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [saveStatus, setSaveStatus] = useState(null);
 
-  // For direct download via anchor
-  const downloadLinkRef = useRef(null);
-
   // --- Options ---
   const loadingMessages = [
     " Analyzing Directive...",
@@ -269,12 +266,35 @@ function GeneratorPage() {
     }
   };
 
-  // --- Direct Download Handler (no blob, no CORS) ---
-  const handleDownloadAsset = useCallback(() => {
+  // --- Download Handler (force download as file, not redirect) ---
+  const handleDownloadAsset = useCallback(async () => {
     playClickSound();
-    if (!posterResult || typeof posterResult !== "string") return;
-    if (downloadLinkRef.current) {
-      downloadLinkRef.current.click();
+    if (!posterResult) return;
+    try {
+      const response = await fetch(posterResult, { mode: "cors" });
+      if (!response.ok) throw new Error("Failed to fetch image for download.");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      try {
+        const urlObj = new URL(posterResult);
+        const parts = urlObj.pathname.split("/");
+        link.download =
+          parts.length > 1 && parts[parts.length - 1]
+            ? parts[parts.length - 1]
+            : "DesignCrafter_AI.png";
+      } catch {
+        link.download = "DesignCrafter_AI.png";
+      }
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      playErrorSound();
+      alert("Failed to download image.");
     }
   }, [posterResult]);
 
@@ -617,7 +637,6 @@ function GeneratorPage() {
                       }
                       return "DesignCrafter_AI.png";
                     })()}
-                    ref={downloadLinkRef}
                     style={{ display: "none" }}
                   >
                     Download

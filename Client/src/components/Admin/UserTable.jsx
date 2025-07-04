@@ -104,7 +104,9 @@ export default function UserTable() {
                           className="w-10 h-10 rounded-full object-cover border border-cyber-border"
                         />
                       ) : (
-                        <span className="text-cyber-border">N/A</span>
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-cyber-bg border border-cyber-border text-neon-blue font-bold text-lg">
+                          {(user.displayName?.[0] || user.email?.[0] || "U").toUpperCase()}
+                        </div>
                       )}
                     </td>
                     <td className="p-3 border-b border-cyber-border">

@@ -17,15 +17,22 @@ export default function AssetTable() {
 
   const filteredAssets = assets.filter((asset) => {
     // Defensive: check if fields exist before using toLowerCase
-    const name = asset.name ? asset.name.toLowerCase() : "";
-    const userId = asset.userId ? asset.userId.toLowerCase() : "";
     const prompt = asset.prompt ? asset.prompt.toLowerCase() : "";
+    const style = asset.style ? asset.style.toLowerCase() : "";
+    const aspectRatio = asset.aspectRatio
+      ? asset.aspectRatio.toLowerCase()
+      : "";
+    const dimensions = asset.dimensions ? asset.dimensions.toLowerCase() : "";
     const searchTerm = search.toLowerCase();
     const matchesSearch =
-      name.includes(searchTerm) ||
-      userId.includes(searchTerm) ||
-      prompt.includes(searchTerm);
-    const matchesDate = filterDate ? asset.date === filterDate : true;
+      prompt.includes(searchTerm) ||
+      style.includes(searchTerm) ||
+      aspectRatio.includes(searchTerm) ||
+      dimensions.includes(searchTerm);
+    const matchesDate = filterDate
+      ? asset.createdAt &&
+        new Date(asset.createdAt).toLocaleDateString("en-GB") === filterDate
+      : true;
     return matchesSearch && matchesDate;
   });
 
@@ -50,7 +57,7 @@ export default function AssetTable() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <input
           type="text"
-          placeholder="Search by name, user ID, or prompt..."
+          placeholder="Search by prompt, style, aspect ratio, dimensions..."
           className="w-full sm:w-80 px-4 py-2 rounded border border-cyber-border bg-cyber-bg text-neon-pink font-mono text-sm focus:outline-none focus:ring-2 focus:ring-neon-pink transition"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -59,22 +66,27 @@ export default function AssetTable() {
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1100px] bg-cyber-bg-darker text-sm table-fixed">
+        <table className="w-full min-w-[1400px] bg-cyber-bg-darker text-sm table-fixed">
           <thead>
-            <tr className="text-neon-pink font-cyber text-middle border-b border-cyber-border text-sm">
-              <th className="py-3 px-3 w-12">#</th>
-              <th className="py-3 px-3 w-20">Image</th>
-              <th className="py-3 px-3 w-48">User ID</th>
-              <th className="py-3 px-3 w-[30rem]">Prompt</th>
-              <th className="py-3 px-3 w-28">Date</th>
-              <th className="py-3 px-3 w-28">Actions</th>
+            <tr className="text-neon-pink font-cyber border-b border-cyber-border text-sm">
+              <th className="py-3 px-3 w-12 text-center">#</th>
+              <th className="py-3 px-3 w-20 text-center">Image</th>
+              <th className="py-3 px-3 w-32 text-left">Prompt</th>
+              <th className="py-3 px-3 w-32 text-left">Negative Prompt</th>
+              <th className="py-3 px-3 w-20 text-center">Style</th>
+              <th className="py-3 px-3 w-20 text-center">Aspect Ratio</th>
+              <th className="py-3 px-3 w-20 text-center">Dimensions</th>
+              <th className="py-3 px-3 w-20 text-center">Seed</th>
+              <th className="py-3 px-3 w-32 text-left">Campaign</th>
+              <th className="py-3 px-3 w-20 text-center">Priority</th>
+              <th className="py-3 px-3 w-28 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredAssets.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={12}
                   className="text-center text-gray-400 py-8 font-mono"
                 >
                   No posters found.
@@ -86,30 +98,43 @@ export default function AssetTable() {
                   key={asset.id}
                   className="text-gray-300 font-mono hover:bg-cyber-bg transition border-b border-cyber-border"
                 >
-                  <td className="py-4 px-3 text-center">{index + 1}</td>
-                  <td className="py-4 px-3">
+                  <td className="py-4 px-3 text-center align-top">
+                    {index + 1}
+                  </td>
+                  <td className="py-4 px-3 text-center align-top">
                     <img
                       src={asset.imageUrl}
-                      alt={asset.name || "Poster"}
-                      className="w-12 h-12 object-cover rounded shadow border border-cyber-border"
+                      alt={asset.prompt || "Poster"}
+                      className="w-12 h-12 object-cover rounded shadow border border-cyber-border mx-auto"
                     />
                   </td>
-                  <td className="py-4 px-3 break-words">
-                    {asset.userId || "-"}
-                  </td>
-                  <td className="py-4 px-3 break-words">
+                  <td className="py-4 px-3 text-left align-top break-words">
                     {asset.prompt || "-"}
                   </td>
-                  <td className="py-4 px-3 whitespace-nowrap">
-                    {asset.date
-                      ? new Date(asset.date).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })
-                      : ""}
+                  <td className="py-4 px-3 text-left align-top break-words">
+                    {asset.negativePrompt ||
+                      asset.metadata?.negativePrompt ||
+                      "-"}
                   </td>
-                  <td className="py-4 px-3">
+                  <td className="py-4 px-3 text-center align-top">
+                    {asset.style || "-"}
+                  </td>
+                  <td className="py-4 px-3 text-center align-top">
+                    {asset.aspectRatio || "-"}
+                  </td>
+                  <td className="py-4 px-3 text-center align-top">
+                    {asset.dimensions || "-"}
+                  </td>
+                  <td className="py-4 px-3 text-center align-top">
+                    {asset.seed ?? "-"}
+                  </td>
+                  <td className="py-4 px-3 text-left align-top">
+                    {asset.metadata?.campaign || "-"}
+                  </td>
+                  <td className="py-4 px-3 text-center align-top">
+                    {asset.metadata?.priority || "-"}
+                  </td>
+                  <td className="py-4 px-3 text-center align-top">
                     <button
                       onClick={() => handleRemove(asset.id)}
                       className="px-3 py-1 bg-neon-pink text-white rounded text-xs font-bold hover:bg-neon-blue transition-colors duration-200"
