@@ -1,6 +1,4 @@
-const { auth } = require("../config/firebase");
 const logger = require("../utils/logger");
-
 const { admin } = require("../config/firebase");
 
 const authMiddleware = async (req, res, next) => {
@@ -26,4 +24,4 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = { verifyFirebaseToken };
+module.exports = authMiddleware;

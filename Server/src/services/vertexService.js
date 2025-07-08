@@ -8,10 +8,16 @@ const keyFilePath =
   path.join(__dirname, "../config/vertex-key.json");
 const projectId = require(keyFilePath).project_id;
 const location = "us-central1";
-const modelId = "imagen-4.0-generate-preview-06-06";
+
+const imageModels = [
+  "imagen-4.0-generate-preview-06-06", // Highest quality, try first
+  "imagen-3.0-generate-preview-06-05", // Excellent fallback
+  "imagegeneration@006", // A stable, older version
+];
 
 async function generatePosterWithVertex({
   prompt,
+  style = "Photorealistic",
   aspectRatio = "1:1",
   sampleCount = 1,
   negativePrompt = "blur",
@@ -22,7 +28,23 @@ async function generatePosterWithVertex({
 }) {
   if (!prompt) throw new Error("Prompt is required");
 
-  logger.info("[VertexAI] Generating image for prompt:", prompt);
+  const styleLabel =
+    typeof style === "object" && style !== null && style.label
+      ? style.label
+      : style;
+
+  const finalPrompt = `
+    Create a visually compelling, high-resolution image.
+    Style: ${styleLabel}.
+    Subject: ${prompt}.
+    Requirements: The image should be artistically styled as "${styleLabel}", with sharp focus, balanced lighting, and clean composition. Avoid artifacts, distortion, or low-quality elements. Emphasize clarity, detail, and visual appeal.
+  `
+    .trim()
+    .replace(/\s+/g, " ");
+
+  logger.info(
+    `[VertexAI] Initializing image generation for prompt: "${finalPrompt}"`
+  );
 
   const auth = new GoogleAuth({
     keyFile: keyFilePath,
@@ -39,43 +61,72 @@ async function generatePosterWithVertex({
     throw new Error("Failed to get access token");
   }
 
-  const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelId}:predict`;
+  for (const modelId of imageModels) {
+    logger.info(
+      `[VertexAI] Attempting to generate image with model: ${modelId}`
+    );
+    const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/${modelId}:predict`;
 
-  const parameters = {
-    aspectRatio,
-    sampleCount,
-    negativePrompt,
-    enhancePrompt,
-    addWatermark,
-    includeRaiReason,
-    language,
-  };
+    const parameters = {
+      aspectRatio,
+      sampleCount,
+      negativePrompt,
+      enhancePrompt,
+      addWatermark,
+      includeRaiReason,
+      language,
+    };
 
-  Object.keys(parameters).forEach(
-    (key) => parameters[key] === undefined && delete parameters[key]
-  );
+    Object.keys(parameters).forEach(
+      (key) => parameters[key] === undefined && delete parameters[key]
+    );
 
-  const payload = {
-    instances: [{ prompt }],
-    parameters,
-  };
+    const payload = {
+      instances: [{ prompt: finalPrompt }],
+      parameters,
+    };
 
-  logger.debug("[VertexAI] Sending request to Vertex endpoint");
-  const response = await axios.post(endpoint, payload, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
+    try {
+      const response = await axios.post(endpoint, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-  const base64 = response.data?.predictions?.[0]?.bytesBase64Encoded;
-  if (!base64) {
-    logger.error("[VertexAI] No image data returned from Vertex AI");
-    throw new Error("No image data returned from Vertex AI");
+      const base64 = response.data?.predictions?.[0]?.bytesBase64Encoded;
+      if (base64) {
+        logger.info(
+          `[VertexAI] Image generated successfully with model: ${modelId}`
+        );
+        return { base64 }; // Success!
+      }
+
+      logger.warn(`[VertexAI] Model ${modelId} returned an empty prediction.`);
+      if (response.data?.predictions?.[0]?.raiFilteredReason) {
+        throw new Error(
+          `Image generation blocked by safety filters: ${response.data.predictions[0].raiFilteredReason}`
+        );
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.error?.message || error.message;
+      logger.error(`[VertexAI] Error with model ${modelId}: ${errorMessage}`);
+
+      if (errorMessage.includes("Quota exceeded")) {
+        logger.warn(
+          `[VertexAI] Quota exceeded for ${modelId}. Trying next model...`
+        );
+        continue;
+      } else {
+        throw new Error(errorMessage);
+      }
+    }
   }
 
-  logger.info("[VertexAI] Image generated successfully");
-  return { base64 };
+  throw new Error(
+    "Failed to generate image: All available models failed, mostly due to quota limits."
+  );
 }
 
 module.exports = { generatePosterWithVertex };

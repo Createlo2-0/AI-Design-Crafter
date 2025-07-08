@@ -1,8 +1,6 @@
-const { auth, db } = require("../config/firebase");
+const { admin, db } = require("../config/firebase");
 const UserModel = require("../models/userModel");
 const logger = require("../utils/logger");
-
-const admin = require("firebase-admin");
 
 async function signup(req, res) {
   const authHeader = req.headers.authorization;
@@ -42,10 +40,10 @@ async function login(req, res) {
   try {
     let decoded;
     if (idToken) {
-      decoded = await auth.verifyIdToken(idToken);
+      decoded = await admin.auth().verifyIdToken(idToken);
       logger.info("[login] Decoded idToken for:", decoded.uid);
     } else if (email) {
-      const user = await auth.getUserByEmail(email);
+      const user = await admin.auth().getUserByEmail(email);
       decoded = { uid: user.uid, email: user.email };
       logger.info("[login] Found user by email:", user.uid);
     } else {
@@ -90,7 +88,7 @@ async function forgotPassword(req, res) {
   const { email } = req.body;
   logger.info("[forgotPassword] Requested for:", email);
   try {
-    const link = await auth.generatePasswordResetLink(email);
+    const link = await admin.auth().generatePasswordResetLink(email);
     logger.info("[forgotPassword] Link generated for:", email);
     res.status(200).json({ message: "Reset link sent", link });
   } catch (error) {

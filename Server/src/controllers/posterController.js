@@ -19,7 +19,7 @@ async function createPoster(req, res) {
       addWatermark,
       includeRaiReason,
       language,
-      userId
+      userId,
     } = req.body;
 
     if (!userId || !prompt) {
@@ -27,7 +27,6 @@ async function createPoster(req, res) {
       return res.status(400).json({ error: "userId and prompt are required" });
     }
 
-    // 1. Generate image with Vertex AI
     logger.info("[createPoster] Generating image with Vertex AI...");
     const { base64 } = await generatePosterWithVertex({
       prompt,
@@ -38,6 +37,7 @@ async function createPoster(req, res) {
       addWatermark,
       includeRaiReason,
       language,
+      style,
     });
 
     // 2. Upload to GCS and get public URL
@@ -80,38 +80,12 @@ async function createPoster(req, res) {
 async function getAllPosters(req, res) {
   logger.info("[getAllPosters] Fetching all posters");
   try {
-    // 1. Get the data from the frontend: posterId, userId, rating, and an optional comment.
-    const { posterId, userId, rating, comment } = req.body;
-
-    // 2. Validate that we have the essential data.
-    if (!posterId || !userId || !rating) {
-      return res.status(400).json({ message: 'Poster ID, User ID, and Rating are required.' });
-    }
-
-    // 3. Build the feedback document with all the required fields.
-    const feedbackDocument = {
-      posterId,
-      userId,
-      rating,
-      comment: comment || '', // Use the comment or an empty string if it's not provided.
-      timestamp: new Date(),   // Use a server-side timestamp for accuracy.
-    };
-
-    // 4. Save the document to a 'feedback' collection in Firestore.
-    // If the collection doesn't exist, Firestore will create it automatically.
-    const feedbackRef = await db.collection('feedback').add(feedbackDocument);
-
-    console.log(`Feedback saved to Firestore with new document ID: ${feedbackRef.id}`);
-
-    // 5. Send a success response back to the frontend.
-    res.status(201).json({ 
-      success: true, 
-      message: 'Feedback saved successfully.',
-      feedbackId: feedbackRef.id // It's good practice to return the new ID.
-    });
-    res.status(200).json(posters);
+    const snapshot = await db.collection("posters").get();
+    const documents = [];
+    snapshot.forEach((doc) => documents.push({ id: doc.id, ...doc.data() }));
+    res.status(200).json(documents);
   } catch (error) {
-    logger.error("[getAllPosters] Error:", error);
+    logger.error(`[getAllPosters] Error:`, error);
     res.status(500).json({ error: error.message });
   }
 }
@@ -217,12 +191,15 @@ async function getAllPostersByUserId(req, res) {
   } catch (error) {
     logger.error("[getAllPostersByUserId] Error:", error);
     res.status(400).json({ error: error.message || error.toString() });
-
   }
-};
-
+}
 
 module.exports = {
-  generatePoster,
-  saveFeedback,
+  createPoster,
+  getAllPosters,
+  getPosterById,
+  updatePoster,
+  deletePoster,
+  totalPosterCount,
+  getAllPostersByUserId,
 };

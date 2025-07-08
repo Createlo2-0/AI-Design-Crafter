@@ -139,7 +139,7 @@ function GeneratorPage() {
   // --- Form State ---
   const [prompt, setPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
-  const [style, setStyle] = useState("Cyberpunk");
+  const [style, setStyle] = useState("Hyper-Reality");
   const [aspectRatio, setAspectRatio] = useState("1:1");
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [seed, setSeed] = useState("");
@@ -170,12 +170,27 @@ function GeneratorPage() {
     " Upscaling Quantum Pixels...",
     " Final Integrity Check...",
   ];
+  // const availableStyles = [
+  //   { value: "Anime", label: "Neo-Tokyo Anime" },
+  //   { value: "Photorealistic", label: "Hyper-Reality" },
+  //   { value: "Fantasy", label: "Mythic Constructs" },
+  //   { value: "Abstract", label: "Glitchwave Abstract" },
+  // ];
+
   const availableStyles = [
-    { value: "Anime", label: "Neo-Tokyo Anime" },
-    { value: "Photorealistic", label: "Hyper-Reality" },
-    { value: "Fantasy", label: "Mythic Constructs" },
-    { value: "Abstract", label: "Glitchwave Abstract" },
+    { value: "photograph", label: "Photograph" },
+    { value: "cinematic", label: "Cinematic" },
+    { value: "anime", label: "Anime / Manga" },
+    { value: "watercolor", label: "Watercolor Painting" },
+    { value: "fantasy", label: "Fantasy Art" },
+    { value: "illustration", label: "Digital Illustration" },
+    { value: "sketch", label: "Pencil Sketch" },
+    { value: "low_poly", label: "Low Poly / Geometric" },
+    { value: "pixel_art", label: "Pixel Art" },
+    { value: "line_art", label: "Line Art" },
+    { value: "origami", label: "Origami" },
   ];
+
   const aspectRatios = [
     { value: "1:1", label: "1:1 Square" },
     { value: "16:9", label: "16:9 Wide" },
@@ -362,7 +377,7 @@ function GeneratorPage() {
               id="prompt"
               type="textarea"
               rows={5}
-              placeholder="e.g., Bioluminescent flora in a derelict megastructure..."
+              placeholder="Enter your creative vision here in well-defined terms..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               helpText="Describe your vision. Detail enhances synthesis."

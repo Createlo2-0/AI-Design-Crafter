@@ -1,8 +1,9 @@
-require("dotenv").config(); // Load .env variables
+require("dotenv").config();
 const admin = require("firebase-admin");
+const { getFirestore } = require("firebase-admin/firestore");
 
-try {
-  if (!admin.apps.length) {
+if (!admin.apps.length) {
+  try {
     admin.initializeApp({
       credential: admin.credential.cert({
         projectId: process.env.FIREBASE_PROJECT_ID,
@@ -11,21 +12,13 @@ try {
       }),
     });
     console.log("Firebase Admin Initialized");
+  } catch (error) {
+    console.error("Firebase Admin Init Error:", error);
+    throw new Error("Failed to initialize Firebase Admin SDK: " + error.message);
   }
-} catch (error) {
-  console.error("Firebase Admin Init Error:", error);
-  throw new Error("Failed to initialize Firebase Admin SDK: " + error.message);
 }
-const admin = require("firebase-admin");
-const { getFirestore } = require("firebase-admin/firestore");
-const serviceAccount = require("./serviceAccountKey.json");
-const admin = require("firebase-admin");
-const { getFirestore } = require("firebase-admin/firestore");
-const serviceAccount = require("./serviceAccountKey.json");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
 
 const db = getFirestore();
+const auth = admin.auth();
 
-module.exports = { admin, db };
+module.exports = { admin, db, auth };
