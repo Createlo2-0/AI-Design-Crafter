@@ -1,9 +1,48 @@
 import React, { useState, useEffect, Fragment } from "react";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 import API_BASE_URL from "../../utils/api";
 
 const ROLES = ["user", "admin"];
 const STATUSES = ["Active", "Inactive"];
+
+// --- Modal Component ---
+const ConfirmDeleteModal = ({ open, onConfirm, onCancel }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        className="bg-cyber-primary border-2 border-neon-pink rounded-xl shadow-2xl p-6 w-[90vw] max-w-xs sm:max-w-sm md:max-w-md text-center"
+      >
+        <h2 className="text-xl font-bold text-neon-pink mb-2 font-cyber">
+          Confirm User Removal
+        </h2>
+        <p className="mb-6 text-gray-300 font-mono">
+          Are you sure you want to remove this user? This action cannot be
+          undone.
+        </p>
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={onCancel}
+            className="px-5 py-1 rounded-full border-2 border-gray-400 text-gray-300 hover:bg-gray-700 transition"
+          >
+            No
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-5 py-1 rounded-full border-2 border-neon-pink text-neon-pink hover:bg-neon-pink hover:text-cyber-primary transition font-bold"
+          >
+            Yes
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+// --- End Modal Component ---
 
 export default function UserTable() {
   const [search, setSearch] = useState("");
@@ -15,6 +54,9 @@ export default function UserTable() {
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserRole, setNewUserRole] = useState(ROLES[0]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [alertMsg, setAlertMsg] = useState(null);
 
   // Fetch users from backend API
   useEffect(() => {
@@ -24,18 +66,34 @@ export default function UserTable() {
       .catch(() => setCurrentUsers([]));
   }, []);
 
-  // DELETE user
-  const handleRemoveUser = async (userId) => {
+  // Show modal
+  const handleRemoveUser = (userId) => {
+    setDeleteId(userId);
+    setShowConfirm(true);
+  };
+
+  // Confirm delete
+  const confirmRemove = async () => {
+    if (!deleteId) return;
     try {
-      await axios.delete(`${API_BASE_URL}/users/${userId}`);
+      await axios.delete(`${API_BASE_URL}/users/${deleteId}`);
       setCurrentUsers((prevUsers) =>
-        prevUsers.filter((user) => user.id !== userId)
+        prevUsers.filter((user) => user.id !== deleteId)
       );
-      alert(`User has been removed.`);
+      setAlertMsg("User has been removed.");
+      setTimeout(() => setAlertMsg(null), 2500);
     } catch (err) {
-      console.log(err);
-      alert("Failed to delete user.");
+      setAlertMsg("Failed to delete user.");
+      setTimeout(() => setAlertMsg(null), 2500);
     }
+    setShowConfirm(false);
+    setDeleteId(null);
+  };
+
+  // Cancel delete
+  const cancelRemove = () => {
+    setShowConfirm(false);
+    setDeleteId(null);
   };
 
   const filteredUsers = currentUsers.filter(
@@ -49,6 +107,24 @@ export default function UserTable() {
 
   return (
     <div className="w-full bg-cyber-bg-darker border border-cyber-border rounded-xl shadow-lg p-4">
+      {/* Alert Message */}
+      {alertMsg && (
+        <div className="mb-4 p-3 rounded bg-neon-pink/20 text-neon-pink font-mono text-center border border-neon-pink transition">
+          {alertMsg}
+        </div>
+      )}
+
+      {/* Custom Confirm Modal */}
+      <AnimatePresence>
+        {showConfirm && (
+          <ConfirmDeleteModal
+            open={showConfirm}
+            onConfirm={confirmRemove}
+            onCancel={cancelRemove}
+          />
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <input
           type="text"
@@ -105,7 +181,11 @@ export default function UserTable() {
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-full flex items-center justify-center bg-cyber-bg border border-cyber-border text-neon-blue font-bold text-lg">
-                          {(user.displayName?.[0] || user.email?.[0] || "U").toUpperCase()}
+                          {(
+                            user.displayName?.[0] ||
+                            user.email?.[0] ||
+                            "U"
+                          ).toUpperCase()}
                         </div>
                       )}
                     </td>

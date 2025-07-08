@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 require("dotenv").config(); // Load .env variables
 const admin = require("firebase-admin");
 
@@ -16,8 +17,20 @@ try {
   console.error("Firebase Admin Init Error:", error);
   throw new Error("Failed to initialize Firebase Admin SDK: " + error.message);
 }
+=======
+// File: Server/src/config/firebase.js (Updated)
 
-const db = admin.firestore();
-const auth = admin.auth();
+const admin = require('firebase-admin');
+const { getFirestore } = require('firebase-admin/firestore');
+>>>>>>> 82aa9ff2abf2d2d2507077938a1b0bbec462b95c
 
-module.exports = { db, auth };
+// Use the path to your downloaded service account key
+const serviceAccount = require('./serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+const db = getFirestore();
+
+module.exports = { admin, db };
