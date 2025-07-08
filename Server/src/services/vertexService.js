@@ -51,7 +51,6 @@ async function generatePosterWithVertex({
     language,
   };
 
-  // Remove undefined parameters
   Object.keys(parameters).forEach(
     (key) => parameters[key] === undefined && delete parameters[key]
   );

@@ -171,7 +171,6 @@ function GeneratorPage() {
     " Final Integrity Check...",
   ];
   const availableStyles = [
-    { value: "Cyberpunk", label: "Cyberpunk Dystopia" },
     { value: "Anime", label: "Neo-Tokyo Anime" },
     { value: "Photorealistic", label: "Hyper-Reality" },
     { value: "Fantasy", label: "Mythic Constructs" },
@@ -211,25 +210,6 @@ function GeneratorPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     playGenerateSound();
-
-    // Validate all required fields
-    if (
-      !prompt.trim() ||
-      !negativePrompt.trim() ||
-      !style ||
-      !aspectRatio ||
-      !seed.trim() ||
-      !steps ||
-      !cfgScale ||
-      !sampler ||
-      !dimensions.trim() ||
-      !campaign.trim() ||
-      !priority.trim()
-    ) {
-      setError("All fields are required.");
-      playErrorSound();
-      return;
-    }
 
     setLoading(true);
     setError(null);
@@ -281,12 +261,9 @@ function GeneratorPage() {
       try {
         const urlObj = new URL(posterResult);
         const parts = urlObj.pathname.split("/");
-        link.download =
-          parts.length > 1 && parts[parts.length - 1]
-            ? parts[parts.length - 1]
-            : "DesignCrafter_AI.png";
+        link.download = "designcreafter_ai.png";
       } catch {
-        link.download = "DesignCrafter_AI.png";
+        link.download = "designcreafter_ai.png";
       }
       document.body.appendChild(link);
       link.click();
@@ -460,7 +437,6 @@ function GeneratorPage() {
                     value={seed}
                     onChange={(e) => setSeed(e.target.value)}
                     helpText="Numeric seed for reproducible patterns."
-                    required
                   />
                   <StyledInput
                     label="Iteration Steps"
@@ -471,7 +447,6 @@ function GeneratorPage() {
                     value={steps}
                     onChange={(e) => setSteps(Number(e.target.value))}
                     helpText="Synthesis depth (e.g., 20-150)."
-                    required
                   />
                   <StyledInput
                     label="Prompt Adherence"
@@ -483,7 +458,6 @@ function GeneratorPage() {
                     value={cfgScale}
                     onChange={(e) => setCfgScale(Number(e.target.value))}
                     helpText="Prompt conformity (e.g., 1.0-20.0)."
-                    required
                   />
                   <CyberButtonGroup
                     label="Sampler Algorithm"
@@ -503,7 +477,6 @@ function GeneratorPage() {
                     value={dimensions}
                     onChange={(e) => setDimensions(e.target.value)}
                     helpText="Custom output size (e.g., 1024x576)"
-                    required
                   />
                   <StyledInput
                     label="Campaign (Metadata)"
@@ -513,7 +486,6 @@ function GeneratorPage() {
                     value={campaign}
                     onChange={(e) => setCampaign(e.target.value)}
                     helpText="Campaign tag for this image"
-                    required
                   />
                   <StyledInput
                     label="Priority (Metadata)"
@@ -523,7 +495,6 @@ function GeneratorPage() {
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
                     helpText="Priority tag for this image"
-                    required
                   />
                 </motion.div>
               )}

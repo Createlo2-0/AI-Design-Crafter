@@ -5,70 +5,108 @@ import Card from "../components/Common/Card";
 import { playClickSound, playModalOpenSound } from "../utils/soundUtils";
 import Button from "../components/Common/Button";
 
-// --- Gallery Data ---
 const initialGalleryItems = [
   {
-    id: "001",
-    src: "/images/gallery/image1.png",
-    alt: "Cyberpunk Cityscape",
+    id: "011",
+    src: "/images/gallery/math_image1.png",
+    alt: "Mandelbrot Set Fractal",
     prompt:
-      "Expansive neon-drenched cyberpunk metropolis at twilight, flying vehicles, towering skyscrapers, cinematic lighting, volumetric fog, reflection on wet streets.",
-    style: "Cyberpunk",
-    seed: 12345,
+      "A deep zoom into the Mandelbrot set, revealing intricate and infinitely complex fractal patterns. Vibrant, psychedelic colors with a glowing, ethereal quality.",
+    style: "Abstract",
+    seed: 56789,
     dimensions: "1024x1024",
   },
   {
-    id: "002",
-    src: "/images/gallery/image2.png",
-    alt: "Glitching Android Portrait",
+    id: "012",
+    src: "/images/gallery/math_image2.jpg",
+    alt: "Geometric Cyberpunk City",
     prompt:
-      "Close-up portrait of a melancholic android, subtle glitch effects, intricate circuit tattoos, moody atmosphere, shallow depth of field.",
-    style: "Portrait",
-    seed: 67890,
-    dimensions: "768x1024",
-  },
-  {
-    id: "003",
-    src: "/images/gallery/image3.png",
-    alt: "Abstract Data Stream",
-    prompt:
-      "Flowing abstract representation of a digital data stream, vibrant neon colors, complex geometric patterns, sense of motion, particles.",
-    style: "Abstract",
-    seed: 11223,
-    dimensions: "1024x768",
-  },
-  {
-    id: "004",
-    src: "/images/gallery/image4.png",
-    alt: "Futuristic Vehicle Concept",
-    prompt:
-      "Sleek, aerodynamic hovercraft concept art, cyberpunk aesthetic, detailed mechanical parts, dynamic pose, motion blur background.",
-    style: "Vehicle",
-    seed: 44556,
+      "A cyberpunk metropolis where skyscrapers are shaped like platonic solids and famous mathematical constants like π, e, and φ glow as holographic neon signs on the buildings.",
+    style: "Cyberpunk",
+    seed: 98765,
     dimensions: "1280x720",
   },
   {
-    id: "005",
-    src: "/images/gallery/image5.png",
-    alt: "Bio-mechanical Organism",
+    id: "013",
+    src: "/images/gallery/math_image3.jpg",
+    alt: "Portrait of a Mathematical Muse",
     prompt:
-      "Intricate bio-mechanical creature design, fusion of organic and robotic elements, dark moody background, glowing eyes, detailed textures.",
+      "An elegant portrait of a woman whose face and hair are composed of intricate, flowing golden lines representing the Fibonacci sequence and the golden ratio.",
+    style: "Portrait",
+    seed: 11235,
+    dimensions: "768x1024",
+  },
+  {
+    id: "014",
+    src: "/images/gallery/math_image4.jpg",
+    alt: "Nautilus Shell Creature",
+    prompt:
+      "A bioluminescent deep-sea creature resembling a dragon, with a body structured like a nautilus shell, showcasing a perfect logarithmic spiral.",
     style: "Creature",
-    seed: 77889,
+    seed: 45678,
     dimensions: "1024x1024",
   },
   {
-    id: "006",
-    src: "/images/gallery/image6.png",
-    alt: "Holographic Interface",
+    id: "015",
+    src: "/images/gallery/math_image5.jpg",
+    alt: "Golden Ratio Concept Vehicle",
     prompt:
-      "User interacting with a complex holographic user interface, floating data panels, neon glow, futuristic setting, depth perception.",
-    style: "UI/UX",
-    seed: 99001,
-    dimensions: "1024x576",
+      "A futuristic, aerodynamic concept car with sleek, flowing lines designed explicitly using the principles of the golden ratio for perfect proportions. Studio lighting.",
+    style: "Vehicle",
+    seed: 16180,
+    dimensions: "1360x720",
+  },
+  {
+    id: "016",
+    src: "/images/gallery/math_image6.jpg",
+    alt: "Euler's Identity Visualization",
+    prompt:
+      "An abstract, cosmic representation of Euler's identity, e^{iπ} + 1 = 0. The equation's components are visualized as celestial bodies and energy fields interacting in space.",
+    style: "Abstract",
+    seed: 27182,
+    dimensions: "1024x1024",
+  },
+  {
+    id: "017",
+    src: "/images/gallery/math_image7.jpg",
+    alt: "Calabi-Yau Manifold",
+    prompt:
+      "A scientific visualization of a Calabi-Yau manifold, a complex 3D shape from string theory, glowing with internal light and intricate geometric structures.",
+    style: "Abstract",
+    seed: 31415,
+    dimensions: "1024x1024",
+  },
+  {
+    id: "018",
+    src: "/images/gallery/math_image8.jpg",
+    alt: "Android Pondering a Tesseract",
+    prompt:
+      "A thoughtful android examining a holographic, rotating tesseract (a four-dimensional cube). The scene is set in a minimalist, futuristic lab.",
+    style: "Portrait",
+    seed: 60221,
+    dimensions: "768x1024",
+  },
+  {
+    id: "019",
+    src: "/images/gallery/math_image9.jpg",
+    alt: "Fractal Tree of Life",
+    prompt:
+      "A majestic, glowing tree whose branches and roots grow in a perfect fractal pattern, symbolizing mathematical growth and interconnectedness in nature.",
+    style: "Creature",
+    seed: 78539,
+    dimensions: "1024x1024",
+  },
+  {
+    id: "020",
+    src: "/images/gallery/math_image10.jpg",
+    alt: "Spaceship Blueprint with Orbital Mechanics",
+    prompt:
+      "A detailed, futuristic blueprint of a spaceship overlaid with glowing, handwritten annotations of complex orbital mechanics and trajectory calculation equations.",
+    style: "Vehicle",
+    seed: 29979,
+    dimensions: "1360x720",
   },
 ];
-
 const filterOptions = [
   "All Styles",
   "Cyberpunk",
@@ -153,7 +191,7 @@ function GalleryPage() {
           }}
           transition={{ duration: 0.1 }}
         >
-           Visual Datastream: Asset Archive 
+          Visual Datastream: Asset Archive
         </motion.h1>
         <motion.p
           className="font-mono text-center text-gray-400 max-w-2xl mx-auto mb-6 sm:mb-10 md:mb-12 text-xs sm:text-sm md:text-base"
@@ -170,7 +208,7 @@ function GalleryPage() {
           variants={filterSectionVariant}
         >
           <span className="text-neon-green mr-2 self-center whitespace-nowrap">
-             FILTER BY STYLE:
+            FILTER BY STYLE:
           </span>
           {filterOptions.map((filter) => (
             <motion.button
@@ -247,7 +285,7 @@ function GalleryPage() {
               exit={{ opacity: 0, y: -10 }}
               className="text-center font-mono text-neon-yellow col-span-full mt-8 sm:mt-10 py-8 sm:py-10 border border-dashed border-cyber-border/50 rounded-sm text-xs sm:text-base"
             >
-               No assets found matching filter: {activeFilter} 
+              No assets found matching filter: {activeFilter}
             </motion.div>
           )}
         </AnimatePresence>
@@ -269,25 +307,25 @@ function GalleryPage() {
               <div className="font-mono text-xs sm:text-sm text-gray-300 space-y-3 p-3 sm:p-4">
                 <p>
                   <strong className="text-neon-green/80 w-24 sm:w-28 inline-block">
-                     STYLE:
+                    STYLE:
                   </strong>{" "}
                   {selectedImage.style}
                 </p>
                 <p>
                   <strong className="text-neon-green/80 w-24 sm:w-28 inline-block">
-                     SEED:
+                    SEED:
                   </strong>{" "}
                   {selectedImage.seed || "N/A"}
                 </p>
                 <p>
                   <strong className="text-neon-green/80 w-24 sm:w-28 inline-block">
-                     DIMENSIONS:
+                    DIMENSIONS:
                   </strong>{" "}
                   {selectedImage.dimensions || "N/A"}
                 </p>
                 <div>
                   <strong className="text-neon-green/80 block mb-1">
-                     PROMPT DIRECTIVE:
+                    PROMPT DIRECTIVE:
                   </strong>
                   <p className="text-[10px] sm:text-xs md:text-sm text-gray-400 italic leading-relaxed bg-cyber-bg-darker/50 p-2 border border-cyber-border/20 rounded-sm">
                     {selectedImage.prompt}

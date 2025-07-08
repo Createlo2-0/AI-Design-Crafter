@@ -6,7 +6,6 @@ import Lenis from "@studio-freight/lenis";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
-// import PhoneAuth from "./components/auth/PhoneAuth";
 import GeneratorPage from "./pages/GeneratorPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import GalleryPage from "./pages/GalleryPage";
@@ -16,7 +15,16 @@ import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 
 import Navbar from "./components/Navabar/Navbar";
 import Footer from "./components/Footer/Footer";
-import ProtectedRoute from "./ProtectedRoute"; 
+import ProtectedRoute from "./ProtectedRoute";
+
+// --- PublicRoute component ---
+const PublicRoute = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
 
 const AnimatedPage = ({ children }) => {
   const pageVariants = {
@@ -102,27 +110,23 @@ function App() {
               <Route
                 path="/login"
                 element={
-                  <AnimatedPage>
-                    <LoginPage />
-                  </AnimatedPage>
+                  <PublicRoute>
+                    <AnimatedPage>
+                      <LoginPage />
+                    </AnimatedPage>
+                  </PublicRoute>
                 }
               />
               <Route
                 path="/signup"
                 element={
-                  <AnimatedPage>
-                    <SignupPage />
-                  </AnimatedPage>
+                  <PublicRoute>
+                    <AnimatedPage>
+                      <SignupPage />
+                    </AnimatedPage>
+                  </PublicRoute>
                 }
               />
-              {/* <Route
-                path="/login/phone"
-                element={
-                  <AnimatedPage>
-                    <PhoneAuth />
-                  </AnimatedPage>
-                }
-              /> */}
               <Route
                 path="/generate"
                 element={

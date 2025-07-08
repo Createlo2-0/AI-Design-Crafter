@@ -158,8 +158,26 @@ const AnimatedPromptConsole = () => {
 
 // --- Main HomePage ---
 function HomePage() {
-  // Removed useAuth and currentUser
-  const currentUser = null;
+  // Get current user from localStorage
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        setCurrentUser(JSON.parse(localStorage.getItem("user")));
+      } catch {
+        setCurrentUser(null);
+      }
+    };
+    window.addEventListener("storage", syncUser);
+    return () => window.removeEventListener("storage", syncUser);
+  }, []);
 
   // --- Navigation Links ---
   const navLinks = [
@@ -318,7 +336,7 @@ function HomePage() {
         className="bg-cyber-bg-darker/50 backdrop-blur-sm border-y-2 border-cyber-border/20 rounded-lg shadow-xl my-12 md:my-16"
       >
         <h2 className="text-3xl md:text-4xl font-cyber text-neon-blue mb-10 md:mb-12 text-center">
-          Visual Synthetics - Output Examples
+          Visual Synthetics - Image Generation Process
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {[1, 2, 3].map((item) => (
@@ -331,12 +349,11 @@ function HomePage() {
                 boxShadow: "0 10px 20px rgba(0, 255, 255, 0.2)",
               }}
             >
-              <div className="w-full h-full flex items-center justify-center text-cyber-border font-mono bg-cyber-bg/30">
-                [ Showcase Image {item} ]
-              </div>
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <p className="text-neon-pink font-cyber text-lg">View Detail</p>
-              </div>
+              <img
+                src={`/images/process/${item}.jpg`}
+                alt={`Showcase Image ${item}`}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
             </motion.div>
           ))}
         </div>
@@ -441,7 +458,7 @@ function HomePage() {
                 <h4
                   className={`font-bold text-lg text-${step.color} mb-1 uppercase tracking-wide`}
                 >
-                  // {step.title} //
+                  {step.title}
                 </h4>
                 <p>{step.text}</p>
               </div>
