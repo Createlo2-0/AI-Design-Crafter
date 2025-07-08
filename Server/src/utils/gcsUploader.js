@@ -5,7 +5,6 @@ const logger = require("./logger");
 const GCLOUD_PROJECT = process.env.GCLOUD_PROJECT;
 const GCS_BUCKET = process.env.GCS_BUCKET;
 
-// Use the absolute path to service.json in the Server folder
 const keyFilename = path.join(__dirname, "../../service.json");
 
 const storage = new Storage({

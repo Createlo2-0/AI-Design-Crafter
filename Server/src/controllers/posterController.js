@@ -1,31 +1,10 @@
-
-// File: Server/src/controllers/posterController.js (Updated for Task 2)
-
 const { db } = require("../config/firebase");
 const { generatePosterWithVertex } = require("../services/vertexService");
 const { uploadToGCS } = require("../utils/gcsUploader");
 const logger = require("../utils/logger");
 
-<<<<<<< HEAD
 async function createPoster(req, res) {
   logger.info("[createPoster] Request by user:", req.body.userId);
-=======
-
-require('dotenv').config();
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { db } = require('../config/firebase'); // Import the Firestore database connection
-
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-/**
- * @description   Generate a poster image using an AI model
- * @route         POST /api/posters/generate
- * @access        Private
- */
-const generatePoster = async (req, res) => {
-  // This is your existing function from Task 1. No changes needed here.
->>>>>>> 82aa9ff2abf2d2d2507077938a1b0bbec462b95c
   try {
     const { prompt, style, userId, aspectRatio } = req.body;
     if (!prompt) {
@@ -35,7 +14,6 @@ const generatePoster = async (req, res) => {
     const simulatedImageUrl = `https://i.pravatar.cc/1024?u=${encodeURIComponent(prompt)}`;
     const posterData = {
       prompt,
-<<<<<<< HEAD
       negativePrompt,
       style,
       aspectRatio,
@@ -48,22 +26,6 @@ const generatePoster = async (req, res) => {
       includeRaiReason,
       language,
     } = req.body;
-=======
-      style: style || 'default',
-      userId: userId || 'test-user-id',
-      timestamp: new Date().toISOString(),
-      imageUrl: simulatedImageUrl,
-      aspectRatio: aspectRatio || '1:1'
-    };
-    res.status(200).json({
-      success: true,
-      message: 'Poster generated successfully (simulated).',
-      data: posterData,
-    });
-  } catch (error) {
-    console.error('Error in poster generation:', error);
-    res.status(500).json({ message: 'Server error while generating poster.' });
->>>>>>> 82aa9ff2abf2d2d2507077938a1b0bbec462b95c
 
     if (!userId || !prompt) {
       logger.warn("[createPoster] Missing userId or prompt");
@@ -115,7 +77,6 @@ const generatePoster = async (req, res) => {
       ...savedPoster,
     });
   } catch (error) {
-<<<<<<< HEAD
     logger.error("[createPoster] Error:", error);
     res.status(500).json({ error: error.message || "Internal server error" });
   }
@@ -123,22 +84,6 @@ const generatePoster = async (req, res) => {
 
 async function getAllPosters(req, res) {
   logger.info("[getAllPosters] Fetching all posters");
-=======
-    console.error("[createPoster] Error:", error);
-    res.status(400).json({ error: error.message || error.toString() });
-
-  }
-};
-
-
-// --- THIS IS THE NEW FUNCTION FOR TASK 2 ---
-/**
- * @description   Save user feedback for a poster to Firestore
- * @route         POST /api/posters/feedback
- * @access        Private (to be protected later)
- */
-const saveFeedback = async (req, res) => {
->>>>>>> 82aa9ff2abf2d2d2507077938a1b0bbec462b95c
   try {
     // 1. Get the data from the frontend: posterId, userId, rating, and an optional comment.
     const { posterId, userId, rating, comment } = req.body;
@@ -169,7 +114,6 @@ const saveFeedback = async (req, res) => {
       message: 'Feedback saved successfully.',
       feedbackId: feedbackRef.id // It's good practice to return the new ID.
     });
-<<<<<<< HEAD
     res.status(200).json(posters);
   } catch (error) {
     logger.error("[getAllPosters] Error:", error);
@@ -258,12 +202,6 @@ async function totalPosterCount(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
-=======
-
-  } catch (error) {
-    console.error('Error saving feedback to Firestore:', error);
-    res.status(500).json({ message: 'Server error while saving feedback.' });
->>>>>>> 82aa9ff2abf2d2d2507077938a1b0bbec462b95c
 
 async function getAllPostersByUserId(req, res) {
   try {
@@ -289,7 +227,6 @@ async function getAllPostersByUserId(req, res) {
 };
 
 
-// Update the exports to include our new function
 module.exports = {
   generatePoster,
   saveFeedback,

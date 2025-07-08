@@ -51,12 +51,8 @@ public/images/generated/
 Client/public/images/generated/
 client/public/images/generated/
 
-<<<<<<< HEAD
-Server/config/vertex-key.json
-=======
 # Ignore Firebase Admin SDK key
 src/config/serviceAccountKey.json
 
 # Ignore Firebase Admin SDK service account keys
 **/serviceAccountKey.json
->>>>>>> 82aa9ff2abf2d2d2507077938a1b0bbec462b95c
