@@ -12,16 +12,10 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-
     "@google/generative-ai": "^0.24.1",
-
     "@google-cloud/aiplatform": "^4.2.0",
     "@google-cloud/storage": "^7.16.0",
-<<<<<<< HEAD
     "@google-cloud/vertexai": "^1.10.0",
-=======
-
->>>>>>> 82aa9ff2abf2d2d2507077938a1b0bbec462b95c
     "axios": "^1.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

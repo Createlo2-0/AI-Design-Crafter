@@ -135,6 +135,12 @@ export default function AssetTable() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+        <input
+          type="date"
+          className="w-full sm:w-60 px-4 py-2 rounded border border-cyber-border bg-cyber-bg text-neon-blue font-mono text-sm focus:outline-none focus:ring-2 focus:ring-neon-blue transition"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
+        />
       </div>
 
       {/* Table */}

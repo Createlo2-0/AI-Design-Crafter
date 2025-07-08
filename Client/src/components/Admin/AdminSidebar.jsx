@@ -49,23 +49,11 @@ export default function AdminSidebar() {
         aria-label="Toggle sidebar"
       >
         {open ? (
-          <svg
-            width="28"
-            height="28"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M6 6l16 16M6 22L22 6" />
           </svg>
         ) : (
-          <svg
-            width="28"
-            height="28"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+          <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M4 8h20M4 16h20" />
           </svg>
         )}

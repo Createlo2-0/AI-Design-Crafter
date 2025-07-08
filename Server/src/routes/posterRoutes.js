@@ -1,5 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const { generatePoster, saveFeedback } = require('../controllers/posterController');
+const authMiddleware = require('../middlewares/authMiddleware');
+
+router.post('/generate', authMiddleware, generatePoster);
+router.post('/feedback', authMiddleware, saveFeedback);
+
 const {
   createPoster,
   getAllPosters,
@@ -25,6 +31,5 @@ router.get("/user/:id", getAllPostersByUserId);
 router.get("/", getAllPosters);
 router.get("/count/ttc", totalPosterCount);
 router.get("/:id", getPosterById);
-
 
 module.exports = router;

@@ -115,18 +115,6 @@ const LoginForm = () => {
           />
           Login with Google
         </Button>
-        {/* <Button
-          type="button"
-          className="w-full bg-white/5 backdrop-blur-lg border-2 border-primary text-white px-4 py-3 transition-all duration-300 flex items-center justify-center gap-2"
-          onClick={handlePhoneLogin}
-        >
-          <img
-            src="https://www.svgrepo.com/show/230989/telephone-phone.svg"
-            alt="Phone"
-            className="w-5 h-5"
-          />
-          Login with Phone
-        </Button> */}
       </div>
     </div>
   );

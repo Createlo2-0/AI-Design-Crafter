@@ -6,13 +6,7 @@ const logger = require("../utils/logger");
 async function createPoster(req, res) {
   logger.info("[createPoster] Request by user:", req.body.userId);
   try {
-    const { prompt, style, userId, aspectRatio } = req.body;
-    if (!prompt) {
-      return res.status(400).json({ message: 'A prompt is required to generate a poster.' });
-    }
-    console.log(`Received request to generate poster with prompt: "${prompt}"`);
-    const simulatedImageUrl = `https://i.pravatar.cc/1024?u=${encodeURIComponent(prompt)}`;
-    const posterData = {
+    const {
       prompt,
       negativePrompt,
       style,
@@ -25,6 +19,7 @@ async function createPoster(req, res) {
       addWatermark,
       includeRaiReason,
       language,
+      userId
     } = req.body;
 
     if (!userId || !prompt) {

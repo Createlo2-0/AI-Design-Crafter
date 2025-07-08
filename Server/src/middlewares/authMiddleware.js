@@ -1,7 +1,7 @@
 const { auth } = require("../config/firebase");
 const logger = require("../utils/logger");
 
-const { admin } = require('../config/firebase');
+const { admin } = require("../config/firebase");
 
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -10,12 +10,15 @@ const authMiddleware = async (req, res, next) => {
     return res.status(401).json({ error: "No token provided" });
   }
 
-  const idToken = authHeader.split('Bearer ')[1];
+  const idToken = authHeader.split("Bearer ")[1];
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedToken;
-    logger.info("[verifyFirebaseToken] Token verified for user:", decodedToken.uid);
+    logger.info(
+      "[verifyFirebaseToken] Token verified for user:",
+      decodedToken.uid
+    );
     next();
   } catch (error) {
     logger.error("[verifyFirebaseToken] Invalid or expired token:", error);
