@@ -170,12 +170,6 @@ function GeneratorPage() {
     " Upscaling Quantum Pixels...",
     " Final Integrity Check...",
   ];
-  // const availableStyles = [
-  //   { value: "Anime", label: "Neo-Tokyo Anime" },
-  //   { value: "Photorealistic", label: "Hyper-Reality" },
-  //   { value: "Fantasy", label: "Mythic Constructs" },
-  //   { value: "Abstract", label: "Glitchwave Abstract" },
-  // ];
 
   const availableStyles = [
     { value: "photograph", label: "Photograph" },
@@ -595,7 +589,6 @@ function GeneratorPage() {
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  {/* Hidden anchor for direct download */}
                   <a
                     href={posterResult}
                     download={(() => {

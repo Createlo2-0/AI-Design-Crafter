@@ -14,7 +14,9 @@ if (!admin.apps.length) {
     console.log("Firebase Admin Initialized");
   } catch (error) {
     console.error("Firebase Admin Init Error:", error);
-    throw new Error("Failed to initialize Firebase Admin SDK: " + error.message);
+    throw new Error(
+      "Failed to initialize Firebase Admin SDK: " + error.message
+    );
   }
 }
 
