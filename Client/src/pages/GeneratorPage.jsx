@@ -193,16 +193,12 @@ function GeneratorPage() {
 
   const aspectRatios = [
     { value: "1:1", label: "1:1 Square" },
-    { value: "16:9", label: "16:9 Wide" },
     { value: "9:16", label: "9:16 Tall" },
+    { value: "16:9", label: "16:9 Wide" },
     { value: "4:3", label: "4:3 Standard" },
+    { value: "3:4", label: "3:4 Portrait" },
     { value: "3:2", label: "3:2 Landscape" },
-  ];
-  const availableSamplers = [
-    { value: "EulerA", label: "Euler A" },
-    { value: "DPM++2M", label: "DPM++ 2M Karras" },
-    { value: "UniPC", label: "UniPC" },
-    { value: "LCM", label: "LCM" },
+    { value: "2:3", label: "2:3 Portrait" },
   ];
 
   // --- Loading Message Animation ---
@@ -474,16 +470,7 @@ function GeneratorPage() {
                     onChange={(e) => setCfgScale(Number(e.target.value))}
                     helpText="Prompt conformity (e.g., 1.0-20.0)."
                   />
-                  <CyberButtonGroup
-                    label="Sampler Algorithm"
-                    id="sampler-selector"
-                    options={availableSamplers}
-                    selectedValue={sampler}
-                    onChange={(value) => {
-                      playClickSound();
-                      setSampler(value);
-                    }}
-                  />
+                  
                   <StyledInput
                     label="Dimensions"
                     id="dimensions"
