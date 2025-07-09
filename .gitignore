@@ -56,3 +56,5 @@ src/config/serviceAccountKey.json
 
 # Ignore Firebase Admin SDK service account keys
 **/serviceAccountKey.json
+
+Server/src/config/vertex-key.json

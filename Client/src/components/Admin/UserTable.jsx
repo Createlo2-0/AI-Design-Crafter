@@ -1,141 +1,130 @@
-import React, { useState, Fragment } from "react";
-
-const initialUsers = [
-  {
-    id: "1",
-    email: "admin@example.com",
-    role: "admin",
-    status: "Active",
-    joined: "2023-01-10",
-  },
-  {
-    id: "2",
-    email: "user@example.com",
-    role: "user",
-    status: "Inactive",
-    joined: "2023-03-22",
-  },
-];
+import React, { useState, useEffect, Fragment } from "react";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import API_BASE_URL from "../../utils/api";
 
 const ROLES = ["user", "admin"];
 const STATUSES = ["Active", "Inactive"];
 
+// --- Modal Component ---
+const ConfirmDeleteModal = ({ open, onConfirm, onCancel }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        className="bg-cyber-primary border-2 border-neon-pink rounded-xl shadow-2xl p-6 w-[90vw] max-w-xs sm:max-w-sm md:max-w-md text-center"
+      >
+        <h2 className="text-xl font-bold text-neon-pink mb-2 font-cyber">
+          Confirm User Removal
+        </h2>
+        <p className="mb-6 text-gray-300 font-mono">
+          Are you sure you want to remove this user? This action cannot be
+          undone.
+        </p>
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={onCancel}
+            className="px-5 py-1 rounded-full border-2 border-gray-400 text-gray-300 hover:bg-gray-700 transition"
+          >
+            No
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-5 py-1 rounded-full border-2 border-neon-pink text-neon-pink hover:bg-neon-pink hover:text-cyber-primary transition font-bold"
+          >
+            Yes
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+// --- End Modal Component ---
+
 export default function UserTable() {
   const [search, setSearch] = useState("");
-  const [currentUsers, setCurrentUsers] = useState(initialUsers);
+  const [currentUsers, setCurrentUsers] = useState([]);
   const [editingUserId, setEditingUserId] = useState(null);
   const [editedEmail, setEditedEmail] = useState("");
-  const [editedRole, setEditedRole] = ROLES.length > 0 ? useState(ROLES[0]) : useState("");
-  const [editedStatus, setEditedStatus] = STATUSES.length > 0 ? useState(STATUSES[0]) : useState("");
-
+  const [editedRole, setEditedRole] = useState(ROLES[0]);
+  const [editedStatus, setEditedStatus] = useState(STATUSES[0]);
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [newUserEmail, setNewUserEmail] = useState("");
-  const [newUserRole, setNewUserRole] = ROLES.length > 0 ? useState(ROLES[0]) : useState("user");
+  const [newUserRole, setNewUserRole] = useState(ROLES[0]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [alertMsg, setAlertMsg] = useState(null);
 
-  const handleCancelEdit = () => {
-    setEditingUserId(null);
-    setEditedEmail("");
-    setEditedRole(ROLES.length > 0 ? ROLES[0] : "user");
-    setEditedStatus(STATUSES.length > 0 ? STATUSES[0] : "Active");
-    console.log("Edit cancelled.");
-  };
-  
-  const handleCancelAddNewUser = () => {
-    setIsAddingUser(false);
-    setNewUserEmail("");
-    setNewUserRole(ROLES.length > 0 ? ROLES[0] : "user");
-  };
+  // Fetch users from backend API
+  useEffect(() => {
+    axios
+      .get(`${API_BASE_URL}/users`)
+      .then((res) => setCurrentUsers(res.data))
+      .catch(() => setCurrentUsers([]));
+  }, []);
 
-  const handleEditUser = (userId, userEmail, currentRole, currentStatus) => {
-    if (isAddingUser) {
-        handleCancelAddNewUser();
-    }
-    setEditingUserId(userId);
-    setEditedEmail(userEmail);
-    setEditedRole(currentRole);
-    setEditedStatus(currentStatus);
-    console.log(`Start editing User ID: ${userId}, Email: ${userEmail}, Role: ${currentRole}, Status: ${currentStatus}`);
+  // Show modal
+  const handleRemoveUser = (userId) => {
+    setDeleteId(userId);
+    setShowConfirm(true);
   };
 
-  const handleSaveEdit = (userIdToSave) => {
-    setCurrentUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userIdToSave
-          ? { ...user, email: editedEmail, role: editedRole, status: editedStatus }
-          : user
-      )
-    );
-    setEditingUserId(null);
-    console.log(`Saved changes for User ID: ${userIdToSave}, New Email: ${editedEmail}, New Role: ${editedRole}, New Status: ${editedStatus}`);
-    alert(`User ${userIdToSave} updated (simulated).`);
+  // Confirm delete
+  const confirmRemove = async () => {
+    if (!deleteId) return;
+    try {
+      await axios.delete(`${API_BASE_URL}/users/${deleteId}`);
+      setCurrentUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== deleteId)
+      );
+      setAlertMsg("User has been removed.");
+      setTimeout(() => setAlertMsg(null), 2500);
+    } catch (err) {
+      setAlertMsg("Failed to delete user.");
+      setTimeout(() => setAlertMsg(null), 2500);
+    }
+    setShowConfirm(false);
+    setDeleteId(null);
   };
 
-  const handleRemoveUser = (userId, userEmail) => {
-    if (editingUserId === userId) {
-      handleCancelEdit();
-    }
-    if (window.confirm(`Are you sure you want to remove user: ${userEmail} (ID: ${userId})? This will remove them from the current view.`)) {
-      setCurrentUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
-      console.log(`User ID: ${userId}, Email: ${userEmail} has been removed from the list (UI update).`);
-      alert(`User ${userEmail} (ID: ${userId}) has been removed from the list.\n\n(In a real application, a backend call would permanently delete the user.)`);
-    } else {
-      console.log(`User ${userId} removal was cancelled.`);
-    }
-  };
-  
-  const handleShowAddUserForm = () => {
-    if (editingUserId) {
-        handleCancelEdit();
-    }
-    setIsAddingUser(true);
-    setNewUserEmail("");
-    setNewUserRole(ROLES.length > 0 ? ROLES[0] : "user");
-  };
-
-  const handleSubmitNewUser = (e) => {
-    e.preventDefault();
-    if (!newUserEmail.trim()) {
-      alert("Email cannot be empty.");
-      return;
-    }
-    if (!/\S+@\S+\.\S+/.test(newUserEmail)) {
-        alert("Please enter a valid email address.");
-        return;
-    }
-    if (currentUsers.some(user => user.email.toLowerCase() === newUserEmail.trim().toLowerCase())) {
-        alert("A user with this email already exists.");
-        return;
-    }
-
-    const maxId = currentUsers.length > 0 
-        ? Math.max(...currentUsers.map(user => parseInt(user.id))) 
-        : 0;
-    const newUserId = (maxId + 1).toString();
-
-    const newUser = {
-      id: newUserId,
-      email: newUserEmail.trim(),
-      role: newUserRole,
-      status: "Active",
-      joined: new Date().toISOString().split("T")[0],
-    };
-
-    setCurrentUsers((prevUsers) => [...prevUsers, newUser]); 
-    handleCancelAddNewUser(); 
-    console.log("New user added:", newUser);
-    alert(`User ${newUser.email} added successfully with ID: ${newUserId}!`);
+  // Cancel delete
+  const cancelRemove = () => {
+    setShowConfirm(false);
+    setDeleteId(null);
   };
 
   const filteredUsers = currentUsers.filter(
     (user) =>
-      user.email.toLowerCase().includes(search.toLowerCase()) ||
-      user.role.toLowerCase().includes(search.toLowerCase()) ||
-      user.status.toLowerCase().includes(search.toLowerCase()) ||
-      user.id.toLowerCase().includes(search.toLowerCase())
+      (user.email && user.email.toLowerCase().includes(search.toLowerCase())) ||
+      (user.role && user.role.toLowerCase().includes(search.toLowerCase())) ||
+      (user.status &&
+        user.status.toLowerCase().includes(search.toLowerCase())) ||
+      (user.id && user.id.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
     <div className="w-full bg-cyber-bg-darker border border-cyber-border rounded-xl shadow-lg p-4">
+      {/* Alert Message */}
+      {alertMsg && (
+        <div className="mb-4 p-3 rounded bg-neon-pink/20 text-neon-pink font-mono text-center border border-neon-pink transition">
+          {alertMsg}
+        </div>
+      )}
+
+      {/* Custom Confirm Modal */}
+      <AnimatePresence>
+        {showConfirm && (
+          <ConfirmDeleteModal
+            open={showConfirm}
+            onConfirm={confirmRemove}
+            onCancel={cancelRemove}
+          />
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <input
           type="text"
@@ -143,107 +132,88 @@ export default function UserTable() {
           className="px-3 py-2 rounded border border-cyber-border bg-cyber-bg text-neon-blue font-mono focus:outline-none focus:ring-2 focus:ring-neon-blue transition"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          disabled={isAddingUser || editingUserId !== null}
+          disabled={isAddingUser}
         />
-        <button
-          onClick={handleShowAddUserForm}
-          className="px-4 py-2 bg-neon-blue text-cyber-bg rounded font-bold hover:bg-neon-pink transition-colors duration-200 text-sm whitespace-nowrap"
-          disabled={isAddingUser || editingUserId !== null}
-        >
-          Add New User
-        </button>
       </div>
 
-      {isAddingUser && (
-        <form onSubmit={handleSubmitNewUser} className="mb-6 p-4 border border-cyber-border rounded-lg bg-cyber-bg-lighter">
-          <h3 className="text-lg font-cyber text-neon-blue mb-3">Add New User</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label htmlFor="newUserEmail" className="block text-sm font-mono text-gray-400 mb-1">Email:</label>
-              <input
-                type="email"
-                id="newUserEmail"
-                value={newUserEmail}
-                onChange={(e) => setNewUserEmail(e.target.value)}
-                className="w-full px-3 py-2 rounded border border-cyber-border bg-cyber-bg-dark text-neon-blue font-mono focus:outline-none focus:ring-2 focus:ring-neon-blue"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="newUserRole" className="block text-sm font-mono text-gray-400 mb-1">Role:</label>
-              <select
-                id="newUserRole"
-                value={newUserRole}
-                onChange={(e) => setNewUserRole(e.target.value)}
-                className="w-full px-3 py-2 rounded border border-cyber-border bg-neon-blue text-cyber-bg font-mono focus:outline-none focus:ring-2 focus:ring-neon-blue capitalize"
-              >
-                {ROLES.map(roleOption => (
-                  <option
-                    key={roleOption}
-                    value={roleOption}
-                    className="capitalize bg-white text-gray-800"
-                  >
-                    {roleOption}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <p className="text-sm font-mono text-gray-400 mb-4">
-            Default Status: <span className="text-neon-green">Active</span> | Joined Date: <span className="text-neon-blue">Auto-generated</span>
-          </p>
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={handleCancelAddNewUser}
-              className="px-3 py-2 bg-gray-500 text-white rounded text-xs font-bold hover:bg-gray-600 transition-colors duration-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-3 py-2 bg-neon-blue text-cyber-bg rounded text-xs font-bold hover:bg-neon-pink transition-colors duration-200"
-            >
-              Save User
-            </button>
-          </div>
-        </form>
-      )}
-
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[700px] bg-cyber-bg-darker rounded">
+        <table className="w-full min-w-[1200px] bg-cyber-bg-darker rounded">
           <thead>
             <tr className="text-neon-blue font-cyber text-left">
-              <th className="p-3 border-b border-cyber-border">User ID</th>
+              <th className="p-3 border-b border-cyber-border">#</th>
+              <th className="p-3 border-b border-cyber-border">Avatar</th>
+              <th className="p-3 border-b border-cyber-border">Display Name</th>
               <th className="p-3 border-b border-cyber-border">Email</th>
+              <th className="p-3 border-b border-cyber-border">Phone</th>
+              <th className="p-3 border-b border-cyber-border">Provider</th>
               <th className="p-3 border-b border-cyber-border">Role</th>
               <th className="p-3 border-b border-cyber-border">Status</th>
-              <th className="p-3 border-b border-cyber-border">Joined</th>
               <th className="p-3 border-b border-cyber-border">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center text-gray-400 py-6 font-mono">
+                <td
+                  colSpan={12}
+                  className="text-center text-gray-400 py-6 font-mono"
+                >
                   No users found.
                 </td>
               </tr>
             ) : (
-              filteredUsers.map((user) => (
+              filteredUsers.map((user, idx) => (
                 <Fragment key={user.id}>
                   <tr
                     className={`text-gray-300 font-mono hover:bg-cyber-bg transition ${
                       editingUserId === user.id ? "hidden" : ""
                     }`}
                   >
-                    <td className="p-3 border-b border-cyber-border">{user.id}</td>
-                    <td className="p-3 border-b border-cyber-border">{user.email}</td>
-                    <td className="p-3 border-b border-cyber-border capitalize">{user.role}</td>
+                    <td className="p-3 border-b border-cyber-border">
+                      {idx + 1}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border">
+                      {user.avatarUrl ? (
+                        <img
+                          src={user.avatarUrl}
+                          alt={user.displayName || user.email}
+                          className="w-10 h-10 rounded-full object-cover border border-cyber-border"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-cyber-bg border border-cyber-border text-neon-blue font-bold text-lg">
+                          {(
+                            user.displayName?.[0] ||
+                            user.email?.[0] ||
+                            "U"
+                          ).toUpperCase()}
+                        </div>
+                      )}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border">
+                      {user.displayName || (
+                        <span className="text-cyber-border">N/A</span>
+                      )}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border">
+                      {user.email}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border">
+                      {user.phoneNumber || (
+                        <span className="text-cyber-border">N/A</span>
+                      )}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border">
+                      {user.provider || (
+                        <span className="text-cyber-border">N/A</span>
+                      )}
+                    </td>
+                    <td className="p-3 border-b border-cyber-border capitalize">
+                      {user.role}
+                    </td>
                     <td className="p-3 border-b border-cyber-border">
                       <span
                         className={`px-2 py-1 rounded text-xs font-bold ${
-                          user.status === "Active"
+                          user.status === "active"
                             ? "bg-neon-green/20 text-neon-green"
                             : "bg-neon-pink/20 text-neon-pink"
                         }`}
@@ -251,78 +221,16 @@ export default function UserTable() {
                         {user.status}
                       </span>
                     </td>
-                    <td className="p-3 border-b border-cyber-border">{user.joined}</td>
                     <td className="p-3 border-b border-cyber-border">
                       <button
-                        onClick={() => handleEditUser(user.id, user.email, user.role, user.status)}
-                        className="px-2 py-1 bg-neon-blue text-cyber-bg rounded text-xs font-bold hover:bg-neon-pink transition-colors duration-200 mr-2"
-                        disabled={(editingUserId !== null && editingUserId !== user.id) || isAddingUser}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleRemoveUser(user.id, user.email)}
+                        onClick={() => handleRemoveUser(user.id)}
                         className="px-2 py-1 bg-neon-pink text-white rounded text-xs font-bold hover:bg-neon-blue transition-colors duration-200"
-                        disabled={editingUserId !== null || isAddingUser}
+                        disabled={isAddingUser}
                       >
                         Remove
                       </button>
                     </td>
                   </tr>
-                  {editingUserId === user.id && (
-                    <tr className="bg-cyber-bg-lighter text-gray-300 font-mono">
-                      <td className="p-3 border-b border-cyber-border">{user.id}</td>
-                      <td className="p-3 border-b border-cyber-border">
-                        <input
-                          type="email"
-                          value={editedEmail}
-                          onChange={(e) => setEditedEmail(e.target.value)}
-                          className="w-full px-2 py-1 rounded border border-cyber-border bg-cyber-bg-dark text-neon-blue font-mono focus:outline-none focus:ring-2 focus:ring-neon-blue"
-                        />
-                      </td>
-                      <td className="p-3 border-b border-cyber-border">
-                        <select
-                          value={editedRole}
-                          onChange={(e) => setEditedRole(e.target.value)}
-                          className="w-full px-2 py-1 rounded border border-cyber-border bg-neon-blue text-cyber-bg font-mono focus:outline-none focus:ring-2 focus:ring-neon-blue capitalize"
-                        >
-                          {ROLES.map(roleOption => (
-                            <option key={roleOption} value={roleOption} className="capitalize bg-white text-gray-800">
-                              {roleOption}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="p-3 border-b border-cyber-border">
-                        <select
-                          value={editedStatus}
-                          onChange={(e) => setEditedStatus(e.target.value)}
-                          className="w-full px-2 py-1 rounded border border-cyber-border bg-neon-blue text-cyber-bg font-mono focus:outline-none focus:ring-2 focus:ring-neon-blue capitalize" // <-- MODIFIED STYLE HERE
-                        >
-                          {STATUSES.map(statusOption => (
-                            <option key={statusOption} value={statusOption} className="capitalize bg-white text-gray-800">
-                              {statusOption}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="p-3 border-b border-cyber-border">{user.joined}</td>
-                      <td className="p-3 border-b border-cyber-border">
-                        <button
-                          onClick={() => handleSaveEdit(user.id)}
-                          className="px-2 py-1 bg-neon-green text-cyber-bg-dark rounded text-xs font-bold hover:bg-green-400 transition-colors duration-200 mr-2"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="px-2 py-1 bg-gray-500 text-white rounded text-xs font-bold hover:bg-gray-600 transition-colors duration-200"
-                        >
-                          Cancel
-                        </button>
-                      </td>
-                    </tr>
-                  )}
                 </Fragment>
               ))
             )}

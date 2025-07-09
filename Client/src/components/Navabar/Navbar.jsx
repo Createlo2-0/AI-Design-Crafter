@@ -29,16 +29,74 @@ const navLinkClass = ({ isActive }) =>
   hover:text-neon-blue
   `;
 
+// --- Modal Component ---
+const ConfirmLogoutModal = ({ open, onConfirm, onCancel }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        className="bg-cyber-primary border-2 border-neon-blue rounded-xl shadow-2xl p-6 w-[90vw] max-w-xs sm:max-w-sm md:max-w-md text-center"
+      >
+        <h2 className="text-xl font-bold text-neon-blue mb-2">
+          Confirm Logout
+        </h2>
+        <p className="mb-6 text-gray-300">Are you sure you want to logout?</p>
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={onCancel}
+            className="px-5 py-1 rounded-full border-2 border-gray-400 text-gray-300 hover:bg-gray-700 transition"
+          >
+            No
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-5 py-1 rounded-full border-2 border-neon-yellow text-neon-yellow hover:bg-neon-yellow hover:text-cyber-primary transition font-bold"
+          >
+            Yes
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+// --- End Modal Component ---
+
 const Navbar = () => {
-  // Remove AuthContext, use mock user for UI only
-  const [currentUser, setCurrentUser] = useState(null); // or mock user object for demo
-  const [loadingAuth, setLoadingAuth] = useState(false);
-  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
+  const navigate = useNavigate();
 
-  // Dummy logout handler for UI only
+  // Modal state
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // Check login status from localStorage
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  });
+
+  // Listen for login/logout changes in localStorage
+  useEffect(() => {
+    const syncUser = () => {
+      try {
+        setCurrentUser(JSON.parse(localStorage.getItem("user")));
+      } catch {
+        setCurrentUser(null);
+      }
+    };
+    window.addEventListener("storage", syncUser);
+    return () => window.removeEventListener("storage", syncUser);
+  }, []);
+
   const handleLogout = async () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
     setCurrentUser(null);
     navigate("/login");
   };
@@ -95,7 +153,6 @@ const Navbar = () => {
           </NavLink>
         ))}
       {!currentUser &&
-        !loadingAuth &&
         guestLinks.map((link) => (
           <NavLink
             key={link.to}
@@ -113,10 +170,7 @@ const Navbar = () => {
           className="ml-0 lg:ml-4"
         >
           <Button
-            onClick={() => {
-              handleLogout();
-              if (onClick) onClick();
-            }}
+            onClick={() => setShowLogoutModal(true)}
             className="px-5 py-1 font-bold rounded-full border-2  border-neon-yellow text-neon-yellow bg-transparent transition-all duration-200 tracking-widest text-[18px]
               hover:bg-transparent hover:text-neon-yellow hover:shadow-[0_0_16px_2px_rgba(255,230,0,0.3)] focus:outline-none focus:ring-2 focus:ring-neon-yellow focus:ring-offset-2"
           >
@@ -146,49 +200,63 @@ const Navbar = () => {
   }, [menuOpen]);
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 120, damping: 15 }}
-      className="bg-cyber-primary/80 sticky backdrop-blur-sm p-3 sm:p-4 text-gray-300 shadow-lg border-b-2 border-neon-blue/70 top-0 z-50"
-    >
-      <div className="container mx-auto flex justify-between items-center px-2 sm:px-4">
-        {/* Logo */}
-        <NavLink
-          to="/"
-          className="text-2xl font-cyber text-neon-pink hover:scale-105 hover:text-white transition-all duration-200"
-          style={{ letterSpacing: "4px" }}
-        >
-          Design<span className="text-neon-blue">Crafter.AI</span>
-        </NavLink>
+    <>
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 120, damping: 15 }}
+        className="bg-cyber-primary/80 sticky backdrop-blur-sm p-3 sm:p-4 text-gray-300 shadow-lg border-b-2 border-neon-blue/70 top-0 z-50"
+      >
+        <div className="container mx-auto flex justify-between items-center px-2 sm:px-4">
+          {/* Logo */}
+          <NavLink
+            to="/"
+            className="flex items-center gap-2 hover:scale-105 transition-all duration-200"
+            style={{ letterSpacing: "4px" }}
+          >
+            <img
+              src="/lg2.png"
+              alt="DesignCrafter.AI Logo"
+              className="h-[62px] w-auto object-cover"
+            />
+          </NavLink>
 
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-3 sm:gap-5 md:gap-8 ml-2">
-          <NavLinks />
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex items-center gap-3 sm:gap-5 md:gap-8 ml-2">
+            <NavLinks />
+          </div>
+
+          {/* Hamburger */}
+          <Hamburger open={menuOpen} toggle={() => setMenuOpen((v) => !v)} />
         </div>
 
-        {/* Hamburger */}
-        <Hamburger open={menuOpen} toggle={() => setMenuOpen((v) => !v)} />
-      </div>
-
-      {/* Mobile/Tablet Dropdown */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            ref={menuRef}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden w-full bg-cyber-primary/90 backdrop-blur-md shadow-inner z-40"
-          >
-            <div className="flex flex-col items-center gap-4 py-6 px-4 max-h-[90vh] overflow-y-auto">
-              <NavLinks onClick={() => setMenuOpen(false)} />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+        {/* Mobile/Tablet Dropdown */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              ref={menuRef}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="lg:hidden w-full bg-cyber-primary/90 backdrop-blur-md shadow-inner z-40"
+            >
+              <div className="flex flex-col items-center gap-4 py-6 px-4 max-h-[90vh] overflow-y-auto">
+                <NavLinks onClick={() => setMenuOpen(false)} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+      <ConfirmLogoutModal
+        open={showLogoutModal}
+        onConfirm={() => {
+          setShowLogoutModal(false);
+          handleLogout();
+        }}
+        onCancel={() => setShowLogoutModal(false)}
+      />
+    </>
   );
 };
 

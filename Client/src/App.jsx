@@ -15,10 +15,16 @@ import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 
 import Navbar from "./components/Navabar/Navbar";
 import Footer from "./components/Footer/Footer";
+import ProtectedRoute from "./ProtectedRoute";
 
-function ProtectedRoute({ children }) {
+// --- PublicRoute component ---
+const PublicRoute = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
   return children;
-}
+};
 
 const AnimatedPage = ({ children }) => {
   const pageVariants = {
@@ -44,7 +50,6 @@ function App() {
   const location = useLocation();
   const lenisRef = useRef(null);
 
-  // Initialize Lenis for smooth scrolling
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.8,
@@ -66,7 +71,6 @@ function App() {
     };
   }, []);
 
-  // Reset scroll and resize Lenis on route change
   useEffect(() => {
     if (lenisRef.current) {
       lenisRef.current.scrollTo(0, { immediate: true });
@@ -74,14 +78,12 @@ function App() {
     }
   }, [location.pathname]);
 
-  // Check if current route is admin
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <>
       {!isAdminRoute && <Navbar />}
       <div className="flex flex-col min-h-screen font-sans">
-        {/* Main Content */}
         <main className="flex-1 w-full mx-auto p-6 relative z-10">
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
@@ -97,26 +99,32 @@ function App() {
               <Route
                 path="/admin/*"
                 element={
-                  <AnimatedPage>
-                    <AdminDashboard />
-                  </AnimatedPage>
+                  <ProtectedRoute requiredRole="admin">
+                    <AnimatedPage>
+                      <AdminDashboard />
+                    </AnimatedPage>
+                  </ProtectedRoute>
                 }
               />
 
               <Route
                 path="/login"
                 element={
-                  <AnimatedPage>
-                    <LoginPage />
-                  </AnimatedPage>
+                  <PublicRoute>
+                    <AnimatedPage>
+                      <LoginPage />
+                    </AnimatedPage>
+                  </PublicRoute>
                 }
               />
               <Route
                 path="/signup"
                 element={
-                  <AnimatedPage>
-                    <SignupPage />
-                  </AnimatedPage>
+                  <PublicRoute>
+                    <AnimatedPage>
+                      <SignupPage />
+                    </AnimatedPage>
+                  </PublicRoute>
                 }
               />
               <Route

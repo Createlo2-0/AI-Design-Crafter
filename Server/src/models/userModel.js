@@ -3,8 +3,9 @@ class UserModel {
     id,
     email,
     displayName = "",
-    role = "user",
     avatarUrl = "",
+    phoneNumber = "",
+    role = "user",
     status = "active",
     createdAt = new Date(),
     lastLogin = new Date(),
@@ -12,9 +13,10 @@ class UserModel {
     this.id = id;
     this.email = email;
     this.displayName = displayName;
-    this.role = role; // "user" or "admin"
     this.avatarUrl = avatarUrl;
-    this.status = status; // "active" or "inactive"
+    this.phoneNumber = phoneNumber;
+    this.role = role;
+    this.status = status;
     this.createdAt = createdAt;
     this.lastLogin = lastLogin;
   }

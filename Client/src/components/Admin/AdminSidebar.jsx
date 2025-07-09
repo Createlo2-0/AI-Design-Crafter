@@ -1,5 +1,7 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import API_BASE_URL from "../../utils/api";
+import axios from "axios";
 
 const links = [
   { to: "/admin", label: "Dashboard" },
@@ -9,7 +11,28 @@ const links = [
 
 export default function AdminSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [adminName, setAdminName] = useState("Admin");
+
+  // Fetch admin info from getUser API
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id) {
+      axios
+        .get(`${API_BASE_URL}/users/${user.id}`)
+        .then((res) => {
+          setAdminName(res.data.name || res.data.email || "Admin");
+        })
+        .catch(() => setAdminName("Admin"));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    navigate("/login");
+  };
 
   const sidebarBg = "backdrop-blur-xl bg-cyber-bg/80";
   const activeLink =
@@ -82,7 +105,9 @@ export default function AdminSidebar() {
           </nav>
 
           <div className="mt-auto pt-10 pb-4 px-5 text-xs text-[#a5b4fc]/70 text-center font-mono tracking-wide">
-            <span className="text-[#60a5fa] font-bold">Welcome, Admin!</span>
+            <span className="text-[#60a5fa] font-bold">
+              Welcome, {adminName}!
+            </span>
             <br />
             &copy; {new Date().getFullYear()}{" "}
             <span className="text-[#2563eb]">Createlo</span>
