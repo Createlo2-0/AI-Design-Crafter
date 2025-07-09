@@ -215,7 +215,7 @@ const Navbar = () => {
             style={{ letterSpacing: "4px" }}
           >
             <img
-              src="/lg2.png"
+              src="/lg.png"
               alt="DesignCrafter.AI Logo"
               className="h-[62px] w-auto object-cover"
             />
