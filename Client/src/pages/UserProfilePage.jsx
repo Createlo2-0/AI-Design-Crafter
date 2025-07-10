@@ -497,52 +497,60 @@ function UserProfilePage() {
       <AnimatePresence>
         {isModalOpen && selectedImage && (
           <Modal isOpen={isModalOpen} onClose={closeModal}>
-            <Card
-              image={selectedImage.imageUrl}
-              title={
-                <span className="text-lg sm:text-xl font-cyber text-neon-pink uppercase tracking-wide">
-                  {selectedImage.prompt}
-                </span>
-              }
-              className="w-full max-w-md mx-auto bg-cyber-bg/40 p-0 border border-cyber-border/30 h-auto"
+            <div
+              className="flex flex-col md:flex-row w-full max-w-4xl mx-auto bg-cyber-bg/40 border border-cyber-border/30 rounded-2xl overflow-hidden"
+              style={{ maxHeight: "90vh", minHeight: "320px" }}
             >
-              <div className="font-mono text-xs sm:text-sm text-gray-300 space-y-3 p-3">
-                <p>
-                  <strong className="text-neon-green/80 w-24 inline-block">
-                    STYLE:
-                  </strong>{" "}
-                  {selectedImage.style}
-                </p>
-                <p>
-                  <strong className="text-neon-green/80 w-24 inline-block">
-                    SEED:
-                  </strong>{" "}
-                  {selectedImage.seed || "N/A"}
-                </p>
-                <p>
-                  <strong className="text-neon-green/80 w-24 inline-block">
-                    DIMENSIONS:
-                  </strong>{" "}
-                  {selectedImage.dimensions || "N/A"}
-                </p>
-                <div>
-                  <strong className="text-neon-green/80 block mb-1">
-                    PROMPT DIRECTIVE:
-                  </strong>
-                  <p className="text-[10px] sm:text-xs text-gray-400 italic leading-relaxed bg-cyber-bg-darker/50 p-2 border border-cyber-border/20 rounded-md">
-                    {selectedImage.prompt}
-                  </p>
-                </div>
+              {/* Image Section */}
+              <div className="flex-1 flex items-center justify-center bg-cyber-bg-darker min-h-[220px] max-h-[90vh]">
+                <img
+                  src={selectedImage.imageUrl}
+                  alt={selectedImage.prompt}
+                  className="w-full h-full object-contain"
+                  style={{ background: "#181c2f", maxHeight: "90vh" }}
+                />
               </div>
-              <Button
-                onClick={closeModal}
-                variant="outline"
-                size="small"
-                className="mt-4 self-center font-mono text-neon-yellow hover:text-cyber-bg border-2 border-neon-yellow hover:bg-neon-yellow px-4 py-2 text-xs sm:text-sm transition-all duration-200 rounded-md hover:shadow-neon-lg-green"
-              >
-                CLOSE DATAVIEW
-              </Button>
-            </Card>
+              {/* Details Section */}
+              <div className="flex-1 p-6 flex flex-col justify-center overflow-y-auto">
+                <h2 className="font-cyber text-2xl sm:text-3xl text-neon-pink uppercase tracking-wide text-center mb-4 break-words">
+                  {selectedImage.prompt}
+                </h2>
+                <div className="font-mono text-base sm:text-lg text-gray-300 space-y-2 w-full max-w-lg mx-auto">
+                  <div className="flex flex-wrap justify-between gap-4">
+                    <span>
+                      <strong className="text-neon-green/80">STYLE:</strong>{" "}
+                      {selectedImage.style}
+                    </span>
+                    <span>
+                      <strong className="text-neon-green/80">SEED:</strong>{" "}
+                      {selectedImage.seed || "N/A"}
+                    </span>
+                    <span>
+                      <strong className="text-neon-green/80">
+                        DIMENSIONS:
+                      </strong>{" "}
+                      {selectedImage.dimensions || "N/A"}
+                    </span>
+                  </div>
+                  <div className="mt-4">
+                    <strong className="text-neon-green/80 block mb-1">
+                      PROMPT DIRECTIVE:
+                    </strong>
+                    <p className="text-xs sm:text-sm text-gray-400 italic leading-relaxed bg-cyber-bg-darker/50 p-2 border border-cyber-border/20 rounded-md break-words">
+                      {selectedImage.prompt}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={closeModal}
+                  variant="outline"
+                  size="medium"
+                  className="mt-6 self-center font-mono text-neon-yellow hover:text-cyber-bg border-2 border-neon-yellow hover:bg-neon-yellow px-6 py-2 text-base transition-all duration-200 rounded-md hover:shadow-neon-lg-green"
+                >
+                  CLOSE DATAVIEW
+                </Button>
+              </div>
+            </div>
           </Modal>
         )}
       </AnimatePresence>
