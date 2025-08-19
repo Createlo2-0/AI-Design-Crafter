@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CyberButtonGroup from "../components/Common/CyberButtonGroup";
 import {
@@ -91,48 +91,82 @@ const ChevronIcon = ({ isOpen }) => (
   </motion.svg>
 );
 
-// --- API call to backend ---
-async function generatePosterViaAPI({
-  prompt,
-  negativePrompt,
-  style,
-  aspectRatio,
-  seed,
-  steps,
-  cfgScale,
-  sampler,
-  dimensions,
-  metadata,
-}) {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user || !user.id) throw new Error("User not logged in.");
 
-  const payload = {
-    userId: user.id,
-    prompt,
-    negativePrompt,
-    style,
-    aspectRatio,
-    seed,
-    steps,
-    cfgScale,
-    sampler,
-    dimensions,
-    metadata,
-  };
+const languageOptions = [
+  { value: "English", label: "English" },
+  { value: "Hindi", label: "Hindi (हिन्दी)" },
+  { value: "Bengali", label: "Bengali (বাংলা)" },
+  { value: "Tamil", label: "Tamil (தமிழ்)" },
+  { value: "Telugu", label: "Telugu (తెలుగు)" },
+  { value: "Marathi", label: "Marathi (मराठी)" },
+  { value: "Gujarati", label: "Gujarati (ગુજરાતી)" },
+  { value: "Kannada", label: "Kannada (ಕನ್ನಡ)" },
+  { value: "Malayalam", label: "Malayalam (മലയാളം)" },
+  { value: "Punjabi", label: "Punjabi (ਪੰਜਾਬੀ)" },
+  { value: "Urdu", label: "Urdu (اردو)" },
+  { value: "Odia", label: "Odia (ଓଡ଼ିଆ)" },
+  { value: "Assamese", label: "Assamese (অসমীয়া)" },
+  { value: "Nepali", label: "Nepali (नेपाली)" },
+  { value: "Sinhala", label: "Sinhala (සිංහල)" },
+  { value: "Sanskrit", label: "Sanskrit (संस्कृतम्)" },
+  { value: "Konkani", label: "Konkani (कोंकणी)" },
+  { value: "Dogri", label: "Dogri (डोगरी)" },
+  { value: "Kashmiri", label: "Kashmiri (کٲشُر)" },
+  { value: "Santali", label: "Santali (ᱥᱟᱱᱛᱟᱲᱤ)" },
+  { value: "Maithili", label: "Maithili (मैथिली)" },
+  { value: "Bodo", label: "Bodo (बर' / बड़ो)" },
+  { value: "Chinese", label: "Chinese (中文)" },
+  { value: "Japanese", label: "Japanese (日本語)" },
+  { value: "Korean", label: "Korean (한국어)" },
+  { value: "Arabic", label: "Arabic (العربية)" },
+  { value: "Russian", label: "Russian (Русский)" },
+  { value: "French", label: "French (Français)" },
+  { value: "German", label: "German (Deutsch)" },
+  { value: "Spanish", label: "Spanish (Español)" },
+  { value: "Italian", label: "Italian (Italiano)" },
+  { value: "Portuguese", label: "Portuguese (Português)" },
+  { value: "Turkish", label: "Turkish (Türkçe)" },
+  { value: "Vietnamese", label: "Vietnamese (Tiếng Việt)" },
+  { value: "Thai", label: "Thai (ไทย)" },
+  // Add more as needed
+];
 
-  const response = await fetch(`${API_BASE_URL}/posters/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || "Failed to generate image.");
-  }
-  return await response.json();
-}
+const fontOptions = [
+  { value: "Arial", label: "Arial" },
+  { value: "Helvetica", label: "Helvetica" },
+  { value: "Times New Roman", label: "Times New Roman" },
+  { value: "Georgia", label: "Georgia" },
+  { value: "Courier New", label: "Courier New" },
+  { value: "Verdana", label: "Verdana" },
+  { value: "Tahoma", label: "Tahoma" },
+  { value: "Trebuchet MS", label: "Trebuchet MS" },
+  { value: "Impact", label: "Impact" },
+  { value: "Comic Sans MS", label: "Comic Sans MS" },
+  { value: "Roboto", label: "Roboto" },
+  { value: "Open Sans", label: "Open Sans" },
+  { value: "Lato", label: "Lato" },
+  { value: "Montserrat", label: "Montserrat" },
+  { value: "Oswald", label: "Oswald" },
+  { value: "Noto Sans", label: "Noto Sans" },
+  { value: "Merriweather", label: "Merriweather" },
+  { value: "Dancing Script", label: "Dancing Script" },
+  { value: "Pacifico", label: "Pacifico" },
+  { value: "Devanagari", label: "Devanagari (देवनागरी)" },
+  { value: "Gurmukhi", label: "Gurmukhi (ਗੁਰਮੁਖੀ)" },
+  { value: "Bengali", label: "Bengali (বাংলা)" },
+  { value: "Gujarati", label: "Gujarati (ગુજરાતી)" },
+  { value: "Tamil", label: "Tamil (தமிழ்)" },
+  { value: "Telugu", label: "Telugu (తెలుగు)" },
+  { value: "Kannada", label: "Kannada (ಕನ್ನಡ)" },
+  { value: "Malayalam", label: "Malayalam (മലയാളം)" },
+  { value: "Oriya", label: "Oriya (ଓଡ଼ିଆ)" },
+  { value: "Sinhala", label: "Sinhala (සිංහල)" },
+  { value: "Arabic", label: "Arabic (العربية)" },
+  { value: "Chinese", label: "Chinese (中文字体)" },
+  { value: "Japanese", label: "Japanese (日本語フォント)" },
+  { value: "Korean", label: "Korean (한국어 폰트)" },
+  // Add more as needed
+];
 
 // --- Main GeneratorPage ---
 function GeneratorPage() {
@@ -147,9 +181,17 @@ function GeneratorPage() {
   const [cfgScale, setCfgScale] = useState(7.5);
   const [sampler, setSampler] = useState("EulerA");
   const [dimensions, setDimensions] = useState("");
-  // Metadata fields
   const [campaign, setCampaign] = useState("");
   const [priority, setPriority] = useState("");
+  const [language, setLanguage] = useState("English");
+  const [fontStyle, setFontStyle] = useState("Arial");
+
+  // --- New fields for accuracy ---
+  const [posterType, setPosterType] = useState("");
+  const [occasion, setOccasion] = useState("");
+  const [targetAudience, setTargetAudience] = useState("");
+  const [colorTheme, setColorTheme] = useState("");
+  const [mainText, setMainText] = useState("");
 
   // --- Process State ---
   const [loading, setLoading] = useState(false);
@@ -231,13 +273,32 @@ function GeneratorPage() {
       cfgScale: parseFloat(cfgScale),
       sampler,
       dimensions,
+      language,
+      fontStyle,
+      posterType,
+      occasion,
+      targetAudience,
+      colorTheme,
+      mainText,
       metadata: {
         campaign: campaign.trim(),
         priority: priority.trim(),
       },
     };
     try {
-      const result = await generatePosterViaAPI(generationParams);
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.id) throw new Error("User not logged in.");
+      const payload = { userId: user.id, ...generationParams };
+      const response = await fetch(`${API_BASE_URL}/posters/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Failed to generate image.");
+      }
+      const result = await response.json();
       if (result && (result.imageUrl || result.url)) {
         setPosterResult(result.imageUrl || result.url);
       } else {
@@ -385,6 +446,84 @@ function GeneratorPage() {
               required
             />
 
+            {/* --- New accuracy fields --- */}
+            <StyledInput
+              label="POSTER TYPE"
+              id="posterType"
+              placeholder="e.g., Festival Greeting Card, Event, Product, Announcement"
+              value={posterType}
+              onChange={(e) => setPosterType(e.target.value)}
+              helpText="Type of poster (e.g., event, festival, greeting, product, etc.)"
+              required
+            />
+            <StyledInput
+              label="OCCASION / FESTIVAL"
+              id="occasion"
+              placeholder="e.g., Diwali, New Year, Sale"
+              value={occasion}
+              onChange={(e) => setOccasion(e.target.value)}
+              helpText="Occasion or festival for the poster"
+              required
+            />
+            <StyledInput
+              label="TARGET AUDIENCE"
+              id="targetAudience"
+              placeholder="e.g., Kids, Adults, Business, All"
+              value={targetAudience}
+              onChange={(e) => setTargetAudience(e.target.value)}
+              helpText="Who is this poster for?"
+            />
+            <StyledInput
+              label="COLOR THEME"
+              id="colorTheme"
+              placeholder="e.g., Vibrant, Pastel, Traditional, Neon"
+              value={colorTheme}
+              onChange={(e) => setColorTheme(e.target.value)}
+              helpText="Preferred color theme"
+            />
+            <StyledInput
+              label="MAIN TEXT TO DISPLAY"
+              id="mainText"
+              placeholder="e.g., शुभ दीपावली, Happy Diwali, Sale Now On!"
+              value={mainText}
+              onChange={(e) => setMainText(e.target.value)}
+              helpText="Main text or slogan to appear on the poster"
+            />
+
+            {/* --- Language and Font Style Fields --- */}
+            <div className="mb-6">
+              <label className="block text-neon-green text-lg font-semibold mb-2 uppercase">
+                Language
+              </label>
+              <select
+                className="font-mono w-full bg-cyber-bg-darker/80 border-2 border-cyber-border/50 focus:border-neon-pink focus:ring-1 focus:ring-neon-pink p-3 text-gray-200 rounded-sm shadow-inner transition-all duration-200"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+              >
+                {languageOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-6">
+              <label className="block text-neon-green text-lg font-semibold mb-2 uppercase">
+                Font Style
+              </label>
+              <select
+                className="font-mono w-full bg-cyber-bg-darker/80 border-2 border-cyber-border/50 focus:border-neon-pink focus:ring-1 focus:ring-neon-pink p-3 text-gray-200 rounded-sm shadow-inner transition-all duration-200"
+                value={fontStyle}
+                onChange={(e) => setFontStyle(e.target.value)}
+              >
+                {fontOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="grid grid-cols-1 gap-0 mb-0">
               <CyberButtonGroup
                 label="CHOOSE YOUR STYLE"
@@ -464,7 +603,6 @@ function GeneratorPage() {
                     onChange={(e) => setCfgScale(Number(e.target.value))}
                     helpText="Prompt conformity (e.g., 1.0-20.0)."
                   />
-                  
                   <StyledInput
                     label="Dimensions"
                     id="dimensions"

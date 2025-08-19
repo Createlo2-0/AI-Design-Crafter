@@ -19,6 +19,12 @@ async function createPoster(req, res) {
       addWatermark,
       includeRaiReason,
       language,
+      fontStyle,
+      posterType,
+      occasion,
+      targetAudience,
+      colorTheme,
+      mainText,
       userId,
     } = req.body;
 
@@ -37,7 +43,14 @@ async function createPoster(req, res) {
       addWatermark,
       includeRaiReason,
       language,
+      fontStyle,
       style,
+      posterType,
+      occasion,
+      targetAudience,
+      colorTheme,
+      mainText,
+      metadata,
     });
 
     // 2. Upload to GCS and get public URL
@@ -56,6 +69,13 @@ async function createPoster(req, res) {
       negativePrompt,
       style,
       aspectRatio,
+      language,
+      fontStyle,
+      posterType,
+      occasion,
+      targetAudience,
+      colorTheme,
+      mainText,
       seed,
       dimensions,
       metadata,

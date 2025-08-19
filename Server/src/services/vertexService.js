@@ -10,21 +10,81 @@ const projectId = require(keyFilePath).project_id;
 const location = "us-central1";
 
 const imageModels = [
-  "imagen-4.0-generate-preview-06-06", // Highest quality, try first
-  "imagen-3.0-generate-preview-06-05", // Excellent fallback
-  "imagegeneration@006", // A stable, older version
+  "imagen-4.0-generate-preview-06-06",
+  "imagen-3.0-generate-preview-06-05",
+  "imagegeneration@006",
 ];
+
+function buildPosterPrompt({
+  prompt,
+  styleLabel,
+  language,
+  fontStyle,
+  posterType,
+  occasion,
+  targetAudience,
+  colorTheme,
+  mainText,
+}) {
+  const clarityPrompt = `
+    Create a high-resolution, visually compelling poster.
+
+    Subject: ${prompt}
+    Poster Type: ${posterType}
+    Occasion/Festival: ${occasion}
+    Target Audience: ${targetAudience}
+    Color Theme: ${colorTheme}
+    Main Text: ${mainText}
+    Visual Style: ${styleLabel}
+
+    Text Requirements:
+    - All text must be rendered in "${language}" language only. Do not use any other language.
+    - Use a clean, highly readable, and professional font style: "${fontStyle}" only. Do not use any other font.
+    - The main text should be exactly: "${mainText}" (if provided).
+    - Ensure the font is easy to read, visually appealing, and well-integrated into the design.
+    - Avoid decorative, funky, or overly stylized fonts that reduce legibility.
+    - The text must be sharp, clear, and stand out against the background.
+    - Do not use English if another language is specified.
+
+    Design & Quality Guidelines:
+    - Resolution: Ultra-sharp, print-quality (minimum 4K).
+    - Focus: Clear subject emphasis with balanced composition and lighting.
+    - Style Consistency: Match "${styleLabel}" across visuals and typography.
+    - Avoid: Distortion, artifacts, pixelation, bad typography, or misplaced text.
+    - Ensure: Clean layout, harmonious colors, professional typography, and strong visual impact.
+
+    Final Goal: A poster that looks professionally designed, highly detailed, aesthetically appealing, and ready for real-world use.
+  `.trim();
+
+  const variantPrompt = `
+    Generate a poster for "${occasion}" with all text in "${language}" using a clean, modern, and highly legible font style: "${fontStyle}". 
+    Poster type: ${posterType}. Target audience: ${targetAudience}. Color theme: ${colorTheme}.
+    Main text: "${mainText}".
+    Prioritize clarity, readability, and professional appearance for all text elements. 
+    The poster should be visually balanced, with text that is easy to read and harmoniously integrated into the overall design.
+    Do not use any language or font other than specified.
+  `.trim();
+
+  return [clarityPrompt.replace(/\s+/g, " "), variantPrompt.replace(/\s+/g, " ")];
+}
 
 async function generatePosterWithVertex({
   prompt,
   style = "Photorealistic",
   aspectRatio = "1:1",
   sampleCount = 1,
-  negativePrompt = "blur",
+  negativePrompt = "blur, low quality, distorted text",
   enhancePrompt = false,
   addWatermark = true,
   includeRaiReason = true,
-  language = "auto",
+  metadata = "",
+  language = "English",
+  fontStyle = "default",
+  posterType = "",
+  occasion = "",
+  targetAudience = "",
+  colorTheme = "",
+  mainText = "",
 }) {
   if (!prompt) throw new Error("Prompt is required");
 
@@ -33,14 +93,19 @@ async function generatePosterWithVertex({
       ? style.label
       : style;
 
-  const finalPrompt = `
-    Create a visually compelling, high-resolution image.
-    Style: ${styleLabel}.
-    Subject: ${prompt}.
-    Requirements: The image should be artistically styled as "${styleLabel}", with sharp focus, balanced lighting, and clean composition. Avoid artifacts, distortion, or low-quality elements. Emphasize clarity, detail, and visual appeal.
-  `
-    .trim()
-    .replace(/\s+/g, " ");
+  const [clarityPrompt, variantPrompt] = buildPosterPrompt({
+    prompt,
+    styleLabel,
+    language,
+    fontStyle,
+    posterType,
+    occasion,
+    targetAudience,
+    colorTheme,
+    mainText,
+  });
+
+  const finalPrompt = clarityPrompt;
 
   logger.info(
     `[VertexAI] Initializing image generation for prompt: "${finalPrompt}"`
@@ -99,7 +164,7 @@ async function generatePosterWithVertex({
         logger.info(
           `[VertexAI] Image generated successfully with model: ${modelId}`
         );
-        return { base64 }; // Success!
+        return { base64 };
       }
 
       logger.warn(`[VertexAI] Model ${modelId} returned an empty prediction.`);
